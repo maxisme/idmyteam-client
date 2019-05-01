@@ -9,7 +9,7 @@ install:
 
 cache: pip
 
-script: python -m pytest -m "not rpi"
+script: python3 -m pytest tests/ -m "not rpi"
 
 services:
   - mysql
