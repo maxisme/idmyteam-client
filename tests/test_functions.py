@@ -7,7 +7,10 @@ from PIL import Image
 
 from settings import functions
 
-ROOT_DIR = '/var/www/'
+ROOT_DIR = os.environ["ROOT_DIR"]
+DB_TABLE = os.environ["DB_TABLE"]
+DB_USERNAME = os.environ["DB_USERNAME"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
 
 MEMBER_ID = '1'
 
@@ -30,7 +33,7 @@ class TestYAML(object):
 ##################
 class MySQLHelper(object):
     def __init__(self):
-        self.conn = functions.connect('max', 'Fz50baqBrvkhxFYUCetsXn4nElD8KSFvwxLG416x', "test-idmyteam")
+        self.conn = functions.connect(DB_USERNAME, DB_PASSWORD, DB_TABLE)
         if not self.conn:
             print('Error with db connection')
             quit()

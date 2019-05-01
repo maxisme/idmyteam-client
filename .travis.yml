@@ -8,3 +8,14 @@ install:
  - pip install opencv-python
 
 script: pytest
+
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE test-idmyteam;' # matches env
+
+env:
+  - DB_PASSWORD=''
+  - DB_USERNAME=root
+  - DB_TABLE=test-idmyteam

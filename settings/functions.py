@@ -161,7 +161,7 @@ class Image:
         @classmethod
         def write(cls, img_path, comment):
             cmd = "convert '{img_path}' -set comment '{comment}' '{img_path}'".format(img_path=img_path, comment=comment)
-            out, _, _ = Shellogging.run_process(cmd)
+            out, _, _ = Shell.run_process(cmd)
             return out
 
         @classmethod
@@ -340,7 +340,7 @@ class Member:
 
         # remove all classified images
         try:
-            shutilogging.rmtree(classified_dir + member_id + "/")
+            shutil.rmtree(classified_dir + member_id + "/")
         except FileNotFoundError as e:
             logging.warning(e)
 
