@@ -10,7 +10,7 @@ import tornado.web
 
 import web_urls
 
-from web import view
+import view
 from settings import config, functions
 from client import SocketClient
 from settings.log import LogDBHandler
