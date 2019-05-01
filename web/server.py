@@ -9,12 +9,12 @@ import tornado.httpserver
 import tornado.web
 
 import web_urls
+
 import view
 from settings import config, functions
 from client import SocketClient
 from settings.log import LogDBHandler
 import camera
-# import button
 
 # set logger
 logging.basicConfig(level='INFO')
