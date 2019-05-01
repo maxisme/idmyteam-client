@@ -9,14 +9,13 @@ install:
 
 cache: pip
 
-script: pytest
+script: pytest -m "not rpi"
 
 services:
   - mysql
 
 before_install:
   - mysql -e 'CREATE DATABASE `test-idmyteam`;' # matches env
-  - sudo apt-get install -y shellcheck
 
 env:
   global:
