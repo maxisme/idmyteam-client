@@ -7,7 +7,7 @@ from PIL import Image
 
 from settings import functions
 
-ROOT_DIR = os.environ.get('TRAVIS_BUILD_DIR', os.environ["ROOT_DIR"])
+ROOT_DIR = os.environ["ROOT_DIR"]
 DB_TABLE = os.environ["DB_TABLE"]
 DB_USERNAME = os.environ["DB_USERNAME"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
