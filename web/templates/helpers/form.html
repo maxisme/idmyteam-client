@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <form method="post" action="{{ request.path }}" class="col s12">
+            {% raw xsrf_form_html() %}
+
+            {% for field in form %}
+                <div class="row">
+                    <div class="input-field col s12">
+                        {% raw field %}
+                        {% if field.type != 'SelectField' %}
+                            <label {% if field.errors %}data-error="{% raw field.errors[0] %}"{% end %} for="{{ field.name }}">{% raw field.label %}</label>
+                        {% end %}
+                    </div>
+                </div>
+            {% end %}
+
+            <div align="center">
+                <button class="btn material-icons" type="submit">check</button>
+            </div>
+        </form>
+    </div>
+{% end %}
+
+{% block scripts %}
+    {% for script in include_scripts %}
+        <script src="{{ static_url(script) }}"></script>
+    {% end %}
+{% end %}

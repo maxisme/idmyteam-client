@@ -1,0 +1,22 @@
+version: "2"
+services:
+  app:
+    build: .
+    links:
+      - database
+    ports:
+      - "8080:8080"
+    restart: always
+  database:
+    image: tobi312/rpi-mysql
+    ports:
+      - "32000:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=AEcQhYd5yiFFY7oc7fTKq8FgDyQnIUZEj1oyMdjwoHGXAwbVfw3FBJLUpOcpo0RsWgHtRq7NEjWylukz
+      - MYSQL_DATABASE=idmyteam
+      - MYSQL_USER=demouser
+      - MYSQL_PASSWORD=demopassword
+      - TZ=Europe/London
+    volumes:
+      - ./db/schema:/docker-entrypoint-initdb.d/:ro

@@ -1,0 +1,65 @@
+#classifiers
+  // prevent annoying select when using shift to classify multiple images
+  *
+    user-select: none
+    -moz-user-select: none
+    -webkit-user-select: none
+
+  .active
+    opacity: 1 !important
+
+  .autocomplete-content
+    position: absolute
+
+  .ms-selected .circle
+    color: $selected-colour !important
+
+  .circle:hover
+      cursor: pointer
+      color: $selected-colour
+
+  .icon
+    text-shadow: 0px 0px 5px $white
+
+
+.select-areas-outline
+  border: 4px $red solid
+  overflow: hidden
+
+.select-areas-resize-handler
+  border: 1px #fff dashed
+  height: 8px
+  width: 8px
+  overflow: hidden
+
+.select-areas-delete-area:after
+  color: $red
+  font-size: 20px
+  content: 'delete'
+
+.delete-area
+  position: absolute
+  cursor: pointer
+  padding: 5px
+
+.box
+  height: 1.1em
+  width: 1.1em
+  border: 2px #1c1c1c solid
+  display: inline-block
+  vertical-align: middle
+
+.portrait
+  max-width: 100%
+  max-height: 100%
+
+.icon:hover
+  cursor: pointer
+  opacity: 1
+
+.row .icon
+  position: relative
+  display: inline
+  top: 35px
+  left: 5px
+  font-size: 25px

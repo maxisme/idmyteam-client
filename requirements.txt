@@ -1,0 +1,11 @@
+oyaml
+numpy
+tornado
+#picamera
+bcrypt
+mysqlclient
+requests
+zmq
+pillow
+wtforms
+pytest

@@ -1,0 +1,79 @@
+<html>
+<head>
+    <!-- custom meta -->
+    <title>Web Panel {% if title %}| {{ title }}{% end %}</title>
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description" content="{{  meta['description'] }}"/>
+    <meta property="og:image" content="{{ static_url('images/og_logo.png')}}" />
+    <meta name="keywords" content="{{ meta['keywords'] }}">
+    <meta name="description" content="{{ meta['description'] }}">
+    <link rel="shortcut icon" href="{{ static_url('images/icon.ico')}}">
+
+    <!-- mobile meta -->
+    <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'/>
+    <!-- jQuery -->
+    <script type="text/javascript" src="{{ static_url('js/libraries/jquery-3.2.1.min.js') }}"></script>
+    <!-- Third party JavaScript -->
+    <script src="{{ static_url('js/libraries/materialize.min.js') }}"></script>
+    {% block scripts %}{% end %}
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,400,700" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ static_url('css/style.css') }}" rel="stylesheet">
+    <!-- Custom JS -->
+    <script src="{{ static_url('js/script.js') }}"></script>
+
+    <!-- custom js -->
+    {% block js %}{% end %}
+</head>
+
+{% if member %}
+    {% set menu_bar_content = """
+    <li><a href='/live-stream' class='button'>Stream</a></li>
+    <li><a href='/members' class='button'>Members</a></li>
+    <li><a href='/script' class='button'>Script</a></li>
+    <li><a href='/classify' class='button'>Classify</a></li>
+    <li><a href='/settings' class='button'>Settings</a></li>
+    <li><a href='/logs' class='button'>Logs</a></li>
+    <li><a href='/backend/login/logout' class='button'>Log Out</a></li>
+    """ %}
+{% else %}
+    {% set menu_bar_content = "<li><a id='login' href='/login' class='button'>Log  In</a></li>" %}
+{% end %}
+
+<body>
+    <nav class="z-depth-0">
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo">
+                <img class="svg" src="{{ static_url('images/logo.svg') }}"/>
+                {% if not socket_connected %}
+                    <style>
+                        .brand-logo svg path{
+                            fill: #bc2122 !important;
+                        }
+                    </style>
+                {% end %}
+            </a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                {%  raw menu_bar_content %}
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                {%  raw menu_bar_content %}
+            </ul>
+        </div>
+    </nav>
+    <div class="content" align="center">
+        {% if title %} <h2><strong>{{ title }}</strong></h2> {% end %}
+        {% if error_message %}
+            <div class='flash-bar error'>{% raw error_message %}</div>
+        {% elif success_message %}
+            <div class='flash-bar success'>{% raw success_message %}</div>
+        {% end %}
+
+        {% block content %}{% end %}
+        <p>&nbsp</p>
+    </div>
+</body>

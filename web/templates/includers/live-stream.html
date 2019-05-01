@@ -1,0 +1,39 @@
+{% set running = False %}
+{% if not camera_running %}
+<strong>Camera turned off!</strong> Turn on in <a href="/settings">settings</a>!
+{% elif not live_stream %}
+    <strong>Live Stream turned off!</strong> Turn on in <a href="/settings">settings</a>!
+{% else %}
+    {% set running = True %}
+    <div align="center">
+        <canvas id="livestream" width="700px" height="500px"></canvas>
+    </div>
+{% end %}
+
+{% if running %}
+    <script>
+        $(document).ready(function () {
+            var img = new Image();
+            img.onload = function () {
+                var w = $(window).width() * 0.6; // 60% width
+                var h = w * (img.height / img.width);
+                var c = $("canvas");
+                c.attr("width", w);
+                c.attr("height", h);
+
+                var canvas = document.getElementById("livestream");
+                var context = canvas.getContext("2d");
+                context.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
+
+                //update image every 0.05 seconds
+                setTimeout(timedRefresh, 50);
+            };
+
+            function timedRefresh() {
+                img.src = '/stream?d=' + Date.now(); // prevent caching
+            }
+
+            timedRefresh();
+        });
+    </script>
+{% end %}

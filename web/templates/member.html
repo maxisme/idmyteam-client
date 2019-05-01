@@ -1,0 +1,27 @@
+{% extends 'helpers/base.html' %}
+
+{% block content %}
+    <p>
+        {% if num_recognitions > 0 %}
+            <strong>{{ member['name'] }} has been recognised {{ num_recognitions }} times!</strong>
+
+            <canvas id="scores" width="400" height="100"></canvas>
+        {% else %}
+            No recognitions of {{  member['name'] }}.
+        {% end %}
+    </p>
+
+    <p>
+        <strong>{{ member['name'] }} has been trained with {{ num_trained }} different portraits!</strong>
+    </p>
+{% end %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ static_url('js/libraries/Chart.min.js') }}"></script>
+{% end %}
+
+{% block js %}
+    {% if num_recognitions > 0 %}
+        {% raw chartjs %}
+    {% end %}
+{% end %}

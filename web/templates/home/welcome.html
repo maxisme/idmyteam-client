@@ -1,0 +1,48 @@
+{% extends '../helpers/base.html' %}
+{% block content %}
+    <div id="welcome" align="center">
+        <h1>
+            Web Panel
+        </h1>
+        <p style="font-weight: 200">Welcome to the ID My Team panel.</p>
+    </div>
+
+    <div class="row">
+        <div class="col m4 s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title {% if not socket_connected %}error{% end %}">
+                        <span class="material-icons">settings_ethernet</span> Socket
+                    </span>
+                    {% if not socket_connected %}Not {% end %}Connected
+                </div>
+            </div>
+        </div>
+
+        <div class="col m4 s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        <span class="material-icons">camera_alt</span> Camera
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col m4 s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        <span class="material-icons">people_outline</span> Model
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+			fadeInOut($("#login"));
+        });
+    </script>
+{% end %}

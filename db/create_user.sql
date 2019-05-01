@@ -1,0 +1,1 @@
+INSERT INTO `Members` (`id`, `name`, `password`, `perm`, `training`) VALUES (1, 'root', '$2b$12$UtO4.0c1N1e/Uweru7Cdb.hhnoeZCn1u6.x3yQWQKnrA878HpDzwu', 'high', 0);

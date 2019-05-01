@@ -1,0 +1,39 @@
+#members
+  th, td
+    text-align: center
+
+    img
+      margin-left: 1em
+
+  .train
+    -webkit-animation: progress-bar 2s
+    -moz-animation: progress-bar 2s
+    animation: progress-bar 2s
+
+    animation-timing-function: linear
+    -webkit-animation-timing-function: linear
+
+    -webkit-background-clip: text
+    -webkit-text-fill-color: transparent
+    color: $icon-colour
+    background-color: $red
+
+    &:hover
+      color: $selected-colour
+
+
+.new-pass
+  color: $icon-colour
+
+  &:hover
+    color: $selected-colour
+
+.stats
+  color: $icon-colour
+
+  &:hover
+    color: $blue
+
+.flashme
+  cursor: unset !important
+  transition: none !important
