@@ -7,7 +7,7 @@ from PIL import Image
 
 from settings import functions
 
-ROOT_DIR = os.environ['TRAVIS_BUILD_DIR'] or os.environ["ROOT_DIR"]
+ROOT_DIR = os.environ.get('TRAVIS_BUILD_DIR', os.environ["ROOT_DIR"])
 DB_TABLE = os.environ["DB_TABLE"]
 DB_USERNAME = os.environ["DB_USERNAME"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
@@ -24,7 +24,7 @@ class TestYAML(object):
         functions.YAML.write(self.test_path, self.dic)
 
     def test_open_YAML(self):
-        out_dic = functions.YAML.read('files/test.yaml')
+        out_dic = functions.YAML.read(self.test_path)
         assert out_dic['hello'] == self.dic['hello']
 
         # clean_up
