@@ -2,7 +2,7 @@
 import os, sys
 import functions
 
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(sys.modules['__main__'].__file__), os.pardir))
+ROOT_DIR = os.environ.get("ROOT_DIR", os.path.abspath(os.path.join(os.path.dirname(sys.modules['__main__'].__file__), os.pardir)))
 SETTINGS_FILE = ROOT_DIR + "/settings.yaml"
 settings = functions.YAML.read(SETTINGS_FILE)
 

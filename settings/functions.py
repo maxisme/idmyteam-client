@@ -1,7 +1,6 @@
 # common functions used in multiple scripts
 import base64
 import datetime
-import glob
 import json
 import logging
 import shlex
@@ -15,7 +14,6 @@ import numpy as np
 import re
 import oyaml
 from oyaml import FullLoader
-import requests
 import os
 import zmq
 from subprocess import Popen, PIPE

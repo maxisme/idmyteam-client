@@ -39,6 +39,7 @@ class BaseHandler(tornado.web.RequestHandler):
             'error_message': self.get_secure_cookie('error_message'),
             'success_message': self.get_secure_cookie('success_message'),
             'member': json.loads(self.get_secure_cookie('member') or '{}'),
+            'include_scripts': [],
             'authed': self.authed,
             'socket_status': config.SOCKET_STATUS,
             'socket_connected': config.SOCKET_STATUS == config.SOCKET_CONNECTED
@@ -69,8 +70,11 @@ class BaseHandler(tornado.web.RequestHandler):
 
         level = 'low'
         for l in config.PERMISSIONS:
-            if int(self.tmpl['member']['perm']) == config.PERMISSIONS[l]['level']:
-                level = l
+            try:
+                if int(self.tmpl['member']['perm']) == config.PERMISSIONS[l]['level']:
+                    level = l
+            except:
+                pass
 
         return config.PERMISSIONS[level]['level'] >= config.PERMISSIONS[perm]['level']
 
