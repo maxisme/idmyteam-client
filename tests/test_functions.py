@@ -7,7 +7,7 @@ from PIL import Image
 
 from settings import functions
 
-ROOT_DIR = os.environ["ROOT_DIR"]
+ROOT_DIR = os.environ['TRAVIS_BUILD_DIR'] or os.environ["ROOT_DIR"]
 DB_TABLE = os.environ["DB_TABLE"]
 DB_USERNAME = os.environ["DB_USERNAME"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
@@ -17,7 +17,7 @@ MEMBER_ID = '1'
 
 @pytest.mark.incremental
 class TestYAML(object):
-    test_path = 'files/test.yaml'
+    test_path = 'test.yaml'
     dic = {'hello': [{'test': 'foo'}, {'test2': 'baz'}]}
 
     def test_write_YAML(self):
@@ -26,6 +26,9 @@ class TestYAML(object):
     def test_open_YAML(self):
         out_dic = functions.YAML.read('files/test.yaml')
         assert out_dic['hello'] == self.dic['hello']
+
+        # clean_up
+        os.remove(self.test_path)
 
 
 ##################
@@ -45,6 +48,7 @@ class MySQLHelper(object):
         x.close()
 
     def init_schema(self):
+        print(ROOT_DIR)
         self.execute_sql_in_file(ROOT_DIR + "/db/schema.sql")
             
 ######################### end #########################
