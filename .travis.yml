@@ -1,11 +1,11 @@
 language: python
 
 python:
- - "3.6"
+  - "3.6"
 
 install:
- - pip install -r requirements.txt
- - pip install opencv-python
+  - pip install -r requirements.txt
+  - pip install opencv-python
 
 script: pytest
 
@@ -16,6 +16,7 @@ before_install:
   - mysql -e 'CREATE DATABASE test-idmyteam;' # matches env
 
 env:
-  - DB_PASSWORD=''
-  - DB_USERNAME=root
-  - DB_TABLE=test-idmyteam
+  global:
+    - DB_PASSWORD=''
+    - DB_USERNAME=root
+    - DB_TABLE=test-idmyteam
