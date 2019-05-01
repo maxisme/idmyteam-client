@@ -3,7 +3,7 @@ import multiprocessing
 from multiprocessing import Pool
 
 import cv2
-import os
+import requests
 import time
 from picamera.array import PiRGBArray
 import picamera as pc
@@ -50,7 +50,7 @@ def classify(img, store_features, secure):
     cv2.imwrite(upload_path, img)
 
     protocol = "https" if secure else "http"
-    r = functions.requests.post(protocol + "://idmy.team/upload", files={
+    r = requests.post(protocol + "://idmy.team/upload", files={
         'img_file': open(upload_path, 'rb')
     }, data={
         'username': config.username,

@@ -457,13 +457,13 @@ class SettingsHandler(BaseHandler):
     @permission('high')
     def post(self):
         restart_camera = False
-        for key in self.request.arguments:
+        args = self._get_args()
+        for key in args:
             split = key.split("_")
             type = split[0].replace("-", " ").title()
             setting = split[1].replace("-", " ").title()
 
-            val = self.get_argument(key)
-            val = val if 'on' not in val else 1
+            val = args[key] if 'on' not in args[key] else 1
             # convert val to int if possible
             try:
                 val = int(val)
@@ -475,10 +475,17 @@ class SettingsHandler(BaseHandler):
                 config.settings[type][setting]['val'] = val
                 if setting in config.CAMERA_RESTART_SETTINGS:
                     restart_camera = True
+
         if restart_camera:
             config.RESTART_CAMERA = True
         functions.YAML.write(config.SETTINGS_FILE, config.settings)
         self.redirect('/settings')
+
+    def _get_args(self):
+        for argument in self.request.arguments:
+            self.request.arguments[argument] = self.request.arguments[argument][0].decode()
+        return self.request.arguments
+
 
     def _store_stats(self):
         # storage
