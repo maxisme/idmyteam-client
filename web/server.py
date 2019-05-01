@@ -44,16 +44,19 @@ def connect_to_wss(reconnect=True):
     config.ws = SocketClient(request, reconnect)
     config.ws.connect()
 
+def start_camera():
+    config.CAMERA_THREAD = threading.Thread(target=camera.run, args=())
+    config.CAMERA_THREAD.start()
 
-def checks():
+def periodic_checks():
     # check socket
     if config.SOCKET_STATUS == config.SOCKET_CLOSED:
         connect_to_wss(False)
 
     # check camera thread
     if not config.CAMERA_THREAD or not config.CAMERA_THREAD.isAlive():
-        config.CAMERA_THREAD = threading.Thread(target=camera.run, args=())
-        config.CAMERA_THREAD.start()
+        logging.critical("Problem with camera please start with web server")
+        start_camera()
 
 def main():
 
@@ -62,9 +65,9 @@ def main():
     server.start(1)  # 1 cpu
 
     connect_to_wss()
-
+    start_camera()
     logging.info("Web server started...")
-    PeriodicCallback(checks, 2000).start()
+    PeriodicCallback(periodic_checks, 2000).start()
     IOLoop.instance().start()
 
 
