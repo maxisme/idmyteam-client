@@ -15,7 +15,7 @@ services:
   - mysql
 
 before_install:
-  - mysql -e 'CREATE DATABASE test-idmyteam;' # matches env
+  - mysql -e 'CREATE DATABASE `test-idmyteam`;' # matches env
 
 env:
   global:
