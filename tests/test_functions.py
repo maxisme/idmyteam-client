@@ -103,7 +103,7 @@ def test_shell_script(shell_str, output):
     file_name = 'foo'
     functions.Shell.validate(shell_str, file_name)
 
-    assert os.path.isfile(file_name) == output
+    assert bool(os.path.isfile(file_name)) == output
 
     # clean up
     if os.path.isfile(file_name):
