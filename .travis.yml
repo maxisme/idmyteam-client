@@ -22,3 +22,4 @@ env:
     - DB_PASSWORD=''
     - DB_USERNAME=root
     - DB_TABLE=test-idmyteam
+    - ROOT_DIR=/var/www/ 
