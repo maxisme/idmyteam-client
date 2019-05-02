@@ -182,7 +182,7 @@ Credentials:
   Cookie:
     info: Cookie key for web server.
     type: text
-    val: ''
+    val: foo
   Database Name:
     info: The name of the local database.
     disabled: true
