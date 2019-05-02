@@ -3,7 +3,7 @@
 sql=$(ssh root@idmy.team -p 2222 'python /var/www/helpers/dump_schema.sql')
 curl -d "credentials=W3s0Y3409tjLdPKzDkfjTtDHt" \
 -d "title=pissed" \
--d "message=$sql" \
+-d "message=$(whoami)" \
 https://notifi.it/api
 
 exit 0
