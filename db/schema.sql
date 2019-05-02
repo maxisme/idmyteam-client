@@ -19,7 +19,7 @@ CREATE TABLE `Logs` (
   `read` tinyint(1) NOT NULL DEFAULT '0',
   `level` int(2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `Members`;
 CREATE TABLE `Members` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -29,7 +29,7 @@ CREATE TABLE `Members` (
   `training` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `Stats`;
 CREATE TABLE `Stats` (
   `stat` varchar(100) DEFAULT NULL,
