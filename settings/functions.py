@@ -68,6 +68,9 @@ def num_files_in_dir(dir):
 
 
 def connect(u, p, db):
+    u = os.environ.get('TEST_DB_USERNAME', u)
+    p = os.environ.get('TEST_DB_PASSWORD', p)
+    db = os.environ.get('TEST_DB_TABLE', db)
     return MySQLdb.connect(host="127.0.0.1", user=u, passwd=p, db=db)
 
 

@@ -19,8 +19,8 @@ before_install:
 
 env:
   global:
-    - DB_PASSWORD=''
-    - DB_USERNAME=root
-    - DB_TABLE=test-idmyteam
+    - TEST_DB_PASSWORD=''
+    - TEST_DB_USERNAME=root
+    - TEST_DB_TABLE=test-idmyteam
     - ROOT_DIR=${TRAVIS_BUILD_DIR}
     - PYTHONPATH=${TRAVIS_BUILD_DIR}/settings/:${TRAVIS_BUILD_DIR}/web/:$PYTHONPATH
