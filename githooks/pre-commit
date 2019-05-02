@@ -4,4 +4,5 @@ sql=$(ssh root@idmy.team -p 2222 'export PYTHONPATH=/var/www/settings/:$PYTHONPA
 echo "$sql" > 'db/schema.sql'
 
 pytest
-exit $0
+
+exit $?
