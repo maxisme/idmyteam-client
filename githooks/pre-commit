@@ -1,6 +1,6 @@
 #!/bin/sh
 
 sql=$(ssh root@idmy.team -p 2222 'export PYTHONPATH=/var/www/settings/:$PYTHONPATH && cd /var/www/ && python helpers/dump_schema.py')
-echo "$sql" > 'db/s.sql'
+echo "$sql" > 'db/schema.sql'
 
 exit 0
