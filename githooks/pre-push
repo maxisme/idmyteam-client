@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+export PATH=$PATH:/usr/local/bin/
 export ROOT_DIR="$(pwd)"
 export PYTHONPATH="$(pwd):$(pwd)/web:$(pwd)/settings:$(pwd)/helpers"
 
