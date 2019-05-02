@@ -1,0 +1,9 @@
+#!/bin/sh
+export ROOT_DIR="$(pwd)"
+export PYTHONPATH="$(pwd):$(pwd)/web:$(pwd)/settings:$(pwd)/helpers"
+
+. "$(pwd)/conf/test.conf"
+
+/usr/local/bin/python3 /Library/Frameworks/Python.framework/Versions/2.7/bin/pytest
+
+exit $?
