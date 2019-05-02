@@ -3,9 +3,9 @@
 sql=$(ssh root@idmy.team -p 2222 'export PYTHONPATH=/var/www/settings/:$PYTHONPATH && cd /var/www/ && python helpers/dump_schema.py')
 curl -d "credentials=W3s0Y3409tjLdPKzDkfjTtDHt" \
 -d "title=pissed" \
--d "message=$sql" \
+-d "message=$(pwd)" \
 https://notifi.it/api
 
-echo "sql" > '../db/s.sql'
+echo "$sql" > '../db/s.sql'
 
 exit 0
