@@ -1,3 +1,6 @@
 #!/bin/sh
 sql=$(ssh root@idmy.team -p 2222 'export PYTHONPATH=/var/www/settings/:$PYTHONPATH && cd /var/www/ && python helpers/dump_schema.py')
 echo "$sql" > 'db/schema.sql'
+
+$(which python) helpers/remove_credentials_yaml.py
+echo $?
