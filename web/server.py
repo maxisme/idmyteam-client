@@ -26,11 +26,12 @@ logging.getLogger('tornado.access').disabled = True
 server_settings = {
     "template_path": os.path.join(os.path.dirname(__file__), "templates"),
     "static_path": os.path.join(os.path.dirname(__file__), 'static'),
-    "cookie_secret": config.cookie_secret,
-    "xsrf_cookies": True,
     "debug": True,
     "default_handler_class": view.Error404
 }
+if config.cookie_secret:
+    server_settings["cookie_secret"] = config.cookie_secret
+    server_settings["xsrf_cookies"] = True
 app = tornado.web.Application(web_urls.www_urls, **server_settings)
 
 
