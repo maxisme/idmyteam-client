@@ -1,10 +1,14 @@
 #!/bin/sh
+export PATH=$PATH:/usr/local/bin/
 
 sql=$(ssh root@idmy.team -p 2222 'export PYTHONPATH=/var/www/settings/:$PYTHONPATH && cd /var/www/ && python helpers/dump_schema.py')
 echo "$sql" > 'db/schema.sql'
 
-export ROOT='$(pwd)'
-export PYTHONPATH="$(pwd):$(pwd)web:$(pwd)settings:$(pwd)helpers"
-eval "$(which python3) $(which pytest)"
+export ROOT_DIR="$(pwd)"
+export PYTHONPATH="$(pwd):$(pwd)/web:$(pwd)/settings:$(pwd)/helpers"
 
-exit -1
+. "$(pwd)/conf/test.conf"
+
+/usr/local/bin/python3 /Library/Frameworks/Python.framework/Versions/2.7/bin/pytest
+
+exit $?

@@ -90,7 +90,7 @@ def test_toGB():
 @pytest.mark.rpi
 @pytest.mark.parametrize('shell_str,output', [
     ('dfsdf=sdfs', False),
-    ('''#!bin/bash
+    ('''#!/bin/bash
     foo='1'
     echo $foo
     ''', True)
@@ -99,7 +99,7 @@ def test_shell_script(shell_str, output):
     file_name = 'foo'
     functions.Shell.validate(shell_str, file_name)
 
-    assert bool(os.path.isfile(file_name)) == output
+    assert bool(os.path.isfile(file_name)) == bool(output)
 
     # clean up
     if os.path.isfile(file_name):

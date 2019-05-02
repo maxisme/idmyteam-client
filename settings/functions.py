@@ -587,6 +587,9 @@ class Shell:
         if exitcode == 0:
             # success so copy validated file
             copyfile(tmp_name, out_file)
+        else:
+            logging.error(out)
+            print(out)
         os.remove(tmp_name)
         return out
 

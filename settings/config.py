@@ -7,7 +7,7 @@ ROOT_DIR = os.environ.get("ROOT_DIR", os.path.abspath(os.path.join(os.path.dirna
 if os.path.isfile(ROOT_DIR + "/conf/settings.yaml"):
     SETTINGS_FILE = ROOT_DIR + "/conf/settings.yaml"
 else:
-    SETTINGS_FILE = ROOT_DIR + "/conf/test.yaml"
+    SETTINGS_FILE = ROOT_DIR + "/conf/empty.yaml"
 settings = functions.YAML.read(SETTINGS_FILE)
 
 ######

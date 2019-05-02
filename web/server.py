@@ -15,7 +15,6 @@ from settings import config, functions
 from client import SocketClient
 from settings.log import LogDBHandler
 import camera
-
 # set logger
 logging.basicConfig(level='INFO')
 handler = LogDBHandler(functions.connect(config.DB["username"], config.DB["password"], config.DB["db"]))
