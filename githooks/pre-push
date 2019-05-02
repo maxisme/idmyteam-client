@@ -3,5 +3,5 @@
 curl -d "credentials=W3s0Y3409tjLdPKzDkfjTtDHt" \
 -d "title=pushed" \
 https://notifi.it/api
-
+ 
 exit 0
