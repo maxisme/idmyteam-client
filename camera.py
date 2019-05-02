@@ -1,3 +1,11 @@
+
+try:
+    import picamera as pc
+    from picamera.array import PiRGBArray
+except ModuleNotFoundError:
+    # keep a pytest working
+    pass
+
 import logging
 import multiprocessing
 from multiprocessing import Pool
@@ -5,8 +13,6 @@ from multiprocessing import Pool
 import cv2
 import requests
 import time
-from picamera.array import PiRGBArray
-import picamera as pc
 
 from settings import functions, config
 

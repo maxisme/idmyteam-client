@@ -13,7 +13,6 @@ from shutil import copyfile
 import numpy as np
 import re
 import oyaml
-from oyaml import FullLoader
 import os
 import zmq
 from subprocess import Popen, PIPE
@@ -22,8 +21,6 @@ import tornado.escape
 import cv2
 import bcrypt
 from PIL import Image as PILImage
-
-
 
 
 class YAML:
@@ -35,7 +32,7 @@ class YAML:
         :return dictionary:
         """
         with open(file, 'r') as f:
-            content = oyaml.load(f, FullLoader)
+            content = oyaml.load(f, oyaml.SafeLoader)
         return content
 
 

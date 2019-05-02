@@ -11,11 +11,6 @@ settings = functions.YAML.read(SETTINGS_FILE)
 ######
 ws = None
 
-#######
-# web #
-#######
-cookie_secret = 'B7Coh0y7r4AVbDLePNndcflf65MhSOHEiiRmizbA'
-
 #########
 # stats #
 #########
@@ -87,6 +82,7 @@ SOCKET_CONNECTED = 1
 SOCKET_NOT_TRAINED = 2
 SOCKET_STATUS = SOCKET_CLOSED
 
+cookie_secret = settings["Credentials"]["Cookie"]["val"]
 SCRIPT_PATH = ROOT_DIR + settings["File Location"]['Bash Script']['val']
 MIN_TRAINING_IMAGES_PER_MEMBER = 10  # TODO get from server
 MAX_NUM_TRAINING_IMAGES = 60  # TODO get from server

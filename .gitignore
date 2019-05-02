@@ -1,1 +1,3 @@
 *.pyc
+helpers
+settings.yaml
