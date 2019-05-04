@@ -7,7 +7,7 @@ ROOT_DIR = os.environ.get("ROOT_DIR", os.path.abspath(os.path.join(os.path.dirna
 if os.environ.get("ROOT_DIR", False):
     SETTINGS_FILE = ROOT_DIR + "/conf/test.yaml"
 else:
-    SETTINGS_FILE = ROOT_DIR + "/conf/settings.yaml"
+    SETTINGS_FILE = ROOT_DIR + "/conf/prod.yaml"
 settings = functions.YAML.read(SETTINGS_FILE)
 
 if ROOT_DIR != settings['Global']['Root']:

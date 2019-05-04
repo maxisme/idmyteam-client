@@ -1,4 +1,7 @@
 #!/bin/sh
+export ROOT_DIR="$(pwd)"
+export PYTHONPATH="$(pwd):$(pwd)/web:$(pwd)/settings:$(pwd)/helpers"
+
 sql=$(ssh root@idmy.team -p 2222 'export PYTHONPATH=/var/www/settings/:$PYTHONPATH && cd /var/www/ && python helpers/dump_schema.py')
 echo "$sql" > 'db/schema.sql'
 

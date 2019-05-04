@@ -39,6 +39,7 @@ class MySQLHelper(object):
         x.close()
 
     def init_schema(self):
+        print(ROOT_DIR + "/db/schema.sql")
         self.execute_sql_in_file(ROOT_DIR + "/db/schema.sql")
             
 ######################### end #########################
