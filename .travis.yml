@@ -15,12 +15,10 @@ services:
   - mysql
 
 before_install:
-  - mysql -e 'CREATE DATABASE `test-idmyteam`;' # matches env
+  - mysql -e 'CREATE DATABASE `idmyteam-client-test`;' # matches env
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('VWpyKKUGaFZQIiCj680n') WHERE user='idmyteamtest';\nFLUSH PRIVILEGES;\n" | mysql -u root
 
 env:
   global:
-    - TEST_DB_PASSWORD=''
-    - TEST_DB_USERNAME=root
-    - TEST_DB_TABLE=test-idmyteam
-    - ROOT_DIR=${TRAVIS_BUILD_DIR}
+    - SETTINGS_FILE=${TRAVIS_BUILD_DIR}/conf/test_local.yaml
     - PYTHONPATH=${TRAVIS_BUILD_DIR}/settings/:${TRAVIS_BUILD_DIR}/web/:$PYTHONPATH

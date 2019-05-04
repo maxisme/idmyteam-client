@@ -77,7 +77,7 @@ def test_image_comment(message):
 
 @pytest.mark.rpi
 def test_num_files_in_dir():
-    assert functions.num_files_in_dir(ROOT_DIR + 'tests/files') == 2
+    assert functions.num_files_in_dir(ROOT_DIR + '/tests/files') == 2
 
 
 def test_toGB():

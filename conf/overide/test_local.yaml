@@ -1,0 +1,19 @@
+Global:
+  Root: /Users/max.mitchell/projects/idmyteam/client
+
+Credentials:
+  Cookie:
+    val: yummycookie
+  Database Name:
+    val: idmyteam-client-test
+  Database Username:
+    val: idmyteamtest
+  Database Password:
+    val: VWpyKKUGaFZQIiCj680n
+
+  Id My Team Username:
+    val:
+  Id My Team Credentials:
+    val:
+  Retract Key:
+    val:
