@@ -4,8 +4,8 @@ import time
 import pytest
 from PIL import Image
 
-from settings import functions
-ROOT_DIR = os.environ["ROOT_DIR"]
+from settings import functions, config
+ROOT_DIR = config.ROOT_DIR
 MEMBER_ID = '1'
 
 
@@ -25,12 +25,9 @@ class TestYAML(object):
         os.remove(self.test_path)
 
 
-##################
-# mysql fixtures #
-##################
 class MySQLHelper(object):
     def __init__(self):
-        self.conn = functions.connect(None, None, None)
+        self.conn = functions.connect(config.DB["username"], config.DB["password"], config.DB["db"])
         if not self.conn:
             print('Error with db connection')
             quit()
@@ -42,7 +39,6 @@ class MySQLHelper(object):
         x.close()
 
     def init_schema(self):
-        print(ROOT_DIR)
         self.execute_sql_in_file(ROOT_DIR + "/db/schema.sql")
             
 ######################### end #########################

@@ -1,2 +1,3 @@
 *.pyc
-settings.yaml
+test.yaml
+prod.yaml

@@ -4,11 +4,14 @@ import functions
 
 ROOT_DIR = os.environ.get("ROOT_DIR", os.path.abspath(os.path.join(os.path.dirname(sys.modules['__main__'].__file__), os.pardir)))
 
-if os.path.isfile(ROOT_DIR + "/conf/settings.yaml"):
-    SETTINGS_FILE = ROOT_DIR + "/conf/settings.yaml"
+if os.environ.get("ROOT_DIR", False):
+    SETTINGS_FILE = ROOT_DIR + "/conf/test.yaml"
 else:
-    SETTINGS_FILE = ROOT_DIR + "/conf/empty.yaml"
+    SETTINGS_FILE = ROOT_DIR + "/conf/settings.yaml"
 settings = functions.YAML.read(SETTINGS_FILE)
+
+if ROOT_DIR != settings['Global']['Root']:
+    raise Exception('Environment and conf .yaml inconsistency! %s != %s', ROOT_DIR, settings['Global']['Root'])
 
 ######
 # ws #

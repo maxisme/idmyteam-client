@@ -78,7 +78,7 @@ class SocketClient(object):
                         logging.error("Invalid Id My Team Credentials!")
 
                         # remove credentials from settings so that user is forced to refill them
-                        config.settings["Credentials"]["Id My Team Credentials"] = ""
+                        config.settings["Credentials"]["Id My Team Credentials"]['val'] = ""
                         functions.YAML.write(config.SETTINGS_FILE, config.settings)
 
                     elif message["type"] == "classification":
