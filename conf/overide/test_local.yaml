@@ -5,7 +5,7 @@ Credentials:
   Cookie:
     val: yummycookie
   Database Name:
-    val: idmyteam-client-test
+    val: idmyteamclient
   Database Username:
     val: idmyteamtest
   Database Password:
