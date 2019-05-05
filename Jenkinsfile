@@ -14,9 +14,8 @@ pipeline {
   agent any
 
   environment {
-    CONF='/conf/test_jenkins.conf'
     PYTHONPATH="$WORKSPACE/settings/:$WORKSPACE/web/:$PYTHONPATH"
-    SETTINGS_FILE="${$WORKSPACE}/conf/test_local.yaml"
+    SETTINGS_FILE="${WORKSPACE}/conf/test_local.yaml"
   }
 
   stages {
