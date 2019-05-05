@@ -33,7 +33,7 @@ pipeline {
       steps {
         sh """
         . ${virtualenv}/bin/activate
-        pytest -m "not rpi"
+        pytest tests/ -m "not rpi"
         """
       }
     }
