@@ -20,7 +20,7 @@ class TestYAML(object):
 
     def test_open_YAML(self):
         out_dic = functions.YAML.read(self.test_path)
-        assert out_dic['hello'] == self.dic['hellod']
+        assert out_dic['hello'] == self.dic['hello']
 
         # clean_up
         os.remove(self.test_path)

@@ -5,4 +5,4 @@ export PATH=$PATH:/usr/local/bin/
 
 python3 /Library/Frameworks/Python.framework/Versions/2.7/bin/pytest
 
-exit 0
+exit $?
