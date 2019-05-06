@@ -8,6 +8,7 @@ class TestWebApp(AsyncHTTPTestCase):
     url_blacklist = []
 
     def get_app(self):
+        server.server_settings['debug'] = False
         self.app = tornado.web.Application(server.web_urls.www_urls, **server.server_settings)
         return self.app
 
