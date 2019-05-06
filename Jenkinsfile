@@ -3,7 +3,7 @@ def virtualenv = "~/.virtualenvs/idmyteam-server/${env.BUILD_ID}"
 void setBuildStatus(String message, String state) {
   step([
       $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/maxisme/idmyteam-server"],
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/maxisme/idmyteam-client"],
       contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
@@ -46,7 +46,7 @@ pipeline {
       setBuildStatus("Build succeeded", "SUCCESS");
     }
     unstable {
-      setBuildStatus("Build succeeded", "SUCCESS");
+      setBuildStatus("Build unstable", "SUCCESS");
     }
     failure {
         setBuildStatus("Build failed", "FAILURE");
