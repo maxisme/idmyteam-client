@@ -1,5 +1,5 @@
 Global:
-  Root: /Users/max.mitchell/projects/idmyteam/client
+  Root: /var/lib/jenkins/workspace/idmyteamclient
 
 Credentials:
   Cookie:
