@@ -14,7 +14,7 @@ pipeline {
   agent any
 
   environment {
-    PYTHONPATH="$WORKSPACE/settings/:$WORKSPACE/web/:$PYTHONPATH"
+    PYTHONPATH="$WORKSPACE:$WORKSPACE/settings/:$WORKSPACE/web/:$PYTHONPATH"
     SETTINGS_FILE="${WORKSPACE}/conf/test_local.yaml"
   }
 

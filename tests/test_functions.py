@@ -15,6 +15,7 @@ class TestYAML(object):
     dic = {'hello': [{'test': 'foo'}, {'test2': 'baz'}]}
 
     def test_write_YAML(self):
+        print(os.environ)
         functions.YAML.write(self.test_path, self.dic)
 
     def test_open_YAML(self):
