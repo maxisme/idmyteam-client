@@ -182,7 +182,7 @@ Credentials:
     info: The name of the local database.
     disabled: true
     type: text
-    val: idmyteamclient
+    val: idmyteam-client-test
   Database Username:
     info: The username for the local database.
     disabled: true
