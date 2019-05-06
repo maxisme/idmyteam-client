@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/maxisme/idmyteam-client.svg?token=zTErHcAMpnepUwtawx8t&branch=master)](https://travis-ci.com/maxisme/idmyteam-client)
+[![Build Status](http://51.158.167.251:8080/buildStatus/icon?job=idmyteamclient)](http://51.158.167.251:8080/job/idmyteamclient/)
 
 ```
 $ git config core.hooksPath .githooks/
