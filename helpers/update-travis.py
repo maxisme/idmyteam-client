@@ -10,4 +10,4 @@ content = content.replace('CONFIG_PATH', CONFIG_PATH)
 
 f = open('../.travis.yml', "w")
 f.write(content)
-f.close() 
+f.close()
