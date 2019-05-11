@@ -74,7 +74,7 @@ def classify(img, store_features, secure):
     return True
 
 
-process_pool = Pool(processes=4)
+process_pool = Pool()
 
 
 def run():
