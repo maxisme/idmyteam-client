@@ -15,9 +15,10 @@ from settings import config, functions
 from client import SocketClient
 from settings.log import LogDBHandler
 import camera
+
 # set logger
 logging.basicConfig(level='INFO')
-handler = LogDBHandler(functions.connect(config.DB["username"], config.DB["password"], config.DB["db"]))
+handler = LogDBHandler(functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"]))
 logging.getLogger('').addHandler(handler)
 logging.getLogger('').setLevel('INFO')
 logging.getLogger('tornado.access').disabled = True
@@ -26,12 +27,13 @@ logging.getLogger('tornado.access').disabled = True
 server_settings = {
     "template_path": os.path.join(os.path.dirname(__file__), "templates"),
     "static_path": os.path.join(os.path.dirname(__file__), 'static'),
-    "cookie_secret": config.cookie_secret,
+    "cookie_secret": config.COOKIE_SECRET,
     "xsrf_cookies": True,
     "debug": True,
     "default_handler_class": view.Error404
 }
-app = tornado.web.Application(web_urls.www_urls, **server_settings)
+
+app = tornado.web.Application(handlers=web_urls.www_urls, **server_settings)
 
 
 def connect_to_wss(reconnect=True):

@@ -6,7 +6,7 @@ SETTINGS_FILE = os.environ.get("SETTINGS_FILE", os.environ.get('LOCAL_DIR'))
 
 settings = functions.YAML.read(SETTINGS_FILE)
 
-ROOT_DIR = settings['Global']['Root']
+ROOT = settings['Global']['Root']
 
 ######
 # ws #
@@ -52,11 +52,11 @@ BG_IMG_REDUCTION = 0.5
 # run.py
 ###########
 # paths
-TMP_IMG_PATH = ROOT_DIR + settings["File Location"]['Live Image']['val']
-TMP_DETECTED_DIR = ROOT_DIR + settings["File Location"]['Temporary Detected Images']['val']
-TMP_CLASSIFIED_PATH = ROOT_DIR + settings["File Location"]["Temporary Classified Images"]["val"]
-CLASSIFIED_PATH = ROOT_DIR + settings["File Location"]["Classified Images"]["val"]
-UNCLASSIFIED_PATH = ROOT_DIR + settings["File Location"]['Unclassified Images']['val']
+TMP_IMG_PATH = ROOT + settings["File Location"]['Live Image']['val']
+TMP_DETECTED_DIR = ROOT + settings["File Location"]['Temporary Detected Images']['val']
+TMP_CLASSIFIED_PATH = ROOT + settings["File Location"]["Temporary Classified Images"]["val"]
+CLASSIFIED_PATH = ROOT + settings["File Location"]["Classified Images"]["val"]
+UNCLASSIFIED_PATH = ROOT + settings["File Location"]['Unclassified Images']['val']
 
 # background extractor
 NUM_BG_TRAIN = settings["Global"]["Training"]["Number"]
@@ -84,8 +84,8 @@ SOCKET_CONNECTED = 1
 SOCKET_NOT_TRAINED = 2
 SOCKET_STATUS = SOCKET_CLOSED
 
-cookie_secret = settings["Credentials"]["Cookie"]["val"]
-SCRIPT_PATH = ROOT_DIR + settings["File Location"]['Bash Script']['val']
+COOKIE_SECRET = settings["Credentials"]["Cookie"]["val"]
+SCRIPT_PATH = ROOT + settings["File Location"]['Bash Script']['val']
 MIN_TRAINING_IMAGES_PER_MEMBER = 10  # TODO get from server
 MAX_NUM_TRAINING_IMAGES = 60  # TODO get from server
 NO_PERM = "none"

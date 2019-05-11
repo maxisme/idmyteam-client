@@ -94,9 +94,8 @@ class FaceCoordinatesHandler(view.BaseHandler):
 class RetractHandler(view.BaseHandler):
     def get(self):
         if self.get_argument('key') == config.settings["Retract Recognition"]['Time']['val']:
-            conn = functions.connect(config.DB["username"], config.DB["password"], config.DB["db"])
             functions.incorrect_classification(
-                conn=conn,
+                conn=self.application.db.connect(),
                 ws=config.ws,
                 capture_time=int(config.settings["Retract Recognition"]['Time']['val']),
                 tmp_dir=config.TMP_DETECTED_DIR,

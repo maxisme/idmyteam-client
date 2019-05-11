@@ -67,8 +67,23 @@ def num_files_in_dir(dir):
     return sum([len(files) for r, d, files in os.walk(dir)])
 
 
-def connect(u, p, db):
-    return MySQLdb.connect(host="127.0.0.1", user=u, passwd=p, db=db)
+class DB:
+    @classmethod
+    def conn(cls, u, p, db):
+        return MySQLdb.connect(host="127.0.0.1", user=u, passwd=p, db=db)
+
+    @classmethod
+    def execute_sql_in_file(cls, conn, file):
+        x = conn.cursor()
+        if not os.path.isfile(file):
+            raise Exception('No such file %s', file)
+        sql = open(file, 'r').read()
+        try:
+            x.execute(sql)
+        except Exception as e:
+            print(sql)
+        finally:
+            x.close()
 
 
 def path_in_dir(path, dir):

@@ -17,7 +17,7 @@ def run():
     while True:
         input_state = GPIO.input(PIN)
         if not input_state:
-            conn = functions.connect(config.DB["username"], config.DB["password"], config.DB["db"])
+            conn = functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
             capture_time = int(config.settings["Retract Recognition"]['Time']['val'])
             functions.incorrect_classification(
                 conn=conn,

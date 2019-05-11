@@ -55,12 +55,12 @@ class SocketClient(object):
                         self.ws.write_message(str(message['id']))  # verify that the message has been received
                         message = message['message']
 
-                    SCRIPT_PATH = config.ROOT_DIR + config.settings["File Location"]["Bash Script"]["val"]
+                    SCRIPT_PATH = config.ROOT + config.settings["File Location"]["Bash Script"]["val"]
                     ID_THRESHOLD = float(config.settings["Recognition"]["Id Threshold"]["val"])
                     RE_RECOGNITION_RATE = int(config.settings["Recognition"]["Re Recognition"]["val"])
                     TRAINING_MODE = bool(int(config.settings["Recognition"]['Training Mode']['val']))
 
-                    conn = functions.connect(config.DB["username"], config.DB["password"], config.DB["db"])
+                    conn = functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
                     if message == "ping":
                         self.ws.write_message("pong")  # keep connection with server alive
 

@@ -9,3 +9,4 @@ zmq
 pillow
 wtforms
 pytest
+sqlalchemy

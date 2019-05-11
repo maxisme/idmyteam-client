@@ -11,7 +11,7 @@ import tornado.websocket
 import forms
 import train
 
-from settings import functions, config
+from settings import functions, config, db
 
 
 def permission(level):
@@ -79,7 +79,8 @@ class BaseHandler(tornado.web.RequestHandler):
         return config.PERMISSIONS[level]['level'] >= config.PERMISSIONS[perm]['level']
 
     def db_connect(self):
-        return functions.connect(config.DB["username"], config.DB["password"], config.DB["db"])
+        self.conn = db.pool.connect()
+        return self.conn
 
     def display_chart(self, html_id, labels, sets, y_label, point_radius=0):
         if isinstance(labels, int):
@@ -120,6 +121,12 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def get_face_cookies(self):
         return functions.unescape(self.get_cookie('face-coordinates'))
+
+    def on_finish(self):
+        try:
+            self.conn.close()
+        except AttributeError:
+            pass
 
 
 class Error404(BaseHandler):
@@ -185,7 +192,7 @@ class ClassifyImagesHandler(BaseHandler):
             if not classifying:
                 img_paths.extend(glob(config.CLASSIFIED_PATH + "*" + config.IMG_TYPE))
 
-        img_paths.sort(key=lambda x: os.path.getmtime(x))  # sort image paths by creation date
+        img_paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)  # sort image paths by creation date
 
         images = OrderedDict()
         for img_path in img_paths:
@@ -496,11 +503,11 @@ class SettingsHandler(BaseHandler):
 
         # number of classified
         config.stats[config.STAT_NUM_CLASSIFIED] = functions.num_files_in_dir(
-            config.ROOT_DIR + config.settings["File Location"]['Classified Images']['val'])
+            config.ROOT + config.settings["File Location"]['Classified Images']['val'])
 
         # number of unclassified
         config.stats[config.STAT_NUM_UNCLASSIFIED] = functions.num_files_in_dir(
-            config.ROOT_DIR + config.settings["File Location"]['Unclassified Images']['val'])
+            config.ROOT + config.settings["File Location"]['Unclassified Images']['val'])
 
         config.stats[config.STAT_CPU_TEMP] = functions.get_cpu_temp()
 

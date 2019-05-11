@@ -10,7 +10,7 @@ CREATE TABLE `Activity` (
   PRIMARY KEY (`id`),
   KEY `member_id` (`member_id`),
   CONSTRAINT `Activity_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `Members` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8; 
 DROP TABLE IF EXISTS `Logs`;
 CREATE TABLE `Logs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -19,7 +19,7 @@ CREATE TABLE `Logs` (
   `read` tinyint(1) NOT NULL DEFAULT '0',
   `level` int(2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2335 DEFAULT CHARSET=utf8; 
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8; 
 DROP TABLE IF EXISTS `Members`;
 CREATE TABLE `Members` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -29,7 +29,7 @@ CREATE TABLE `Members` (
   `training` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8; 
 DROP TABLE IF EXISTS `Stats`;
 CREATE TABLE `Stats` (
   `stat` varchar(100) DEFAULT NULL,
