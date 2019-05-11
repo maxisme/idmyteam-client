@@ -45,9 +45,11 @@ def connect_to_wss(reconnect=True):
     config.ws = SocketClient(request, reconnect)
     config.ws.connect()
 
+
 def start_camera():
     config.CAMERA_THREAD = threading.Thread(target=camera.run, args=())
     config.CAMERA_THREAD.start()
+
 
 def periodic_checks():
     # check socket
@@ -59,8 +61,8 @@ def periodic_checks():
         logging.critical("Problem with camera please start with web server")
         start_camera()
 
-def main():
 
+def main():
     server = tornado.httpserver.HTTPServer(app)
     server.bind(8080)
     server.start(1)  # 1 cpu

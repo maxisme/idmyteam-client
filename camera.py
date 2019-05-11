@@ -1,10 +1,9 @@
-IS_TEST = False
+
 try:
     import picamera as pc
     from picamera.array import PiRGBArray
 except ModuleNotFoundError:
     # keep a pytest working
-    IS_TEST = True
     pass
 
 import logging
@@ -75,14 +74,10 @@ def classify(img, store_features, secure):
     return True
 
 
-if not IS_TEST:
-    process_pool = Pool()
+process_pool = Pool()
 
 
 def run():
-    if IS_TEST:
-        return
-
     # check if connected to socket
     if config.SOCKET_STATUS != config.SOCKET_CONNECTED:
         if config.SOCKET_STATUS == config.SOCKET_NOT_TRAINED:
