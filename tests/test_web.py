@@ -1,5 +1,5 @@
 from settings import config, functions
-import web_helpers
+from tests.web_helpers import WebTest
 
 import mock
 from faker import Factory
@@ -13,7 +13,7 @@ class MemberGenerator(object):
         self.permission = config.PERMISSIONS[perm]['level']
 
 
-class TestWebApp(web_helpers.WebTest):
+class TestWebApp(WebTest):
     root_member = MemberGenerator('high')
 
     @mock.patch('view.BaseHandler.authed', return_value=True)
