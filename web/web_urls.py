@@ -3,6 +3,8 @@ import view, events, authed
 www_urls = [
     (r'/', view.WelcomeHandler),
     (r'/login', authed.LoginHandler),
+    (r'/logout', authed.LogoutHandler),
+
 
     (r'/settings', view.SettingsHandler),
     (r'/script', view.ScriptHandler),

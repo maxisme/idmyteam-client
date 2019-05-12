@@ -10,3 +10,6 @@ pillow
 wtforms
 pytest
 sqlalchemy
+
+faker
+mock

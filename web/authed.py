@@ -27,3 +27,7 @@ class LoginHandler(view.BaseHandler):
                 self.flash_error('Wrong username or password!')
         return self._screen()
 
+class LogoutHandler(view.BaseHandler):
+    def get(self):
+        self.clear_all_cookies()
+        self.redirect('/')
