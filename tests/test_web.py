@@ -1,4 +1,4 @@
-from settings import config, functions
+from settings import config
 from tests.web_helpers import WebTest
 
 import mock
