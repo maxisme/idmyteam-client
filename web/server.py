@@ -46,7 +46,7 @@ def connect_to_wss(reconnect=True):
     config.ws.connect()
 
 
-def start_camera():
+def start_camera(): 
     config.CAMERA_THREAD = threading.Thread(target=camera.run, args=())
     config.CAMERA_THREAD.start()
 
