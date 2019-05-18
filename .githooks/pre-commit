@@ -7,6 +7,6 @@ echo "$sql" > 'sql/schema.sql'
 
 /usr/local/bin/python3 helpers/gen_yaml_confs.py
 
-/usr/local/bin/black *
+/usr/local/bin/black *.py
 
 exit 0
