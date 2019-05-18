@@ -1,7 +1,7 @@
 oyaml
 numpy
 tornado
-#picamera
+# picamera
 bcrypt
 mysqlclient
 requests
@@ -9,4 +9,4 @@ zmq
 pillow
 wtforms
 pytest
-opencv-python
+opencv - python
