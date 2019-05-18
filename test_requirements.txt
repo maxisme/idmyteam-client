@@ -8,5 +8,5 @@ requests
 zmq
 pillow
 wtforms
-pytest
 opencv-python
+pytest
