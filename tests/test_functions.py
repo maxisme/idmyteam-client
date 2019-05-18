@@ -5,14 +5,15 @@ import pytest
 from PIL import Image
 
 from settings import functions, config
+
 ROOT_DIR = config.ROOT
-MEMBER_ID = '1'
+MEMBER_ID = "1"
 
 
 @pytest.mark.incremental
 class TestYAML(object):
-    test_path = 'test.yaml'
-    dic = {'hello': [{'test': 'foo'}, {'test2': 'baz'}]}
+    test_path = "test.yaml"
+    dic = {"hello": [{"test": "foo"}, {"test2": "baz"}]}
 
     def test_write_YAML(self):
         print(os.environ)
@@ -20,11 +21,12 @@ class TestYAML(object):
 
     def test_open_YAML(self):
         out_dic = functions.YAML.read(self.test_path)
-        assert out_dic['hello'] == self.dic['hello']
+        assert out_dic["hello"] == self.dic["hello"]
 
         # clean_up
         os.remove(self.test_path)
-            
+
+
 ######################### end #########################
 
 # @pytest.mark.parametrize('retry_time,allowed_seconds,expected',[
@@ -43,14 +45,10 @@ class TestYAML(object):
 #     assert functions.Member.allowed_recognition(sql_helper.conn, MEMBER_ID, allowed_seconds) == expected
 
 
-@pytest.mark.parametrize('message', [
-    'hello',
-    'a' * 5000,
-    '{"hello": "max"}'
-])
+@pytest.mark.parametrize("message", ["hello", "a" * 5000, '{"hello": "max"}'])
 def test_image_comment(message):
-    img_path = 'test_img.jpg'
-    img = Image.new('RGB', (1, 1), color='red')
+    img_path = "test_img.jpg"
+    img = Image.new("RGB", (1, 1), color="red")
     img.save(img_path)
 
     functions.Image.Comment.write(img_path, message)
@@ -60,7 +58,7 @@ def test_image_comment(message):
 
 @pytest.mark.rpi
 def test_num_files_in_dir():
-    assert functions.num_files_in_dir(ROOT_DIR + '/tests/files') == 2
+    assert functions.num_files_in_dir(ROOT_DIR + "/tests/files") == 2
 
 
 def test_toGB():
@@ -68,15 +66,21 @@ def test_toGB():
 
 
 @pytest.mark.rpi
-@pytest.mark.parametrize('shell_str,output', [
-    ('dfsdf=sdfs', False),
-    ('''#!/bin/bash
+@pytest.mark.parametrize(
+    "shell_str,output",
+    [
+        ("dfsdf=sdfs", False),
+        (
+            """#!/bin/bash
     foo='1'
     echo $foo
-    ''', True)
-])
+    """,
+            True,
+        ),
+    ],
+)
 def test_shell_script(shell_str, output):
-    file_name = 'foo'
+    file_name = "foo"
     functions.Shell.validate(shell_str, file_name)
 
     assert bool(os.path.isfile(file_name)) == bool(output)
@@ -84,6 +88,3 @@ def test_shell_script(shell_str, output):
     # clean up
     if os.path.isfile(file_name):
         os.remove(file_name)
-
-
-

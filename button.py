@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 from settings import config, functions
 
-logging.getLogger('')
+logging.getLogger("")
 
 
 def run():
@@ -13,18 +13,19 @@ def run():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(PIN, GPIO.IN)
 
-
     while True:
         input_state = GPIO.input(PIN)
         if not input_state:
-            conn = functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
-            capture_time = int(config.settings["Retract Recognition"]['Time']['val'])
+            conn = functions.DB.conn(
+                config.DB["username"], config.DB["password"], config.DB["db"]
+            )
+            capture_time = int(config.settings["Retract Recognition"]["Time"]["val"])
             functions.incorrect_classification(
                 conn=conn,
                 ws=config.ws,
                 capture_time=capture_time,
                 tmp_dir=config.TMP_DETECTED_DIR,
-                unclassified_dir=config.UNCLASSIFIED_PATH
+                unclassified_dir=config.UNCLASSIFIED_PATH,
             )
             conn.close()
 

@@ -8,7 +8,7 @@ import logging
 from tornado import gen
 from tornado.websocket import websocket_connect
 
-logging.getLogger('')
+logging.getLogger("")
 
 
 class SocketClient(object):
@@ -24,7 +24,7 @@ class SocketClient(object):
             self.ws = yield websocket_connect(self.url)
         except Exception as e:
             if not self.is_reconnect:
-                logging.error('Socket error: %s', e)
+                logging.error("Socket error: %s", e)
         else:
             config.SOCKET_STATUS = config.SOCKET_CONNECTED
             logging.info("Connected to remote socket.")
@@ -47,22 +47,39 @@ class SocketClient(object):
                     try:
                         message = json.loads(str(msg))
                     except:
-                        logging.warning('Received invalid message from server "%s"', msg)
+                        logging.warning(
+                            'Received invalid message from server "%s"', msg
+                        )
                         self.close()
                         return
 
-                    if 'id' in message:
-                        self.ws.write_message(str(message['id']))  # verify that the message has been received
-                        message = message['message']
+                    if "id" in message:
+                        self.ws.write_message(
+                            str(message["id"])
+                        )  # verify that the message has been received
+                        message = message["message"]
 
-                    SCRIPT_PATH = config.ROOT + config.settings["File Location"]["Bash Script"]["val"]
-                    ID_THRESHOLD = float(config.settings["Recognition"]["Id Threshold"]["val"])
-                    RE_RECOGNITION_RATE = int(config.settings["Recognition"]["Re Recognition"]["val"])
-                    TRAINING_MODE = bool(int(config.settings["Recognition"]['Training Mode']['val']))
+                    SCRIPT_PATH = (
+                        config.ROOT
+                        + config.settings["File Location"]["Bash Script"]["val"]
+                    )
+                    ID_THRESHOLD = float(
+                        config.settings["Recognition"]["Id Threshold"]["val"]
+                    )
+                    RE_RECOGNITION_RATE = int(
+                        config.settings["Recognition"]["Re Recognition"]["val"]
+                    )
+                    TRAINING_MODE = bool(
+                        int(config.settings["Recognition"]["Training Mode"]["val"])
+                    )
 
-                    conn = functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
+                    conn = functions.DB.conn(
+                        config.DB["username"], config.DB["password"], config.DB["db"]
+                    )
                     if message == "ping":
-                        self.ws.write_message("pong")  # keep connection with server alive
+                        self.ws.write_message(
+                            "pong"
+                        )  # keep connection with server alive
 
                     elif message == "delete-model":
                         logging.info("Deleted Model!")
@@ -71,7 +88,9 @@ class SocketClient(object):
 
                     elif message["type"] == "no_model":
                         logging.info("No Team Model")
-                        functions.Member.Activity.purge(conn)  # kill any team activity as there shouldn't be any, anyway.
+                        functions.Member.Activity.purge(
+                            conn
+                        )  # kill any team activity as there shouldn't be any, anyway.
                         config.SOCKET_STATUS = config.SOCKET_NOT_TRAINED
 
                     elif message["type"] == "invalid_credentials":
@@ -112,31 +131,54 @@ class SocketClient(object):
                                 t = time.time()
 
                                 # time since file was created
-                                recognition_speed = str(t - os.path.getmtime(image_path))
+                                recognition_speed = str(
+                                    t - os.path.getmtime(image_path)
+                                )
 
                                 if name:
-                                    if functions.Member.allowed_recognition(conn, member_id, RE_RECOGNITION_RATE):
-                                        execution_start = time.time()  # speed of recognition script
-                                        functions.Shell.run_recognition_script(name, recognition_score, SCRIPT_PATH)
-                                        config.stats[config.STAT_SCRIPT_SPEED] = str(time.time() - execution_start)
+                                    if functions.Member.allowed_recognition(
+                                        conn, member_id, RE_RECOGNITION_RATE
+                                    ):
+                                        execution_start = (
+                                            time.time()
+                                        )  # speed of recognition script
+                                        functions.Shell.run_recognition_script(
+                                            name, recognition_score, SCRIPT_PATH
+                                        )
+                                        config.stats[config.STAT_SCRIPT_SPEED] = str(
+                                            time.time() - execution_start
+                                        )
                                     else:
                                         logging.info("Already Recognised " + name)
 
                                     if member_id > functions.Member.UNKNOWN_ID:
-                                        functions.Member.Activity.recognised(conn, member_id, recognition_score,
-                                                                             recognition_speed)
+                                        functions.Member.Activity.recognised(
+                                            conn,
+                                            member_id,
+                                            recognition_score,
+                                            recognition_speed,
+                                        )
                                         if TRAINING_MODE:
                                             # move all classified images to classified page
-                                            move_img_path = config.UNCLASSIFIED_PATH + str(member_id) + "_" + file_name
+                                            move_img_path = (
+                                                config.UNCLASSIFIED_PATH
+                                                + str(member_id)
+                                                + "_"
+                                                + file_name
+                                            )
 
                                     elif member_id == functions.Member.UNKNOWN_ID:
                                         logging.info("Unknown individual")
-                                        move_img_path = config.UNCLASSIFIED_PATH + file_name
+                                        move_img_path = (
+                                            config.UNCLASSIFIED_PATH + file_name
+                                        )
 
                                 if move_img_path:
                                     if coords:
                                         # write coords of face into image file
-                                        functions.Image.Comment.write(image_path, coords)
+                                        functions.Image.Comment.write(
+                                            image_path, coords
+                                        )
 
                                     # move uploaded image for manual classification
                                     os.rename(image_path, move_img_path)
@@ -154,18 +196,25 @@ class SocketClient(object):
                             member_id = int(member[0])
                             num_trained = int(member[1])
 
-                            functions.Member.Activity.trained(conn, member_id, num_trained)
-                            functions.Member.toggle_training(conn, member_id, is_training=False)
+                            functions.Member.Activity.trained(
+                                conn, member_id, num_trained
+                            )
+                            functions.Member.toggle_training(
+                                conn, member_id, is_training=False
+                            )
 
                     elif message["type"] == "delete_trained_image":
-                        file = config.CLASSIFIED_PATH + message['img_path']
+                        file = config.CLASSIFIED_PATH + message["img_path"]
                         os.unlink(file)
 
                     elif message["type"] == "error":
                         # log error message
-                        logging.warning(message['mess'])
+                        logging.warning(message["mess"])
 
                 except Exception as e:
-                    error_str = 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e
+                    error_str = (
+                        "Error on line {}".format(sys.exc_info()[-1].tb_lineno),
+                        type(e).__name__,
+                        e,
+                    )
                     logging.error("%s msg: %s", error_str, msg)
-

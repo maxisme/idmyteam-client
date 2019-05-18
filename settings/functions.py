@@ -31,10 +31,9 @@ class YAML:
         :param file:
         :return dictionary:
         """
-        with open(file, 'r') as f:
+        with open(file, "r") as f:
             content = oyaml.load(f, oyaml.SafeLoader)
         return content
-
 
     @classmethod
     def write(cls, file, config):
@@ -44,7 +43,7 @@ class YAML:
         :param config: dictionary to be written
         :return bool:
         """
-        with open(file, 'w') as outfile:
+        with open(file, "w") as outfile:
             return oyaml.dump(config, outfile, default_flow_style=False)
 
 
@@ -76,8 +75,8 @@ class DB:
     def execute_sql_in_file(cls, conn, file):
         x = conn.cursor()
         if not os.path.isfile(file):
-            raise Exception('No such file %s', file)
-        sql = open(file, 'r').read()
+            raise Exception("No such file %s", file)
+        sql = open(file, "r").read()
         try:
             x.execute(sql)
         except Exception as e:
@@ -87,7 +86,7 @@ class DB:
 
 
 def path_in_dir(path, dir):
-    return path[:len(dir)] == dir
+    return path[: len(dir)] == dir
 
 
 def get_local_IP():
@@ -105,7 +104,10 @@ def incorrect_classification(conn, ws, capture_time, tmp_dir, unclassified_dir):
     # remove all DB activity stats in interval
     x = conn.cursor()
     try:
-        x.execute("DELETE FROM `Activity` WHERE `time` >= NOW() - interval %s second", capture_time)
+        x.execute(
+            "DELETE FROM `Activity` WHERE `time` >= NOW() - interval %s second",
+            capture_time,
+        )
         conn.commit()
     except MySQLdb.Error as e:
         logging.warning("Unable to TRUNCATE activity %s", e)
@@ -117,9 +119,7 @@ def incorrect_classification(conn, ws, capture_time, tmp_dir, unclassified_dir):
     logging.info("Removed")
 
     # send message to server to delete 'incremental learning' data
-    ws.send({
-        "purge_seconds": capture_time
-    })
+    ws.send({"purge_seconds": capture_time})
 
 
 def escape(dict):
@@ -134,7 +134,9 @@ def unescape(str):
 
 def random_file_name(dir, type):
     while True:
-        ran_file = dir + str(randint(1, 9999999999999999999999999999999999999999999)) + type
+        ran_file = (
+            dir + str(randint(1, 9999999999999999999999999999999999999999999)) + type
+        )
         if not os.path.isfile(ran_file):
             break
     return ran_file
@@ -146,7 +148,7 @@ def to_GB(val):
 
 def get_cpu_temp():
     # write cpu temperature
-    cmd = os.popen('/opt/vc/bin/vcgencmd measure_temp').read()
+    cmd = os.popen("/opt/vc/bin/vcgencmd measure_temp").read()
     return re.search(r"\d+\.\d+", cmd).group(0)  # extract only the number from cmd
 
 
@@ -170,14 +172,16 @@ class Image:
     class Comment:
         @classmethod
         def write(cls, img_path, comment):
-            cmd = "convert '{img_path}' -set comment '{comment}' '{img_path}'".format(img_path=img_path, comment=comment)
+            cmd = "convert '{img_path}' -set comment '{comment}' '{img_path}'".format(
+                img_path=img_path, comment=comment
+            )
             out, _, _ = Shell.run_process(cmd)
             return out
 
         @classmethod
         def read(cls, img_path):
             try:
-                return PILImage.open(img_path).app['COM']
+                return PILImage.open(img_path).app["COM"]
             except KeyError:
                 return None
 
@@ -185,7 +189,9 @@ class Image:
         INITIAL_RESIZE = 1.0
 
         @classmethod
-        def get_movement(cls, img, fgbg, diff_threshold, img_w, img_h, resize_prop=INITIAL_RESIZE):
+        def get_movement(
+            cls, img, fgbg, diff_threshold, img_w, img_h, resize_prop=INITIAL_RESIZE
+        ):
             """
             get border contour around movement area from an image
             :param array img:
@@ -202,22 +208,30 @@ class Image:
             num_img_pixels = float(img_w * img_h) * resize_prop
 
             if resize_prop != cls.INITIAL_RESIZE:
-                img = cv2.resize(img, (int(img_w * resize_prop), int(img_h * resize_prop)))
+                img = cv2.resize(
+                    img, (int(img_w * resize_prop), int(img_h * resize_prop))
+                )
 
-            mask = ret_mask = fgbg.apply(img, 0)  # apply background extractor model without training
+            mask = ret_mask = fgbg.apply(
+                img, 0
+            )  # apply background extractor model without training
 
             if resize_prop != cls.INITIAL_RESIZE:
                 ret_mask = cv2.resize(mask, (img_w, img_h))  # mask to return
 
             # check the amount of change in the image
             num_changed_pixels = float(np.count_nonzero(mask))
-            image_diff = 100 - ((num_img_pixels - num_changed_pixels) / num_img_pixels) * 100
+            image_diff = (
+                100 - ((num_img_pixels - num_changed_pixels) / num_img_pixels) * 100
+            )
 
             if image_diff > float(diff_threshold):
                 # Acquire contours from the background extractor
                 # https://docs.opencv.org/4.0.0/d4/d73/tutorial_py_contours_begin.html
                 # https://docs.opencv.org/4.0.0/d9/d8b/tutorial_py_contours_hierarchy.html
-                cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                cnts, _ = cv2.findContours(
+                    mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+                )
 
                 # get the single largest contour rectangle
                 largest_contour = 0
@@ -241,9 +255,7 @@ class Image:
         @classmethod
         def model(cls, mask_thresh):
             return cv2.createBackgroundSubtractorMOG2(
-                history=1000,
-                varThreshold=mask_thresh,
-                detectShadows=False
+                history=1000, varThreshold=mask_thresh, detectShadows=False
             )
             # return cv2.bgsegm.createBackgroundSubtractorCNT(useHistory=False)
 
@@ -252,7 +264,9 @@ class Image:
         for f in os.listdir(dir):
             file = os.path.join(dir, f)
             try:
-                end_time = datetime.datetime.fromtimestamp(os.stat(file).st_mtime) + datetime.timedelta(0, capture_time)
+                end_time = datetime.datetime.fromtimestamp(
+                    os.stat(file).st_mtime
+                ) + datetime.timedelta(0, capture_time)
                 if end_time < datetime.datetime.now():
                     os.unlink(file)  # delete file
             except:
@@ -263,20 +277,22 @@ class Image:
     def base_64_src(cls, file_path):
         with open(file_path, "rb") as image_file:
             b64 = base64.b64encode(image_file.read())
-        return 'data:image/jpeg; base64,' + b64.decode('utf-8')
+        return "data:image/jpeg; base64," + b64.decode("utf-8")
 
 
 class Member:
-    UNKNOWN_NAME = 'UNKNOWN'
+    UNKNOWN_NAME = "UNKNOWN"
     UNKNOWN_ID = 0
-    INVALID_NAME = 'INVALID'
+    INVALID_NAME = "INVALID"
     INVALID_ID = -1
 
     @classmethod
     def get_all(cls, conn):
         x = conn.cursor(MySQLdb.cursors.DictCursor)
         try:
-            x.execute("SELECT * FROM Members where id != 1")  # all members apart from root
+            x.execute(
+                "SELECT * FROM Members where id != 1"
+            )  # all members apart from root
             return x.fetchall()
         except Exception as e:
             logging.error("Unable to get all members %s", e)
@@ -307,7 +323,10 @@ class Member:
 
         x = conn.cursor()
         try:
-            x.execute("INSERT INTO `Members` (name, password, perm) VALUES (%s, %s, %s);", (name, password, perm))
+            x.execute(
+                "INSERT INTO `Members` (name, password, perm) VALUES (%s, %s, %s);",
+                (name, password, perm),
+            )
             conn.commit()
         except MySQLdb.Error as e:
             logging.error("Couldn't sign up: " + str(e))
@@ -319,12 +338,12 @@ class Member:
 
     @classmethod
     def login(cls, user, password):
-        user_password = user.pop('password', None)
+        user_password = user.pop("password", None)
         return cls._check_password_hash(password, user_password)
 
     @classmethod
     def _hash_password(cls, s):
-        return bcrypt.hashpw(str.encode(s), bcrypt.gensalt()).decode('utf-8')
+        return bcrypt.hashpw(str.encode(s), bcrypt.gensalt()).decode("utf-8")
 
     @classmethod
     def _check_password_hash(cls, s, h):
@@ -373,7 +392,10 @@ class Member:
         password = cls._hash_password(password)
         x = conn.cursor()
         try:
-            x.execute("UPDATE `Members` SET password = %s WHERE id = %s", (password, member_id))
+            x.execute(
+                "UPDATE `Members` SET password = %s WHERE id = %s",
+                (password, member_id),
+            )
             conn.commit()
         except MySQLdb.Error as e:
             logging.error("Couldn't set member password: " + str(e))
@@ -387,10 +409,13 @@ class Member:
     def get_num_trained(cls, conn, member_id):
         x = conn.cursor()
         try:
-            x.execute("""SELECT num FROM Activity 
+            x.execute(
+                """SELECT num FROM Activity 
             WHERE member_id = %s 
             AND type = 'TRAINED' 
-            ORDER BY id DESC LIMIT 1""", (member_id,))
+            ORDER BY id DESC LIMIT 1""",
+                (member_id,),
+            )
             return x.fetchall()[0][0]
         except Exception as e:
             return 0
@@ -399,9 +424,12 @@ class Member:
     def get_activity(cls, conn, member_id):
         x = conn.cursor(MySQLdb.cursors.DictCursor)
         try:
-            x.execute("""SELECT `score`, `type`
+            x.execute(
+                """SELECT `score`, `type`
             FROM Activity 
-            WHERE `member_id` = %s""", (member_id,))
+            WHERE `member_id` = %s""",
+                (member_id,),
+            )
             return x.fetchall()
         except Exception as e:
             logging.error("Unable to get recognition score %s", e)
@@ -452,7 +480,10 @@ class Member:
 
         # CHECK IF RECOGNITION HAS OCCURRED AGAIN WITHIN `allowed_seconds`
         x = conn.cursor()
-        x.execute("SELECT `time` FROM `Activity` WHERE `member_id` = %s ORDER BY `id` DESC LIMIT 1", (member_id,))
+        x.execute(
+            "SELECT `time` FROM `Activity` WHERE `member_id` = %s ORDER BY `id` DESC LIMIT 1",
+            (member_id,),
+        )
 
         try:
             last_recognised_time = x.fetchall()[0][0]
@@ -460,7 +491,9 @@ class Member:
             # exception when member has never been recognised before
             return True
 
-        recognition_grace = last_recognised_time + datetime.timedelta(0, allowed_seconds)
+        recognition_grace = last_recognised_time + datetime.timedelta(
+            0, allowed_seconds
+        )
 
         if datetime.datetime.now() > recognition_grace:
             return True
@@ -477,7 +510,10 @@ class Member:
         """
         x = conn.cursor()
         try:
-            x.execute("UPDATE `Members` SET training = %s WHERE id = %s", (is_training * 1, member_id))
+            x.execute(
+                "UPDATE `Members` SET training = %s WHERE id = %s",
+                (is_training * 1, member_id),
+            )
             conn.commit()
         except MySQLdb.Error as e:
             logging.error("Unable to write member as trained into DB " + str(e))
@@ -497,8 +533,10 @@ class Member:
             """
             x = conn.cursor()
             try:
-                x.execute("INSERT INTO `Activity` (`member_id`, `type`, `num`) VALUES (%s, 'TRAINED', %s)",
-                          (member_id, num))
+                x.execute(
+                    "INSERT INTO `Activity` (`member_id`, `type`, `num`) VALUES (%s, 'TRAINED', %s)",
+                    (member_id, num),
+                )
                 conn.commit()
             except MySQLdb.Error as e:
                 logging.error("Unable to write TRAINED into DB " + str(e))
@@ -510,8 +548,11 @@ class Member:
         def recognised(cls, conn, member_id, score, process_speed):
             x = conn.cursor()
             try:
-                x.execute("""INSERT INTO `Activity` (`member_id`, `type`, `score`, `speed`)
-                    VALUES (%s, 'RECOGNISED', %s, %s)""", (member_id, score, process_speed))
+                x.execute(
+                    """INSERT INTO `Activity` (`member_id`, `type`, `score`, `speed`)
+                    VALUES (%s, 'RECOGNISED', %s, %s)""",
+                    (member_id, score, process_speed),
+                )
                 conn.commit()
             except MySQLdb.Error as e:
                 logging.error("Unable to write RECOGNISED into DB " + str(e))
@@ -537,7 +578,6 @@ class Member:
 
             cls._stop_team_training(conn)
 
-
         @classmethod
         def _stop_team_training(cls, conn):
             """
@@ -546,7 +586,7 @@ class Member:
             """
             x = conn.cursor()
             try:
-                x.execute('UPDATE `Members` SET `training` = 0')
+                x.execute("UPDATE `Members` SET `training` = 0")
                 conn.commit()
             except MySQLdb.Error as e:
                 logging.error("Unable to _stop_team_training DB" + str(e))
@@ -566,11 +606,14 @@ class Logs:
         """
         x = conn.cursor(MySQLdb.cursors.DictCursor)
         try:
-            x.execute("""SELECT *
+            x.execute(
+                """SELECT *
             FROM Logs
             WHERE level >= %s
             ORDER BY `id` DESC
-            LIMIT %s, %s""", (level, (page -1) * page_size, page_size))
+            LIMIT %s, %s""",
+                (level, (page - 1) * page_size, page_size),
+            )
             return x.fetchall()
         except Exception as e:
             logging.error("Unable to fetch logs %s", e)
@@ -590,7 +633,7 @@ class Shell:
 
     @classmethod
     def validate(cls, shell_str, out_file):
-        str = shell_str.replace('\r', '')
+        str = shell_str.replace("\r", "")
         tmp_name = cls._write_str_to_tmp_file(str)
 
         cmd = "shellcheck '{}'".format(tmp_name)
