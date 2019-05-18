@@ -5,7 +5,6 @@ www_urls = [
     (r'/login', authed.LoginHandler),
     (r'/logout', authed.LogoutHandler),
 
-
     (r'/settings', view.SettingsHandler),
     (r'/script', view.ScriptHandler),
     (r'/logs', view.LogsHandler),

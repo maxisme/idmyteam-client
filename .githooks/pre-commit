@@ -4,5 +4,9 @@ export PYTHONPATH="$(pwd):$(pwd)/web:$(pwd)/settings:$(pwd)/helpers"
 
 sql=$(ssh root@idmy.team -p 2222 'export SETTINGS_FILE=/var/www/conf/prod_remote.yaml && export PYTHONPATH=/var/www/settings/:$PYTHONPATH && cd /var/www/ && python helpers/dump_schema.py')
 echo "$sql" > 'sql/schema.sql'
-#/usr/local/bin/python3 helpers/gen_yaml_confs.py
-exit $?
+
+/usr/local/bin/python3 helpers/gen_yaml_confs.py
+
+black *
+
+exit 0
