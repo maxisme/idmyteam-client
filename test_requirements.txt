@@ -9,4 +9,4 @@ zmq
 pillow
 wtforms
 pytest
-opencv - python
+opencv-python
