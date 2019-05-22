@@ -11,3 +11,5 @@ wtforms
 opencv-python
 pytest
 sqlalchemy
+mock
+faker
