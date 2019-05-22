@@ -10,3 +10,4 @@ pillow
 wtforms
 opencv-python
 pytest
+sqlalchemy
