@@ -192,7 +192,7 @@ Credentials:
     info: The password for the local database.
     disabled: true
     type: text
-    val: VWpyKKUGaFZQIiCj680n
+    val: VWpyKKUGaFZQIiCj680nT80PWQoOGrtjIz8cRnWfgqXmpPVvof9aRpOAj!l5W
   Retract Key:
     info: A key to be used when calling the <strong>/retract</strong> endpoint when
       the system incorrectly identifies the wrong member.
