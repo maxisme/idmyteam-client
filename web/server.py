@@ -17,13 +17,17 @@ from settings.log import LogDBHandler
 import camera
 
 # set logger
-logging.basicConfig(level="INFO")
-handler = LogDBHandler(
-    functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
-)
-logging.getLogger("").addHandler(handler)
-logging.getLogger("").setLevel("INFO")
-logging.getLogger("tornado.access").disabled = True
+try:
+    logging.basicConfig(level="INFO")
+    handler = LogDBHandler(
+        functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
+    )
+    logging.getLogger("").addHandler(handler)
+    logging.getLogger("").setLevel("INFO")
+    logging.getLogger("tornado.access").disabled = True
+except:
+    # testing
+    pass
 
 # web settings
 server_settings = {
