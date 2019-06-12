@@ -67,7 +67,7 @@ class ClassifyHandler(view.BaseHandler):
             if functions.path_in_dir(
                 img_path, config.UNCLASSIFIED_PATH
             ) and os.path.isfile(img_path):
-                os.remove(img_path)
+                os.remove(img_path) 
 
 
 class ClassifyDeleteHandler(view.BaseHandler):
