@@ -28,15 +28,21 @@ python3-dev \
 supervisor && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # install python 3.6
-RUN mkdir -p /tmp/python3
-WORKDIR /tmp/python3/
-RUN wget -O python.tar.xz https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
-RUN tar xJf python.tar.xz
-WORKDIR Python-3.6.3/
-RUN ./configure
-RUN make
-RUN make install
+#RUN mkdir -p /tmp/python3
+#WORKDIR /tmp/python3/
+#RUN wget -O python.tar.xz https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
+#RUN tar xJf python.tar.xz
+#WORKDIR Python-3.6.3/
+#RUN ./configure
+#RUN make
+#RUN make install
+
+# install pip
+RUN wget https://bootstrap.pypa.io/get-pip.py
+RUN python3 get-pip.py
+RUN rm get-pip.py
 RUN pip3 install --upgrade pip
+RUN pip3 install numpy
 
 #RUN dd if=/dev/zero of=/swapfile1GB bs=1M count=1024
 #RUN mkswap /swapfile1GB
@@ -45,10 +51,10 @@ RUN pip3 install --upgrade pip
 # install opencv
 RUN mkdir -p /tmp/opencv
 RUN wget -O /tmp/opencv/opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
-RUN wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
+RUN wget -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
 WORKDIR /tmp/opencv/
-RUN unzip /tmp/opencv/opencv_contrib.zip
-RUN unzip /tmp/opencv/opencv.zip
+RUN unzip opencv_contrib.zip
+RUN unzip opencv.zip
 WORKDIR /tmp/opencv/opencv-4.0.0/
 RUN mkdir build
 WORKDIR /tmp/opencv/opencv-4.0.0/build/
