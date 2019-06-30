@@ -1,5 +1,5 @@
 Global:
-  Root: /Users/max.mitchell/projects/idmyteam/client
+  Root: /Users/maxmitch/Documents/work/idmyteam-client
 
 Credentials:
   Cookie:
@@ -7,9 +7,9 @@ Credentials:
   Database Name:
     val: idmyteam-client-test
   Database Username:
-    val: idmyteamtest
+    val: root
   Database Password:
-    val: VWpyKKUGaFZQIiCj680n
+    val:
 
   Id My Team Username:
     val:

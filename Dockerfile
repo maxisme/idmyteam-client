@@ -1,4 +1,4 @@
-FROM resin/raspberry-pi2-debian:latest
+FROM resin/raspberry-pi2-debian:buster
 
 EXPOSE 8080
 
@@ -25,6 +25,9 @@ gfortran \
 python-mysqldb \
 libraspberrypi-bin \
 python3-dev \
+python3-setuptools \
+imagemagick \
+shellcheck \
 supervisor && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # install python 3.6
@@ -38,9 +41,7 @@ supervisor && apt-get clean && rm -rf /var/lib/apt/lists/*
 #RUN make install
 
 # install pip
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3 get-pip.py
-RUN rm get-pip.py
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py && rm get-pip.py
 RUN pip3 install --upgrade pip
 RUN pip3 install numpy
 
@@ -72,9 +73,9 @@ RUN make -j2
 RUN make install
 RUN ldconfig
 RUN rm -rf /tmp/opencv
-RUN apt-get update && apt-get install -y python-opencv python-dev libffi-dev libmariadbclient-dev
+RUN apt-get update && apt-get install -y python-opencv libffi-dev libmariadbclient-dev
 
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py && rm get-pip.py
+RUN ln -s /usr/local/python/cv2/python-3.7/cv2.cpython-37m-arm-linux-gnueabihf.so /usr/local/lib/python3.7/dist-packages/
 
 # init proj
 WORKDIR /usr/src/idmyteam

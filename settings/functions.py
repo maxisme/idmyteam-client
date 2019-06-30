@@ -69,6 +69,7 @@ def num_files_in_dir(dir):
 class DB:
     @classmethod
     def conn(cls, u, p, db):
+        p = "" if p is None else p
         return MySQLdb.connect(host="127.0.0.1", user=u, passwd=p, db=db)
 
     @classmethod

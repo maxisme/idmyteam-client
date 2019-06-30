@@ -1,6 +1,6 @@
 Global:
   Image File Type: .jpg
-  Root: /Users/max.mitchell/projects/idmyteam/client
+  Root: /Users/maxmitch/Documents/work/idmyteam-client
   Training:
     min: 10
     Number: 10
@@ -187,12 +187,12 @@ Credentials:
     info: The username for the local database.
     disabled: true
     type: text
-    val: idmyteamtest
+    val: root
   Database Password:
     info: The password for the local database.
     disabled: true
     type: text
-    val: VWpyKKUGaFZQIiCj680n
+    val: ''
   Retract Key:
     info: A key to be used when calling the <strong>/retract</strong> endpoint when
       the system incorrectly identifies the wrong member.
