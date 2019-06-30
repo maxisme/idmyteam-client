@@ -94,7 +94,6 @@ SOCKET_STATUS = SOCKET_CLOSED
 COOKIE_SECRET = settings["Credentials"]["Cookie"]["val"]
 SCRIPT_PATH = ROOT + settings["File Location"]["Bash Script"]["val"]
 MIN_TRAINING_IMAGES_PER_MEMBER = 10  # TODO get from server
-MAX_NUM_TRAINING_IMAGES = 60  # TODO get from server
 NO_PERM = "none"
 PERMISSIONS = {
     NO_PERM: {"level": 0, "description": "Only to be recognised."},

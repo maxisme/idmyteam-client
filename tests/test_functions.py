@@ -7,8 +7,6 @@ from PIL import Image
 from settings import functions, config
 
 ROOT_DIR = config.ROOT
-MEMBER_ID = "1"
-
 
 @pytest.mark.incremental
 class TestYAML(object):
