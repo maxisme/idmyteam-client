@@ -6,7 +6,7 @@ from tornado import escape
 from tornado.web import decode_signed_value
 
 from settings import functions, config
-import server
+import client
 
 
 class WebTest(tornado.testing.AsyncHTTPTestCase):
@@ -36,10 +36,10 @@ class WebTest(tornado.testing.AsyncHTTPTestCase):
         conn.close()
 
     def get_app(self):
-        server.server_settings["debug"] = False
-        server.server_settings["xsrf_cookies"] = False
+        client.server_settings["debug"] = False
+        client.server_settings["xsrf_cookies"] = False
         return tornado.web.Application(
-            server.web_urls.www_urls, **server.server_settings
+            client.web_urls.www_urls, **client.server_settings
         )
 
     def _update_cookies(self, headers):
