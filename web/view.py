@@ -145,6 +145,7 @@ class Error404(BaseHandler):
 class WelcomeHandler(BaseHandler):
     def get(self):
         self.tmpl["title"] = ""
+        self.tmpl["camera"] = config.settings["Camera"]
         self.render("home/welcome.html", **self.tmpl)
 
 
@@ -163,31 +164,33 @@ class ClassifyHandler(BaseHandler):
 
     @permission("medium")
     def post(self):
-        img_paths = self.request.arguments["paths"]
-        names = self.request.arguments["names"]
+        if 'paths' in self.request.arguments:
+            img_paths = self.request.arguments["paths"]
+            names = self.request.arguments["names"]
 
-        cookie_faces = self.get_face_cookies()
-        conn = self.db_connect()
-        classify_cnt = 0
-        for i in range(len(img_paths)):
-            img_path = img_paths[i].decode()
-            member_id = functions.Member.name_to_id(conn, names[i].decode())
-            if member_id > 0:
-                if img_path in cookie_faces:
-                    functions.Image.Comment.write(img_path, cookie_faces[img_path])
-                elif not functions.Image.Comment.read(img_path):
-                    self.flash_error(
-                        "Image contains no facial coordinates!", "/classify"
+            cookie_faces = self.get_face_cookies()
+            conn = self.db_connect()
+            classify_cnt = 0
+            for i in range(len(img_paths)):
+                img_path = img_paths[i].decode()
+                member_id = functions.Member.name_to_id(conn, names[i].decode())
+                if member_id > 0:
+                    if img_path in cookie_faces:
+                        functions.Image.Comment.write(img_path, cookie_faces[img_path])
+                    elif not functions.Image.Comment.read(img_path):
+                        self.flash_error(
+                            "Image contains no facial coordinates!", "/classify"
+                        )
+
+                    # move image to classification directory
+                    file_name = os.path.basename(img_path)
+                    os.rename(
+                        img_path, config.CLASSIFIED_PATH + str(member_id) + "/" + file_name
                     )
-
-                # move image to classification directory
-                file_name = os.path.basename(img_path)
-                os.rename(
-                    img_path, config.CLASSIFIED_PATH + str(member_id) + "/" + file_name
-                )
-                classify_cnt += 1
-
-        self.flash_success("Success! Classified {} images.".format(classify_cnt))
+                    classify_cnt += 1
+            self.flash_success("Success! Classified {} images.".format(classify_cnt))
+        else:
+            self.flash_error("No images to classify!")
         self.redirect("/classify")
 
 

@@ -11,12 +11,7 @@
         {% end %}
         </p>
     </div>
-    {% if not logs %}
-        <p>&nbsp</p>
-        <div align='center'>
-            <h5 class='success'><br>No logs!</h5>
-        </div>
-    {% else %}
+    {% if logs %}
         <table class="responsive-table">
             <thead>
             <tr>
@@ -43,13 +38,14 @@
             </tbody>
         </table>
 
+       <br>
         <div class="nav-btns" align="center">
             {% if page - 1 > 0 %}
-                <a class="btn-small" href='/logs/{{ page - 1 }}'> < </a>
+                <a class="btn-large" href='/logs/{{ page - 1 }}'> < </a>
             {% end %}
 
             {% if len(logs) == page_size %}
-                <a class="btn-small" href='/logs/{{ page + 1 }}'> > </a>
+                <a class="btn-large" href='/logs/{{ page + 1 }}'> > </a>
             {% end %}
         </div>
 

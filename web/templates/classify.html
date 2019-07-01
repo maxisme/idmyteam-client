@@ -15,7 +15,7 @@
     <div id="infotrain" class="modal">
         <div class="modal-content">
             <h4>Tips</h4>
-            You can use the cmd (⌘) key and click between the <span class="material-icons">panorama_fish_eye</span> icons at the top left corner of the images to select <strong>individually</strong>.<br>
+            You can use the cmd (⌘) key and click between the <span class="material-icons">panorama_fish_eye</span> icons at the top left corner of the images to select <strong>individually</strong>.<br><br>
             You can use the shift (⇧) key and click between the <span class="material-icons">panorama_fish_eye</span> icons at the top left corner of the images to select <strong>images between</strong>.
             <hr>
             A blue border <div class="box" style="border-color: #2BA9B1">&nbsp;</div> indicates the face has been selected by the <strong>ID My Team server</strong>.<br>
@@ -65,8 +65,8 @@
 <script>
     /* get name data */
     var names = {
-        {% for member in members %}
-            '{{ member['name'] }}': null,
+        {% for m in members %}
+            '{{ m['name'] }}': null,
         {% end %}
     };
 
