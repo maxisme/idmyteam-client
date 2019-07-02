@@ -59,9 +59,10 @@ Camera:
     type: select
     options:
     - 640 x 480
+    - 1296 x 976
     - 1280 x 720
     - 1640 x 922
-    val: 640 x 480
+    val: 1296 x 976
   Framerate:
     info: Change the framerate of the camera. If set to 0 this is set automatically.
     type: range
