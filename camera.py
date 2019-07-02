@@ -186,7 +186,7 @@ def run():
                         img = mask
 
                     # log how much movement and status
-                    img_text = "Training BG"
+                    img_text = "Training..."
                     if x:
                         if has_uploaded:
                             img_text = "Uploading Image"

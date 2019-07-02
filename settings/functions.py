@@ -326,7 +326,7 @@ class Member:
         try:
             x.execute(
                 "INSERT INTO `Members` (name, password, perm) VALUES (%s, %s, %s);",
-                (name, password, perm),
+                (name.title(), password, perm),
             )
             conn.commit()
         except MySQLdb.Error as e:

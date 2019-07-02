@@ -26,9 +26,9 @@
     <hr>
 
     {% if mask %}
-        <p class="error">Please turn off <strong>mask</strong> in <a href="/settings">Settings</a> to train members.</p>
+        <p class="error">Please turn off <strong>mask</strong> in the camera <a href="/settings">Settings</a> to train members.</p>
     {% elif not silent_mode %}
-        <p class="error">Please turn on <strong>Silent Mode</strong> in <a href="/settings">Settings</a> to train members.</p>
+        <p class="error">Please turn on <strong>Silent Mode</strong> in the camera <a href="/settings">Settings</a> to train members.</p>
     {% else %}
         {% include 'includers/live-stream.html' %}
 

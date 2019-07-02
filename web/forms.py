@@ -38,7 +38,7 @@ class LoginForm(CustomForm):
 
 
 class NewMemberForm(CustomForm):
-    name = StringField("Name", [validators.Length(min=5), validators.InputRequired()])
+    name = StringField("Name", [validators.Length(min=3), validators.InputRequired()])
     choices = [
         (
             str(config.PERMISSIONS[perm]["level"]),

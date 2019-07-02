@@ -264,15 +264,24 @@ class MemberHandler(BaseHandler):
         self.tmpl["num_trained"] = functions.Member.get_num_trained(conn, member_id)
         set = """{{
             label: 'Recognition Scores',
-            data: [{data}],
+            data: [{}],
             borderWidth: 1,
             borderColor: '#333',
             fill: false
-        }}""".format(
-            data=",".join(str(s) for s in recognitions)
-        )
+        }}""".format(",".join(str(s) for s in recognitions))
+
+        threshold = config.settings["Recognition"]["Id Threshold"]["val"]
+        if float(threshold) > 0.5:
+            set += """, {{
+                label: 'Recognition Threshold',
+                data: [{}],
+                borderWidth: 1,
+                borderColor: '#bc2122',
+                fill: true
+            }}""".format(",".join(threshold for _ in range(len(recognitions))))
+
         self.tmpl["chartjs"] = self.display_chart(
-            "scores", self.tmpl["num_recognitions"], set, "Scores", point_radius=2
+            "scores", self.tmpl["num_recognitions"], set, "Recognition Scores", point_radius=2
         )
 
         self.render("member.html", **self.tmpl)
@@ -506,7 +515,7 @@ class SettingsHandler(BaseHandler):
     def get(self):
         self.tmpl["title"] = "Settings"
         self.tmpl["settings"] = config.settings
-        self._store_stats()
+        self._get_stats()
         self.tmpl["stats"] = config.stats
         self.tmpl["stats_info"] = config.STATS_INFO
         self.render("settings.html", **self.tmpl)
@@ -545,7 +554,7 @@ class SettingsHandler(BaseHandler):
             ].decode()
         return self.request.arguments
 
-    def _store_stats(self):
+    def _get_stats(self):
         # storage
         st = os.statvfs("/")
         total_storage = functions.to_GB(st.f_bsize * st.f_blocks)

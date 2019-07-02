@@ -4,7 +4,9 @@
     {% set colour_2 = "#db8d2e" %}
     <p class="info">
         {% if socket_status == 2 %}
-            <strong class='error'>For the system to start recognising you must first add and train at least 2 members!</strong><br>
+            <div align="center" class='error'>
+                <span class="material-icons error">warning</span><br>For the system to start recognising, you must add and train at least 2 members!
+            </div><br>
         {% else %}
             The members of your team.
         {% end %}
@@ -61,7 +63,7 @@
                     <!-- MODAL FOR PERMISSIONS SAME AS member/add.php-->
                     <div id="modalperm" class="modal">
                         <div class="modal-content">
-                            <h4>Website Permissions</h4>
+                            <h4>Web Panel Permissions</h4>
                             <p>
                                 Choose the permissions for this user.
                             </p>
@@ -137,7 +139,9 @@
 
                 $('select').on('change', function() {
                     var member_id = $(this).parents("tr").attr("data-member-id");
-                    $.post("member/"+member_id+"/permission", { perm: this.value});
+                    $.post("member/"+member_id+"/permission", { perm: this.value}).fail(function(){
+                        alert("Problem setting users permission");
+                    });
                 });
             {% end %}
         });

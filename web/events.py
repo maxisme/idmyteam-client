@@ -16,22 +16,17 @@ class MemberDeleteHandler(view.BaseHandler):
     def get(self, member_id):
         if self.tmpl["member"]["id"] == member_id:
             self.flash_error("You cannot remove yourself!", "/members")
-
-        if not functions.Member.remove(
-            self.db_connect(), member_id, config.CLASSIFIED_PATH
-        ):
-            self.flash_error("Error removing member!", "/members")
-
+        functions.Member.remove(self.db_connect(), member_id, config.CLASSIFIED_PATH)
         return self.redirect("/members")
 
 
 class MemberPermHandler(view.BaseHandler):
     @view.permission("high")
     def post(self, member_id):
-        permission = int(self.get_argument("perm"))
-
-        if member_id in (0, self.tmpl["member"]["id"]):  # 0 = root member id
+        if int(member_id) in (0, int(self.tmpl["member"]["id"])):  # 0 = root member id
             return self.write_error(502)
+
+        permission = int(self.get_argument("perm"))
 
         valid_perm = False
         for p in config.PERMISSIONS:

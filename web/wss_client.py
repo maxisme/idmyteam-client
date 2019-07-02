@@ -151,7 +151,7 @@ class SocketClient(object):
                                             time.time() - execution_start
                                         )
                                     else:
-                                        logging.info("Already Recognised " + name)
+                                        logging.info("Not allowed to recognise " + name)
 
                                     if member_id > functions.Member.UNKNOWN_ID:
                                         functions.Member.Activity.recognised(
@@ -160,6 +160,8 @@ class SocketClient(object):
                                             recognition_score,
                                             recognition_speed,
                                         )
+                                        config.stats[config.STAT_RECOGNITION_SPEED] = recognition_speed
+
                                         if TRAINING_MODE:
                                             # move all classified images to classified page
                                             move_img_path = (

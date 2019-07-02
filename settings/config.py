@@ -25,6 +25,7 @@ STAT_NUM_UNCLASSIFIED = "Number Of Unclassified Images"
 STAT_BG_EXTRACTOR_SPEED = "Background Extractor Speed"
 STAT_SCRIPT_SPEED = "Script Speed"
 STAT_CPU_TEMP = "CPU Temperature"
+STAT_RECOGNITION_SPEED = "Recognition Speed"
 
 STATS_INFO = {
     STAT_FPS: "The number of frames per second the camera is taking",
@@ -32,8 +33,9 @@ STATS_INFO = {
     STAT_NUM_CLASSIFIED: "The number of images that have been classified and will be sent for training",
     STAT_NUM_UNCLASSIFIED: """The number of images that are waiting for a user to assign which 
                                         member the face in the image is of.""",
-    STAT_BG_EXTRACTOR_SPEED: "The time the background extractor takes to process an image (effects the FPS) in seconds",
-    STAT_SCRIPT_SPEED: "The time the custom script takes to run.",
+    STAT_BG_EXTRACTOR_SPEED: "The amount of time the background extractor takes to process an image (effects the FPS) in seconds",
+    STAT_SCRIPT_SPEED: "The amount of  time the custom script takes to run.",
+    STAT_RECOGNITION_SPEED: "The amount of time the last recognition took to recognise a member.",
     STAT_CPU_TEMP: "The temperature of the CPU.",
 }
 
