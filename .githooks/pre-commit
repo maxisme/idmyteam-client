@@ -9,4 +9,10 @@ echo "$sql" > 'sql/schema.sql'
 
 /usr/local/bin/black *.py
 
-exit 0
+export SETTINGS_FILE="$(pwd)/conf/test_local.yaml"
+export PYTHONPATH="$(pwd):$(pwd)/web:$(pwd)/settings:$(pwd)/helpers"
+export PATH=$PATH:/usr/local/bin/
+
+python3 /Library/Frameworks/Python.framework/Versions/2.7/bin/pytest
+
+exit $?
