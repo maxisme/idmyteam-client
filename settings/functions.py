@@ -264,15 +264,16 @@ class Image:
     def delete_expired(cls, dir, capture_time):
         for f in os.listdir(dir):
             file = os.path.join(dir, f)
-            try:
-                end_time = datetime.datetime.fromtimestamp(
-                    os.stat(file).st_mtime
-                ) + datetime.timedelta(0, capture_time)
-                if end_time < datetime.datetime.now():
-                    os.unlink(file)  # delete file
-            except:
-                if file:
-                    os.unlink(file)  # delete file
+            if os.path.isfile(file):
+                try:
+                    end_time = datetime.datetime.fromtimestamp(
+                        os.stat(file).st_mtime
+                    ) + datetime.timedelta(0, capture_time)
+                    if end_time < datetime.datetime.now():
+                        os.unlink(file)  # delete file
+                except:
+                    if file:
+                        os.unlink(file)  # delete file
 
     @classmethod
     def base_64_src(cls, file_path):
