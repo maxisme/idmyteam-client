@@ -45,6 +45,7 @@ class BaseHandler(tornado.web.RequestHandler):
             "authed": self.authed,
             "socket_status": config.SOCKET_STATUS,
             "socket_connected": config.SOCKET_STATUS == config.SOCKET_CONNECTED,
+            "silent_mode": bool(int(config.settings["Camera"]["Silent Mode"]["val"]))
         }
 
         # remove flash messages
@@ -81,7 +82,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return config.PERMISSIONS[level]["level"] >= config.PERMISSIONS[perm]["level"]
 
     def db_connect(self):
-        self.conn = db.pool.connect()
+        self.conn = db.pool.raw_connection()
         return self.conn
 
     def display_chart(self, html_id, labels, sets, y_label, point_radius=0):
@@ -175,7 +176,9 @@ class ClassifyHandler(BaseHandler):
                 img_path = img_paths[i].decode()
                 member_id = functions.Member.name_to_id(conn, names[i].decode())
                 if member_id > 0:
-                    if img_path in cookie_faces:
+                    if not os.path.isfile(img_path):
+                        continue
+                    elif img_path in cookie_faces:
                         functions.Image.Comment.write(img_path, cookie_faces[img_path])
                     elif not functions.Image.Comment.read(img_path):
                         self.flash_error(
@@ -310,7 +313,7 @@ class MemberPasswordHandler(BaseHandler):
         self._screen(user)
 
     def _screen(self, user):
-        self.tmpl["title"] = "Change %s password" % (user,)
+        self.tmpl["title"] = "Change %s's password" % (user,)
         self.render("helpers/form.html", **self.tmpl)
 
 
@@ -428,13 +431,10 @@ class MemberTrainHandler(BaseHandler):
         self.tmpl["min_training_images"] = config.MIN_TRAINING_IMAGES_PER_MEMBER
 
         self.tmpl["camera_running"] = bool(int(config.settings["Camera"]["Run"]["val"]))
-        self.tmpl["silent_mode"] = bool(
-            int(config.settings["Camera"]["Silent Mode"]["val"])
-        )
+        self.tmpl["mask"] = bool(int(config.settings["Camera"]["Mask"]["val"]))
         self.tmpl["live_stream"] = bool(
             int(config.settings["Camera"]["Live Stream"]["val"])
         )
-        self.tmpl["mask"] = bool(int(config.settings["Camera"]["Mask"]["val"]))
         self.tmpl["recurring_time"] = config.settings["Training"]["Recurring Time"][
             "val"
         ]
@@ -475,6 +475,7 @@ class LiveStreamHandler(BaseHandler):
         self.tmpl["live_stream"] = bool(
             int(config.settings["Camera"]["Live Stream"]["val"])
         )
+        self.tmpl["capture_log"] = config.CAPTURE_LOG
         self.render("stream.html", **self.tmpl)
 
 

@@ -1,3 +1,7 @@
+import datetime
+
+from log import LogDBHandler
+
 try:
     import picamera as pc
     from picamera.array import PiRGBArray
@@ -15,7 +19,18 @@ import time
 
 from settings import functions, config
 
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# set logger
+try:
+    logging.basicConfig(level="INFO")
+    handler = LogDBHandler(
+        functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
+    )
+    logging.getLogger("").addHandler(handler)
+    logging.getLogger("").setLevel("INFO")
+    logging.getLogger("tornado.access").disabled = True
+except:
+    # exception for testing
+    pass
 
 
 class Camera(object):
@@ -34,8 +49,6 @@ class Camera(object):
             self.camera.framerate = FRAMERATE
         if SHUTTER:
             self.camera.shutter_speed = SHUTTER
-
-        time.sleep(2)
 
     def getRaw(self):
         return PiRGBArray(self.camera, size=self.camera.resolution)
@@ -186,7 +199,8 @@ def run():
                         img = mask
 
                     # log how much movement and status
-                    img_text = "Training..."
+                    img_text = "...."
+                    img_text = img_text[:(i % 4)]
                     if x:
                         if has_uploaded:
                             img_text = "Uploading Image"
@@ -196,6 +210,14 @@ def run():
                         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 255, 255), 1)
 
                     functions.Image.write_text(img, img_text)
+
+                if has_uploaded:
+                    now = datetime.datetime.now()
+                    time_str = str(now.hour)+":"+str(now.minute)+":"+str(now.second)
+                    if time_str not in config.CAPTURE_LOG:
+                        config.CAPTURE_LOG[time_str] = 1
+                    else:
+                        config.CAPTURE_LOG[time_str] += 1
 
                 # delete all expired images
                 multiprocessing.Process(

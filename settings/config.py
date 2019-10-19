@@ -32,8 +32,9 @@ STATS_INFO = {
     STAT_STORAGE: "How much storage is left on the device",
     STAT_NUM_CLASSIFIED: "The number of images that have been classified and will be sent for training",
     STAT_NUM_UNCLASSIFIED: """The number of images that are waiting for a user to assign which 
-                                        member the face in the image is of.""",
-    STAT_BG_EXTRACTOR_SPEED: "The amount of time the background extractor takes to process an image (effects the FPS) in seconds",
+    member the face in the image is of.""",
+    STAT_BG_EXTRACTOR_SPEED: """The amount of time the background extractor takes to process an image 
+    (effects the FPS) in seconds""",
     STAT_SCRIPT_SPEED: "The amount of  time the custom script takes to run.",
     STAT_RECOGNITION_SPEED: "The amount of time the last recognition took to recognise a member.",
     STAT_CPU_TEMP: "The temperature of the CPU.",
@@ -51,7 +52,9 @@ CAMERA_RESTART_SETTINGS = [
     "Shutter Speed",
 ]
 IMG_TYPE = settings["Global"]["Image File Type"]
-UPLOAD_RETRY_LIMIT = 20
+UPLOAD_RETRY_LIMIT = 10
+CAPTURE_LIMIT = 10
+CAPTURE_LOG = {}
 MAJOR_BG_CHANGE_THRESH = 50
 BG_IMG_REDUCTION = 0.5
 
@@ -62,7 +65,7 @@ BG_IMG_REDUCTION = 0.5
 TMP_IMG_PATH = ROOT + settings["File Location"]["Live Image"]["val"]
 TMP_DETECTED_DIR = ROOT + settings["File Location"]["Temporary Detected Images"]["val"]
 TMP_CLASSIFIED_PATH = (
-    ROOT + settings["File Location"]["Temporary Classified Images"]["val"]
+        ROOT + settings["File Location"]["Temporary Classified Images"]["val"]
 )
 CLASSIFIED_PATH = ROOT + settings["File Location"]["Classified Images"]["val"]
 UNCLASSIFIED_PATH = ROOT + settings["File Location"]["Unclassified Images"]["val"]

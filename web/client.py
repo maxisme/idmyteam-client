@@ -1,5 +1,7 @@
 import os
 import logging
+import time
+
 from tornado.ioloop import IOLoop, PeriodicCallback
 import tornado.wsgi
 import tornado.gen
@@ -56,7 +58,7 @@ def connect_to_wss(reconnect=True):
 
 
 def start_camera():
-    config.CAMERA_THREAD = threading.Thread(target=camera.run, args=())
+    config.CAMERA_THREAD = threading.Thread(target=camera.run)
     config.CAMERA_THREAD.start()
 
 
@@ -66,10 +68,10 @@ def periodic_checks():
         connect_to_wss(False)
 
     # check camera thread
-    if not config.CAMERA_THREAD or not config.CAMERA_THREAD.isAlive():
+    if not config.CAMERA_THREAD or not config.CAMERA_THREAD.is_alive():
         logging.critical("Problem with camera please start with web server")
-        start_camera()
-
+        IOLoop.instance().stop()
+        main()
 
 def main():
     server = tornado.httpserver.HTTPServer(app)

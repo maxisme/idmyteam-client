@@ -28,7 +28,7 @@ class SocketClient(object):
             )
         except Exception as e:
             if not self.is_reconnect:
-                logging.error("Socket error: %s", e)
+                logging.info("Socket error: %s", e)
         else:
             config.SOCKET_STATUS = config.SOCKET_CONNECTED
             logging.info("Connected to remote socket.")
@@ -36,7 +36,7 @@ class SocketClient(object):
     def close(self):
         config.SOCKET_STATUS = config.SOCKET_CLOSED
         self.ws = None
-        logging.warning("Socket connection closed")
+        logging.critical("Socket connection closed")
 
     def on_message(self, msg):
         if not msg or msg is "None":
@@ -128,12 +128,12 @@ class SocketClient(object):
                             if functions.Member.allowed_recognition(
                                     conn, member_id, RE_RECOGNITION_RATE
                             ):
-                                execution_start = (
-                                    time.time()
-                                )  # speed of recognition script
+                                execution_start = time.time() # speed of recognition script
+
                                 functions.Shell.run_recognition_script(
                                     name, recognition_score, SCRIPT_PATH
-                                )
+                                )  # TODO logging.info the output of the bash script
+
                                 config.stats[config.STAT_SCRIPT_SPEED] = str(
                                     time.time() - execution_start
                                 )
@@ -202,6 +202,7 @@ class SocketClient(object):
                 # log error message
                 logging.warning(message["mess"])
 
+            conn.close()
         except Exception as e:
             error_str = (
                 "Error on line {}".format(sys.exc_info()[-1].tb_lineno),
