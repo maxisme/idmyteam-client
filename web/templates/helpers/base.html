@@ -48,7 +48,7 @@
         <div class="nav-wrapper">
             <a href="/" class="brand-logo">
                 <img class="svg" src="{{ static_url('images/logo.svg') }}"/>
-                {% if not socket_connected %}
+                {% if not socket_connected or silent_mode %}
                     <style>
                         .brand-logo svg path{
                             fill: #bc2122 !important;
