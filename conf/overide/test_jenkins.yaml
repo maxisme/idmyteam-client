@@ -1,5 +1,5 @@
 Global:
-  Root: /var/lib/jenkins/workspace/idmyteamclient
+  Root: /var/lib/jenkins/workspace/idmyteam-client
 
 Credentials:
   Cookie:
