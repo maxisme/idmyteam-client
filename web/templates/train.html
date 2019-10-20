@@ -98,7 +98,6 @@
                 var has_areas = true;
                 $(".ima").each(function () {
                     var has_coords = $(this).attr("has_coords");
-                    console.log(has_coords);
                     if(!has_coords || has_coords != 1) has_areas = false;
                 });
                 return has_areas;

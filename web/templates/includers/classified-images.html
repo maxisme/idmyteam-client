@@ -5,7 +5,7 @@
 {% for img_path in images %}
     {% set img = images[img_path] %}
     {% set img_id = str(int(img_id) + 1) %}
-    {% if images[img_path]['coordinates'] and images[img_path]['coordinates'] != '{}' %}
+    {% if images[img_path]['coordinates'] and images[img_path]['coordinates'] != '{}' and images[img_path]['coordinates'] != 'null' %}
         {% set face_coords_js = face_coords_js + "$('#portrait-"+img_id+"').selectAreas('add', toActualArea($('#portrait-"+img_id+"'), JSON.parse('"+images[img_path]['coordinates']+"'), true));\n$('#portrait-"+img_id+"').closest('span').attr('has_coords', '1');\n\n" %}
     {% end %}
 
