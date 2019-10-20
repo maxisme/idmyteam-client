@@ -80,10 +80,10 @@ Camera:
 Recognition:
   icon: face
   Training Mode:
-    info: Having this on will send all classified images to be confirmed manually
-      on the <a href="/classify">classify</a> page. And all uploaded images will not
-      be used for online learning. When starting off a teams model we highly recommend
-      turning this on to improve recognition accuracy.
+    info: Having this on will send all images that are sent to be recognised to be
+      confirmed manually on the <a href="/classify">classify</a> page. And all uploaded
+      images will not be used for online learning. When starting off a teams model
+      we highly recommend turning this on to improve recognition accuracy.
     type: switch
     val: 1
   Upload Cropped:

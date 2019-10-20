@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-from settings import functions, config
+from settings import functions, config, db
 import logging
 from tornado import gen
 from tornado.websocket import websocket_connect
@@ -58,9 +58,10 @@ class SocketClient(object):
                 )  # verify that the message has been received
                 message = message["message"]
 
+            # settings
             SCRIPT_PATH = (
-                    config.ROOT
-                    + config.settings["File Location"]["Bash Script"]["val"]
+                config.ROOT
+                + config.settings["File Location"]["Bash Script"]["val"]
             )
             ID_THRESHOLD = float(
                 config.settings["Recognition"]["Id Threshold"]["val"]
@@ -72,13 +73,11 @@ class SocketClient(object):
                 int(config.settings["Recognition"]["Training Mode"]["val"])
             )
 
-            conn = functions.DB.conn(
-                config.DB["username"], config.DB["password"], config.DB["db"]
-            )
+            conn = db.pool.raw_connection()
             if message == "delete-model":
                 logging.info("Deleted Model!")
                 functions.Member.Activity.purge(conn)
-                self.connect()  # force a reconnect
+                self.connect()  # force socket reconnect
 
             elif message["type"] == "no_model":
                 logging.info("No Team Model")
@@ -105,7 +104,14 @@ class SocketClient(object):
                 image_path = config.TMP_DETECTED_DIR + file_name
 
                 if os.path.isfile(image_path):
+                    move_img_path = None
                     if name == "INVALID":
+                        if TRAINING_MODE:
+                            move_img_path = (
+                                config.UNCLASSIFIED_PATH
+                                + file_name
+                            )
+
                         logging.info("No face was detected in image upload")
                         # TODO need to decide what to do with an invalid image
                         # [will be very useful for debugging but will take up a lot of storage space]
@@ -113,10 +119,8 @@ class SocketClient(object):
                         # must at least work with background detector as if this ideally should never happen
                         # and if it does the settings on the pi must be wrong and the most likely thing to
                         # be wrong is the background detector
-                        pass
                     else:
                         # run script
-                        move_img_path = None
                         t = time.time()
 
                         # time since file was created
@@ -164,15 +168,15 @@ class SocketClient(object):
                                         config.UNCLASSIFIED_PATH + file_name
                                 )
 
-                        if move_img_path:
-                            if coords:
-                                # write coords of face into image file
-                                functions.Image.Comment.write(
-                                    image_path, coords
-                                )
+                    if move_img_path:
+                        if coords:
+                            # write coords of face into image file
+                            functions.Image.Comment.write(
+                                image_path, coords
+                            )
 
-                            # move uploaded image for manual classification
-                            os.rename(image_path, move_img_path)
+                        # move uploaded image for manual classification
+                        os.rename(image_path, move_img_path)
 
             elif message["type"] == "trained":
                 # when a team gets their first model restart the camera and socket

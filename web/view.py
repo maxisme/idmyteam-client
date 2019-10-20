@@ -462,7 +462,7 @@ class AddMemberHandler(BaseHandler):
         return self.redirect("/member/" + str(member_id) + "/train")
 
     def _screen(self):
-        self.tmpl["title"] = "Add Team Member"
+        self.tmpl["title"] = "Add New Team Member"
         self.tmpl["include_scripts"] = ["js/add-member.js"]
         self.render("helpers/form.html", **self.tmpl)
 
