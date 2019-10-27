@@ -62,8 +62,6 @@ def classify(img, store_features, secure):
     :return bool: whether image was uploaded successfully
     """
 
-    start_t = time.time()
-
     upload_path = functions.random_file_name(config.TMP_DETECTED_DIR, config.IMG_TYPE)
 
     # write image to file for future handling
@@ -81,10 +79,8 @@ def classify(img, store_features, secure):
         },
     )
 
-    logging.info("Took %s seconds to upload image", time.time() - start_t)
-
     if r.status_code != 200:
-        # upload is being rate limited
+        # upload is likely being rate limited
         logging.error(r.reason)
         return False
     return True
