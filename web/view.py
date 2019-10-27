@@ -152,13 +152,20 @@ class WelcomeHandler(BaseHandler):
 
 class ClassifyHandler(BaseHandler):
     @permission("medium")
-    def get(self):
+    def get(self, page=1):
         self.tmpl["title"] = "Classify"
+        self.tmpl["page"] = page = int(page)
+        self.tmpl["page_size"] = page_size = config.NUM_UNCLASSIFIED_PER_PAGE
 
         conn = self.db_connect()
-        self.tmpl["images"] = ClassifyImagesHandler.get_images(
+        images = ClassifyImagesHandler.get_images(
             conn, self.get_face_cookies(), True
         )
+
+        images = images[page_size * (page - 1):page_size * page]
+
+        self.tmpl["images"] = images
+
         self.tmpl["members"] = MembersHandler.get_members(conn)
 
         self.render("classify.html", **self.tmpl)
@@ -208,6 +215,14 @@ class ClassifyImagesHandler(BaseHandler):
 
     @classmethod
     def get_images(cls, conn, face_coordinates, classifying=False, img_paths=False):
+        """
+        TODO cache
+        :param conn: database conn
+        :param dict face_coordinates:
+        :param bool classifying: whether to also select classified images
+        :param img_paths: optional selected file paths
+        :return:
+        """
         if img_paths == False:
             # file paths
             img_paths = glob(config.UNCLASSIFIED_PATH + "*" + config.IMG_TYPE)
@@ -218,7 +233,7 @@ class ClassifyImagesHandler(BaseHandler):
             key=lambda x: os.path.getmtime(x), reverse=True
         )  # sort image paths by creation date
 
-        images = OrderedDict()
+        images = ClassifyImagesHandler.SlicableOrderedDict()
         for img_path in img_paths:
             file_name = os.path.basename(img_path)
 
@@ -249,6 +264,16 @@ class ClassifyImagesHandler(BaseHandler):
             }
 
         return images
+
+    class SlicableOrderedDict(OrderedDict):
+        def __getitem__(self, k):
+            if not isinstance(k, slice):
+                return OrderedDict.__getitem__(self, k)
+            x = ClassifyImagesHandler.SlicableOrderedDict()
+            for idx, key in enumerate(self.keys()):
+                if k.start <= idx < k.stop:
+                    x[key] = self[key]
+            return x
 
 
 class MemberHandler(BaseHandler):
@@ -385,7 +410,7 @@ class MemberTrainHandler(BaseHandler):
             img_path = img_path.decode()
             logging.info(img_path)
             if img_path not in face_coordinates and not functions.Image.Comment.read(
-                img_path
+                    img_path
             ):
                 self.tmpl["error_message"] = "Not added coordinates for every image"
                 return self._screen(conn, member_id)
@@ -497,7 +522,7 @@ class StreamCaptureDeleteHandler(BaseHandler):
     def post(self, member_id):
         img_path = self.get_argument("image_path")
         if functions.path_in_dir(
-            img_path, config.TMP_CLASSIFIED_PATH
+                img_path, config.TMP_CLASSIFIED_PATH
         ) or functions.path_in_dir(img_path, config.CLASSIFIED_PATH):
             # valid img file path to delete
             try:
@@ -530,7 +555,8 @@ class SettingsHandler(BaseHandler):
             type = split[0].replace("-", " ").title()
             setting = split[1].replace("-", " ").title()
 
-            val = args[key] if "on" not in args[key] else 1
+            val = args[key] if "on" not in args[key] else 1  # convert "on" to 1
+
             # convert val to int if possible
             try:
                 val = int(val)
@@ -561,7 +587,7 @@ class SettingsHandler(BaseHandler):
         total_storage = functions.to_GB(st.f_bsize * st.f_blocks)
         storage_left = functions.to_GB(st.f_bavail * st.f_frsize)
         config.stats[config.STAT_STORAGE] = (
-            str(storage_left) + "/" + str(total_storage) + " GB"
+                str(storage_left) + "/" + str(total_storage) + " GB"
         )
 
         # number of classified
@@ -603,17 +629,16 @@ class ScriptHandler(BaseHandler):
 class LogsHandler(BaseHandler):
     @permission("high")
     def get(self, page=1, level=2):
-
         self.tmpl["title"] = "Logs"
 
         conn = self.db_connect()
         self.tmpl["page"] = int(page)
-        self.tmpl["page_size"] = 30
+        self.tmpl["page_size"] = config.NUM_LOGS_PER_PAGE
         self.tmpl["logs"] = (
-            functions.Logs.get_logs(
-                conn, self.tmpl["page"], self.tmpl["page_size"], level
-            )
-            or {}
+                functions.Logs.get_logs(
+                    conn, self.tmpl["page"], self.tmpl["page_size"], level
+                )
+                or {}
         )
         self.tmpl["logging_levels"] = logging._levelToName
         self.tmpl["current_level"] = int(level)

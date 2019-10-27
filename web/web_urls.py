@@ -13,6 +13,7 @@ www_urls = [
     (r"/live-stream", view.LiveStreamHandler),
     (r"/stream", events.StreamHandler),
     (r"/classify", view.ClassifyHandler),
+    (r"/classify/(\d+)", view.ClassifyHandler),
     (r"/classify/delete", events.ClassifyDeleteHandler),
     (r"/classify/set-face-coordinates", events.FaceCoordinatesHandler),
     (r"/members", view.MembersHandler),

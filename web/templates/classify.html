@@ -40,24 +40,15 @@
     </form>
 
 
-    <div class="nav-btns" align="center">
-        {% set prev_page = locals().get('prev_page', 1) %}
-        {% set next_page = locals().get('next_page', 2) %}
-        {% if prev_page > 1 %}
-            <a class="btn-large" href='/classify?page={{ prev_page }}'>
-        {% else %}
-            <a class="btn-large disabled">
-        {% end %}
-                <span class="material-icons">chevron_left</span>
-            </a>
 
-        {% if next_page > 2 %}
-            <a class="btn-large" href='/classify?page={{ next_page }}'>
-        {% else %}
-            <a class="btn-large disabled">
+    <div class="nav-btns" align="center">
+        {% if page - 1 > 0 %}
+            <a class="btn-large" href='/classify/{{ page - 1 }}'> < </a>
         {% end %}
-                <span class="material-icons">chevron_right</span>
-            </a>
+
+        {% if len(images) == page_size %}
+            <a class="btn-large" href='/classify/{{ page + 1 }}'> > </a>
+        {% end %}
     </div>
 {% end %}
 
