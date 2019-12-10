@@ -19,7 +19,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install libmysqlclient-dev
-#        pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
+        python -m pip install --upgrade pip
+        pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
     - name: Test
       env:
         PYTHONPATH: "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
