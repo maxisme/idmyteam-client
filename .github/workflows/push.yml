@@ -24,3 +24,6 @@ jobs:
     - name: Test
       run: |
         pytest
+      env:
+        PYTHONPATH: "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
+        SETTINGS_FILE: "${GITHUB_WORKSPACE}/conf/test_jenkins.yaml"
