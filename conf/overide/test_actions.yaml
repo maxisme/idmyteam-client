@@ -7,9 +7,9 @@ Credentials:
   Database Name:
     val: idmyteamclient
   Database Username:
-    val: idmyteamtest
+    val: root
   Database Password:
-    val: VWpyKKUGaFZQIiCj680nT80PWQoOGrtjIz8cRnWfgqXmpPVvof9aRpOAj!l5W
+    val: root
 
   Id My Team Username:
     val:

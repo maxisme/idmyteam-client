@@ -188,12 +188,12 @@ Credentials:
     info: The username for the local database.
     disabled: true
     type: text
-    val: idmyteamtest
+    val: root
   Database Password:
     info: The password for the local database.
     disabled: true
     type: text
-    val: VWpyKKUGaFZQIiCj680nT80PWQoOGrtjIz8cRnWfgqXmpPVvof9aRpOAj!l5W
+    val: root
   Retract Key:
     info: A key to be used when calling the <strong>/retract</strong> endpoint when
       the system incorrectly identifies the wrong member.
