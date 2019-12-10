@@ -1,6 +1,6 @@
 Global:
   Image File Type: .jpg
-  Root: /var/lib/jenkins/workspace/idmyteam-client
+  Root: /home/runner/work/idmyteam-client/idmyteam-client
   Training:
     min: 10
     Number: 10
