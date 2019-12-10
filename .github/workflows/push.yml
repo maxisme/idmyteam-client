@@ -23,6 +23,6 @@ jobs:
         pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
     - name: Test
       env:
-        PYTHONPATH: "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
-        SETTINGS_FILE: "${GITHUB_WORKSPACE}/conf/test_jenkins.yaml"
+        PYTHONPATH: $GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH
+        SETTINGS_FILE: ${GITHUB_WORKSPACE}/conf/test_jenkins.yaml
       run: pytest
