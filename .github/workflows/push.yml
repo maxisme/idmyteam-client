@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.5, 3.6, 3.7]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v1
@@ -19,8 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install libmysqlclient-dev
-        python -m pip install --upgrade pip
-        pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
+#        pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
     - name: Test
       env:
         PYTHONPATH: "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
