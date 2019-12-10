@@ -48,6 +48,7 @@ class TestWebApp(WebTest):
     def test_high_perm_member(self):
         self._test_perms("high")
 
+    # helpers
     def _create_member(self, perm):
         # create new member with perm
         low_member = MemberGenerator(perm)

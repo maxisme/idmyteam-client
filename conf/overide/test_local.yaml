@@ -9,7 +9,7 @@ Credentials:
   Database Username:
     val: root
   Database Password:
-    val:
+    val: root
 
   Id My Team Username:
     val:
