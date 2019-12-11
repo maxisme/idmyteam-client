@@ -1,4 +1,4 @@
-[![Build Status](https://jenk.ml/job/idmyteam-client/badge/icon)](https://jenk.ml/job/idmyteam-client/)
+[![Build Status](https://github.com/maxisme/idmyteam-client/workflows/ID%20My%20Team%20Client/badge.svg)](https://github.com/maxisme/idmyteam-client/actions)
 
 
 [Server Code](https://github.com/maxisme/idmyteam-server)
