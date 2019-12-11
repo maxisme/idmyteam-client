@@ -16,12 +16,19 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Fetch cached dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/test_requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install new dependencies
       run: |
         sudo apt-get install libmysqlclient-dev
         python -m pip install --upgrade pip
         pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
-    - name: Test
+    - name: Run tests
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
         export SETTINGS_FILE="${GITHUB_WORKSPACE}/conf/test_actions.yaml"
