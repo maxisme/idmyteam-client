@@ -183,7 +183,8 @@ class Image:
         def read(cls, img_path):
             try:
                 return PILImage.open(img_path).app["COM"]
-            except KeyError:
+            except Exception as e:
+                logging.error(f"Problem fetching comment from image: {e}")
                 return None
 
     class BackgroundExtractor:
