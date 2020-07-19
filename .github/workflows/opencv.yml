@@ -18,7 +18,7 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           path: "opencv-docker/"
-          repository: ${{ github.repository }}
+          repository: rpi-opencv
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tag_with_ref: true
