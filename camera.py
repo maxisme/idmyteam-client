@@ -19,6 +19,8 @@ import time
 
 from settings import functions, config
 
+process_pool = Pool()
+
 # set logger
 try:
     logging.basicConfig(level="INFO")
@@ -64,7 +66,7 @@ def classify(img, store_features, secure):
 
     upload_path = functions.random_file_name(config.TMP_DETECTED_DIR, config.IMG_TYPE)
 
-    # write image to file for future handling
+    # write image to file
     cv2.imwrite(upload_path, img)
 
     protocol = "https" if secure else "http"
@@ -86,7 +88,6 @@ def classify(img, store_features, secure):
     return True
 
 
-process_pool = Pool()
 
 
 def run():

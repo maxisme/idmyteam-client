@@ -1,6 +1,4 @@
-FROM resin/raspberry-pi2-debian:buster
-
-EXPOSE 8080
+FROM python:3.8
 
 RUN mkdir -p /usr/src/idmyteam
 
@@ -23,59 +21,37 @@ libssl-dev \
 libatlas-base-dev \
 gfortran \
 python-mysqldb \
-libraspberrypi-bin \
-python3-dev \
-python3-setuptools \
 imagemagick \
 shellcheck \
 supervisor && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# install python 3.6
-#RUN mkdir -p /tmp/python3
-#WORKDIR /tmp/python3/
-#RUN wget -O python.tar.xz https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
-#RUN tar xJf python.tar.xz
-#WORKDIR Python-3.6.3/
-#RUN ./configure
-#RUN make
-#RUN make install
-
-# install pip
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py && rm get-pip.py
-RUN pip3 install --upgrade pip
-RUN pip3 install numpy
-
-#RUN dd if=/dev/zero of=/swapfile1GB bs=1M count=1024
-#RUN mkswap /swapfile1GB
-#RUN swapon /swapfile1GB
-
 # install opencv
 RUN mkdir -p /tmp/opencv
-RUN wget -O /tmp/opencv/opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
-RUN wget -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
+RUN wget -O /tmp/opencv/opencv.zip https://github.com/opencv/opencv/archive/4.4.0.zip
+RUN wget -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.4.0.zip
 WORKDIR /tmp/opencv/
 RUN unzip opencv_contrib.zip
 RUN unzip opencv.zip
-WORKDIR /tmp/opencv/opencv-4.0.0/
+WORKDIR /tmp/opencv/opencv-4.4.0/
 RUN mkdir build
-WORKDIR /tmp/opencv/opencv-4.0.0/build/
+WORKDIR /tmp/opencv/opencv-4.4.0/build/
 RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local \
-    -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv/opencv_contrib-4.0.0/modules \
-    -D ENABLE_VFPV3=ON \
+    -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv/opencv_contrib-4.4.0/modules \
+#    -D ENABLE_VFPV3=ON \
     -D BUILD_TESTS=OFF \
-    -D ENABLE_NEON=ON \
+#    -D ENABLE_NEON=ON \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D INSTALL_C_EXAMPLES=OFF \
     -D BUILD_EXAMPLES=OFF ..
 
-RUN make -j2
+RUN make -j
 RUN make install
 RUN ldconfig
 RUN rm -rf /tmp/opencv
 RUN apt-get update && apt-get install -y python-opencv libffi-dev libmariadbclient-dev
 
-RUN ln -s /usr/local/python/cv2/python-3.7/cv2.cpython-37m-arm-linux-gnueabihf.so /usr/local/lib/python3.7/dist-packages/
+#RUN ln -s /usr/local/python/cv2/python-3.7/cv2.cpython-37m-arm-linux-gnueabihf.so /usr/local/lib/python3.7/dist-packages/
 
 # init proj
 WORKDIR /usr/src/idmyteam

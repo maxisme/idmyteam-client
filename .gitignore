@@ -1,3 +1,4 @@
 *.pyc
 *remote.yaml
 .travis-edit.yml
+/venv/

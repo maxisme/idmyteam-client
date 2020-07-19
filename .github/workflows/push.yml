@@ -3,33 +3,42 @@ name: ID My Team Client
 on: [push]
 
 jobs:
-  build:
+#  test:
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        python-version: [3.6, 3.7, 3.8, 3.9]
+#
+#    steps:
+#    - uses: actions/checkout@v1
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v1
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Install new dependencies
+#      run: |
+#        sudo apt-get install libmysqlclient-dev
+#        python -m pip install --upgrade pip
+#        pip install -r test_requirements.txt
+#    - name: Run tests
+#      run: |
+#        export PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
+#        export SETTINGS_FILE="${GITHUB_WORKSPACE}/conf/test_actions.yaml"
+#        pytest tests/ -m "not rpi"
 
+  publish:
+    name: Publish Docker image
+    #    needs: test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.6, 3.7]
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Fetch cached dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/test_requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Install new dependencies
-      run: |
-        sudo apt-get install libmysqlclient-dev
-        python -m pip install --upgrade pip
-        pip install -r test_requirements.txt # --cache-dir ~/.pip-cache
-    - name: Run tests
-      run: |
-        export PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
-        export SETTINGS_FILE="${GITHUB_WORKSPACE}/conf/test_actions.yaml"
-        pytest tests/ -m "not rpi"
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: '0'
+      - name: Publish to Docker Registry
+        uses: docker/build-push-action@v1
+        with:
+          repository: ${{ github.repository }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tag_with_ref: true
+          tag_with_sha: true
