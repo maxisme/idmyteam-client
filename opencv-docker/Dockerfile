@@ -8,7 +8,7 @@ RUN apt-get -q update && apt-get -y upgrade && apt-get install -y $CVPACKAGES &&
 RUN mkdir -p /tmp/opencv
 WORKDIR /tmp/opencv/
 RUN wget --quiet -O /tmp/opencv/opencv.zip https://github.com/opencv/opencv/archive/4.4.0.zip
-RUN wget --quiet -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/oencv_contrib/archive/4.4.0.zip
+RUN wget --quiet -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.4.0.zip
 RUN unzip opencv_contrib.zip && unzip opencv.zip
 WORKDIR /tmp/opencv/opencv-4.4.0/
 RUN mkdir build
