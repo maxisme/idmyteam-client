@@ -1,14 +1,14 @@
 FROM python:3.8
 
-RUN export CV_PACKAGES="wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev"
+ARG CVPACKAGES="wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev"
 
-RUN apt-get -q update && apt-get -y upgrade && apt-get install -y "$CV_PACKAGES" && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get -q update && apt-get -y upgrade && apt-get install -y $CVPACKAGES && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # install opencv
 RUN mkdir -p /tmp/opencv
 WORKDIR /tmp/opencv/
-RUN wget -O /tmp/opencv/opencv.zip https://github.com/opencv/opencv/archive/4.4.0.zip
-RUN wget -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.4.0.zip
+RUN wget --quiet -O /tmp/opencv/opencv.zip https://github.com/opencv/opencv/archive/4.4.0.zip
+RUN wget --quiet -O /tmp/opencv/opencv_contrib.zip https://github.com/opencv/oencv_contrib/archive/4.4.0.zip
 RUN unzip opencv_contrib.zip && unzip opencv.zip
 WORKDIR /tmp/opencv/opencv-4.4.0/
 RUN mkdir build
