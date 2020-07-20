@@ -1,4 +1,5 @@
 FROM python:3.8
+
 RUN apt-get -q update && apt-get -y upgrade && apt-get install -y \
 build-essential \
 git \
@@ -18,6 +19,8 @@ libssl-dev \
 libatlas-base-dev \
 qemu-user-static \
 gfortran && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install numpy
 
 # install opencv
 RUN mkdir -p /tmp/opencv
