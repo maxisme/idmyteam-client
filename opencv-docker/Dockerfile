@@ -23,7 +23,7 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D INSTALL_C_EXAMPLES=OFF \
     -D BUILD_EXAMPLES=OFF ..
 
-RUN make -j
+RUN make
 RUN make install
 RUN ldconfig
 
