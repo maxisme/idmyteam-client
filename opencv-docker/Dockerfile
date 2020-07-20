@@ -1,26 +1,8 @@
 FROM python:3.8
 
-RUN apt-get -q update && apt-get -y upgrade && apt-get install -y \
-build-essential \
-git \
-cmake \
-wget \
-unzip \
-yasm \
-pkg-config \
-libswscale-dev \
-libjpeg-dev \
-libpng-dev \
-libtiff-dev \
-libavformat-dev \
-libpq-dev \
-libffi-dev \
-libssl-dev \
-libatlas-base-dev \
-qemu-user-static \
-gfortran && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN export CV_PACKAGES="wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev"
 
-RUN pip3 install numpy
+RUN apt-get -q update && apt-get -y upgrade && apt-get install -y "$CV_PACKAGES" && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # install opencv
 RUN mkdir -p /tmp/opencv
@@ -36,7 +18,7 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv/opencv_contrib-4.4.0/modules \
 #    -D ENABLE_VFPV3=ON \
     -D BUILD_TESTS=OFF \
-    -D ENABLE_NEON=ON \
+#    -D ENABLE_NEON=ON \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D INSTALL_C_EXAMPLES=OFF \
     -D BUILD_EXAMPLES=OFF ..
