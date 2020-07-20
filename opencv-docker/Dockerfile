@@ -2,7 +2,7 @@ FROM python:3.8
 
 ARG CVPACKAGES="wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev"
 
-RUN apt-get -q update && apt-get -y upgrade && apt-get install -y $CVPACKAGES && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get -q update && apt-get -y upgrade && apt-get install -y $CVPACKAGES
 
 # install opencv
 RUN mkdir -p /tmp/opencv
@@ -29,3 +29,5 @@ RUN ldconfig
 
 # clean up
 RUN rm -rf /tmp/opencv
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+#RUN apt remove --purge $CVPACKAGES
