@@ -31,7 +31,7 @@ WORKDIR /tmp/opencv/opencv-4.4.0/build/
 RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local \
     -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv/opencv_contrib-4.4.0/modules \
-    -D ENABLE_VFPV3=ON \
+#    -D ENABLE_VFPV3=ON \
     -D BUILD_TESTS=OFF \
     -D ENABLE_NEON=ON \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
