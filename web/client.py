@@ -76,10 +76,11 @@ def periodic_checks():
 
 
 def main():
-    print("started http://127.0.0.1:1234")
     server = tornado.httpserver.HTTPServer(app)
-    server.bind(1234)
+    port = int(os.getenv("PORT", 8080))
+    server.bind(port)
     server.start(1)  # 1 cpu
+    print(f"started http://127.0.0.1:{port}")
 
     connect_to_wss()
     start_camera()
