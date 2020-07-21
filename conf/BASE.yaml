@@ -1,6 +1,5 @@
 Global:
   Image File Type: .jpg
-  Root:
   Training:
     min: 10 # specifies how many images per member for initial train and also the min amount of classified images for an upload
     Number: 10 # number of images to use as init training of Background Extractor
@@ -132,27 +131,8 @@ Credentials:
     info: The credentials to connect with the ID My Team Server API. Find <a target="_blank" href='https://idmy.team/profile'>here</a>.
     type: text
     val:
-  Cookie:
-    info: Cookie key for web server.
-    type: text
-    val:
-  Database Name:
-    info: The name of the local database.
-    disabled: true
-    type: text
-    val:
-  Database Username:
-    info: The username for the local database.
-    disabled: true
-    type: text
-    val:
-  Database Password:
-    info: The password for the local database.
-    disabled: true
-    type: text
-    val:
   Retract Key:
-    info: A key to be used when calling the <strong>/retract</strong> endpoint when the system incorrectly identifies the wrong member.
+    info: A key to be used when calling the <strong>/retract</strong> endpoint when the system incorrectly identifies a wrong member.
     type: text
     val:
 

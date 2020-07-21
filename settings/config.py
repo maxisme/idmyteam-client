@@ -1,12 +1,13 @@
 # settings for the whole local system.
 import os, sys
 import functions
+from pathlib import Path
 
-SETTINGS_FILE = os.environ.get("SETTINGS_FILE", os.environ.get("LOCAL_DIR"))
+ROOT = str(Path(os.path.realpath(__file__)).parent.parent) + "/"
+
+SETTINGS_FILE = ROOT+"conf/conf.yaml"
 
 settings = functions.YAML.read(SETTINGS_FILE)
-
-ROOT = settings["Global"]["Root"]
 
 ######
 # ws #
@@ -17,6 +18,7 @@ ws = None
 # stats #
 #########
 stats = {}
+
 LOG_STAT_EVERY = 60  # logs to `STATS_FILE` every x frames
 STAT_FPS = "FPS"
 STAT_STORAGE = "Storage"
@@ -83,9 +85,9 @@ credentials = settings["Credentials"]["Id My Team Credentials"]["val"]
 # Database
 ###########
 DB = {
-    "username": settings["Credentials"]["Database Username"]["val"],
-    "password": settings["Credentials"]["Database Password"]["val"],
-    "db": settings["Credentials"]["Database Name"]["val"],
+    "db": os.environ.get("DB", "idmyteam"),
+    "username": os.environ.get("DBUSER", "idmyteam"),
+    "password": os.environ.get("DBPASS", "idmyteam"),
 }
 
 ########
@@ -99,7 +101,7 @@ SOCKET_CONNECTED = 1
 SOCKET_NOT_TRAINED = 2
 SOCKET_STATUS = SOCKET_CLOSED
 
-COOKIE_SECRET = settings["Credentials"]["Cookie"]["val"]
+COOKIE_SECRET = os.environ.get("COOKIESECRET", "foo") # todo run randomiser
 SCRIPT_PATH = ROOT + settings["File Location"]["Bash Script"]["val"]
 MIN_TRAINING_IMAGES_PER_MEMBER = 10  # TODO get from server
 NO_PERM = "none"

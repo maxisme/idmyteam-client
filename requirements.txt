@@ -12,3 +12,5 @@ pytest
 sqlalchemy
 faker
 mock
+pyzmq
+opencv-python

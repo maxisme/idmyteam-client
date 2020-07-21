@@ -88,8 +88,6 @@ def classify(img, store_features, secure):
     return True
 
 
-
-
 def run():
     # check if connected to socket
     if config.SOCKET_STATUS != config.SOCKET_CONNECTED:
@@ -109,8 +107,12 @@ def run():
     )
 
     # init camera
-    cam = Camera()
-    raw = cam.getRaw()
+    try:
+        cam = Camera()
+        raw = cam.getRaw()
+    except Exception as e:
+        logging.critical(f"Problem starting camera... (you are likely not running on rpi) - {e}")
+        return
 
     logging.info("Started camera...")
 

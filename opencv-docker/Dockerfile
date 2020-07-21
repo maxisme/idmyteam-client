@@ -1,5 +1,7 @@
 FROM python:3.8
+RUN uname -a
 
+ARG jobs=1
 ARG CVPACKAGES="wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev"
 
 RUN apt-get -q update && apt-get -y upgrade && apt-get install -y $CVPACKAGES
@@ -23,7 +25,7 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D INSTALL_C_EXAMPLES=OFF \
     -D BUILD_EXAMPLES=OFF ..
 
-RUN make
+RUN make -j$jobs
 RUN make install
 RUN ldconfig
 

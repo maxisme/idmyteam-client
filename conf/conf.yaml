@@ -1,6 +1,6 @@
 Global:
   Image File Type: .jpg
-  Root: /home/runner/work/idmyteam-client/idmyteam-client
+  Root: null
   Training:
     min: 10
     Number: 10
@@ -169,34 +169,15 @@ Credentials:
     info: The username to connect with the ID My Team Server API. Find <a target="_blank"
       href='https://idmy.team/profile'>here</a>.
     type: text
-    val: null
+    val: foo
   Id My Team Credentials:
     info: The credentials to connect with the ID My Team Server API. Find <a target="_blank"
       href='https://idmy.team/profile'>here</a>.
     type: text
-    val: null
-  Cookie:
-    info: Cookie key for web server.
-    type: text
-    val: yummycookie
-  Database Name:
-    info: The name of the local database.
-    disabled: true
-    type: text
-    val: idmyteamclient
-  Database Username:
-    info: The username for the local database.
-    disabled: true
-    type: text
-    val: root
-  Database Password:
-    info: The password for the local database.
-    disabled: true
-    type: text
-    val: root
+    val: bar
   Retract Key:
     info: A key to be used when calling the <strong>/retract</strong> endpoint when
-      the system incorrectly identifies the wrong member.
+      the system incorrectly identifies a wrong member.
     type: text
     val: null
 File Location:

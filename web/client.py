@@ -1,6 +1,5 @@
 import os
 import logging
-import time
 
 from tornado.ioloop import IOLoop, PeriodicCallback
 import tornado.wsgi
@@ -16,7 +15,10 @@ import view
 from settings import config, functions
 from wss_client import SocketClient
 from settings.log import LogDBHandler
-import camera
+try:
+    import camera
+except:
+    pass
 
 # set logger
 try:
@@ -68,14 +70,15 @@ def periodic_checks():
         connect_to_wss(False)
 
     # check camera thread
-    if not config.CAMERA_THREAD or not config.CAMERA_THREAD.is_alive():
-        logging.critical("Problem with camera please start with web server")
-        IOLoop.instance().stop()
-        main()
+    # if not config.CAMERA_THREAD or not config.CAMERA_THREAD.is_alive():
+    #     IOLoop.instance().stop()
+    #     main()
+
 
 def main():
+    print("started http://127.0.0.1:1234")
     server = tornado.httpserver.HTTPServer(app)
-    server.bind(8080)
+    server.bind(1234)
     server.start(1)  # 1 cpu
 
     connect_to_wss()

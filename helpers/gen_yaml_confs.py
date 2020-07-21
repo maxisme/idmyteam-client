@@ -13,7 +13,7 @@ def update(d, u):
     return d
 
 
-template = functions.YAML.read("../conf/template.yaml")
+template = functions.YAML.read("../conf/BASE.yaml")
 overide_dir = "../conf/overide/"
 for filename in os.listdir(overide_dir):
     t_yaml = functions.YAML.read(overide_dir + filename)

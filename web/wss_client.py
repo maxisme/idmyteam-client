@@ -39,7 +39,7 @@ class SocketClient(object):
         logging.critical("Socket connection closed")
 
     def on_message(self, msg):
-        if not msg or msg is "None":
+        if not msg or msg == "None":
             return self.close()
 
         try:
