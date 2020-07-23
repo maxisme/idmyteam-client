@@ -1,5 +1,4 @@
 oyaml
-numpy
 tornado
 # picamera
 bcrypt
@@ -13,4 +12,4 @@ sqlalchemy
 faker
 mock
 pyzmq
-opencv-python
+python-dotenv

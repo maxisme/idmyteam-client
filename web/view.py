@@ -147,6 +147,7 @@ class WelcomeHandler(BaseHandler):
     def get(self):
         self.tmpl["title"] = ""
         self.tmpl["camera"] = config.settings["Camera"]
+        self.tmpl["camera_is_running"] = bool(config.CAMERA_THREAD.is_alive())
         self.render("home/welcome.html", **self.tmpl)
 
 
@@ -223,7 +224,7 @@ class ClassifyImagesHandler(BaseHandler):
         :param img_paths: optional selected file paths
         :return:
         """
-        if img_paths == False:
+        if not img_paths:
             # file paths
             img_paths = glob(config.UNCLASSIFIED_PATH + "*" + config.IMG_TYPE)
             if not classifying:
@@ -455,7 +456,8 @@ class MemberTrainHandler(BaseHandler):
         )
         self.tmpl["min_training_images"] = config.MIN_TRAINING_IMAGES_PER_MEMBER
 
-        self.tmpl["camera_running"] = bool(int(config.settings["Camera"]["Run"]["val"]))
+        self.tmpl["camera_on"] = bool(int(config.settings["Camera"]["Run"]["val"]))
+        self.tmpl["camera_is_running"] = bool(config.CAMERA_THREAD.is_alive())
         self.tmpl["mask"] = bool(int(config.settings["Camera"]["Mask"]["val"]))
         self.tmpl["live_stream"] = bool(
             int(config.settings["Camera"]["Live Stream"]["val"])
@@ -496,7 +498,8 @@ class LiveStreamHandler(BaseHandler):
     @permission("low")
     def get(self):
         self.tmpl["title"] = "Stream"
-        self.tmpl["camera_running"] = bool(int(config.settings["Camera"]["Run"]["val"]))
+        self.tmpl["camera_on"] = bool(int(config.settings["Camera"]["Run"]["val"]))
+        self.tmpl["camera_is_running"] = bool(config.CAMERA_THREAD.is_alive())
         self.tmpl["live_stream"] = bool(
             int(config.settings["Camera"]["Live Stream"]["val"])
         )
@@ -599,6 +602,7 @@ class SettingsHandler(BaseHandler):
         config.stats[config.STAT_NUM_UNCLASSIFIED] = functions.num_files_in_dir(
             config.ROOT + config.settings["File Location"]["Unclassified Images"]["val"]
         )
+
 
         config.stats[config.STAT_CPU_TEMP] = functions.get_cpu_temp()
 

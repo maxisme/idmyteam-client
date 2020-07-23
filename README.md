@@ -19,3 +19,9 @@ then:
 ```
 dphys-swapfile setup
 ```
+
+# running
+```
+$ docker-compose up -d db
+$ docker-compose up migrate
+```

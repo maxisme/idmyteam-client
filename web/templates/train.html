@@ -4,10 +4,10 @@
     <h5>How to train</h5>
     <ol>
         <li class="info">
-            Take as many photos of <strong>{{ team_member['name'] }}</strong> as possible. The more images, the better the system will perform (you are required to take at least {{ min_training_images }} images).
+            Take as many portraits of <strong>{{ team_member['name'] }}</strong> as possible. The more images, the better the system will perform (you are required to take at least {{ min_training_images }} images).
         </li>
         <li class="info">
-            After taking the photos <strong>select the facial areas</strong>.
+            After taking the portraits <strong>select the facial areas</strong>.
         </li>
         <li class="info">
             Submit.
@@ -25,7 +25,9 @@
     {% end %}
     <hr>
 
-    {% if mask or not silent_mode %}
+    {% if not camera_is_running %}
+        <strong class="error">There is no camera on this machine</strong>
+    {% elif mask or not silent_mode %}
         {% if mask %}
             <p class="error">You need to have <strong>Mask</strong> turned <b>off</b> in <a target="_blank" href="/settings">Settings> camera</a> to train members.</p>
         {% end %}
@@ -34,7 +36,6 @@
         {% end %}
     {% else %}
         {% include 'includers/live-stream.html' %}
-
 
         <form action="/member/{{ team_member['id'] }}/train" class="train-form" method="post">
             {% if running %}

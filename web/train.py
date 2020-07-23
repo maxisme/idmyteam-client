@@ -70,7 +70,7 @@ def upload(conn):
             )
     zip.close()
 
-    # upload zip of classsified images to idmy.team
+    # upload zip of classified images to idmy.team
     r = requests.post(
         "https://idmy.team/upload",
         files={"ZIP": file_buff.getvalue()},
@@ -79,6 +79,7 @@ def upload(conn):
 
     if r.status_code != 200:
         # FAILED TO UPLOAD
+        # mark all members as not training
         for m in members:
             functions.Member.toggle_training(conn, m, is_training=False)
         message = json.loads(r.reason)

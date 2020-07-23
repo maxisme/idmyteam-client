@@ -3,20 +3,24 @@ services:
   app:
     build: .
     links:
-      - database
-    ports:
-      - "8080:8080"
+      - db
     restart: always
-  database:
-    image: tobi312/rpi-mysql
+    network_mode: "host"
+
+  db:
+    image: mysql
     ports:
-      - "32000:3306"
+      - "127.0.0.1:3306:3306"
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=AEcQhYd5yiFFY7oc7fTKq8FgDyQnIUZEj1oyMdjwoHGXAwbVfw3FBJLUpOcpo0RsWgHtRq7NEjWylukz
+      - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=idmyteam
-      - MYSQL_USER=demouser
-      - MYSQL_PASSWORD=demopassword
-      - TZ=Europe/London
+      - MYSQL_USER=idmyteam
+      - MYSQL_PASSWORD=idmyteam
+
+  migrate:
+    image: migrate/migrate
+    network_mode: "host"
     volumes:
-      - ./db/schema:/docker-entrypoint-initdb.d/:ro
+      - ./sql:/migrations
+    command: ["-path", "/migrations/", "-database", "mysql://idmyteam:idmyteam@tcp(127.0.0.1:3306)/idmyteam", "up"]

@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import os
 import logging
 
@@ -15,6 +19,7 @@ import view
 from settings import config, functions
 from wss_client import SocketClient
 from settings.log import LogDBHandler
+
 try:
     import camera
 except:
@@ -39,10 +44,9 @@ server_settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
     "cookie_secret": config.COOKIE_SECRET,
     "xsrf_cookies": True,
-    "debug": True,
+    "debug": bool(os.getenv("DEBUG", False)),
     "default_handler_class": view.Error404,
 }
-
 app = tornado.web.Application(handlers=web_urls.www_urls, **server_settings)
 
 
@@ -65,7 +69,7 @@ def start_camera():
 
 
 def periodic_checks():
-    # check socket
+    # check socket is alive
     if config.SOCKET_STATUS == config.SOCKET_CLOSED:
         connect_to_wss(False)
 

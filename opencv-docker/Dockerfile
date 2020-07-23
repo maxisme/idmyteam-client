@@ -1,10 +1,6 @@
 FROM python:3.8
-RUN uname -a
 
-ARG jobs=1
-ARG CVPACKAGES="wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev"
-
-RUN apt-get -q update && apt-get -y upgrade && apt-get install -y $CVPACKAGES
+RUN apt-get -q update && apt-get -y upgrade && apt-get install -y wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
 
 # install opencv
 RUN mkdir -p /tmp/opencv
@@ -15,21 +11,24 @@ RUN unzip opencv_contrib.zip && unzip opencv.zip
 WORKDIR /tmp/opencv/opencv-4.4.0/
 RUN mkdir build
 WORKDIR /tmp/opencv/opencv-4.4.0/build/
-RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
-    -D CMAKE_INSTALL_PREFIX=/usr/local \
-    -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv/opencv_contrib-4.4.0/modules \
-#    -D ENABLE_VFPV3=ON \
-    -D BUILD_TESTS=OFF \
-#    -D ENABLE_NEON=ON \
-    -D INSTALL_PYTHON_EXAMPLES=OFF \
-    -D INSTALL_C_EXAMPLES=OFF \
-    -D BUILD_EXAMPLES=OFF ..
+RUN pip install numpy
+RUN cmake -D CMAKE_INSTALL_PREFIX=/usr/local \
+	-D INSTALL_PYTHON_EXAMPLES=ON \
+	-D INSTALL_C_EXAMPLES=OFF \
+	-D OPENCV_ENABLE_NONFREE=OFF \
+	-D BUILD_NEW_PYTHON_SUPPORT=ON \
+	-D BUILD_opencv_python3=ON \
+	-D HAVE_opencv_python3=ON \
+	-D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv/opencv_contrib-4.4.0/modules \
+	-DPYTHON_DEFAULT_EXECUTABLE=$(which python) \
+	-D BUILD_EXAMPLES=ON ..
 
+ARG jobs=1
 RUN make -j$jobs
 RUN make install
 RUN ldconfig
 
 # clean up
-RUN rm -rf /tmp/opencv
+#RUN rm -rf /tmp/opencv
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 #RUN apt remove --purge $CVPACKAGES

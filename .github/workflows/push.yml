@@ -23,7 +23,6 @@ jobs:
 #    - name: Run tests
 #      run: |
 #        export PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/settings/:$GITHUB_WORKSPACE/web/:$GITHUB_WORKSPACE/tests/:$PYTHONPATH"
-#        export SETTINGS_FILE="${GITHUB_WORKSPACE}/conf/test_actions.yaml"
 #        pytest tests/ -m "not rpi"
 
   publish:

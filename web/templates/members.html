@@ -16,7 +16,7 @@
     {% if authed('medium') %}
         <div align="center">
             <p>
-                <a style="border-bottom: none;" href="member/add">
+                <a style="border-bottom: none;" href="/member/add">
                     <div class="btn-floating btn-large">
                         <i class="large material-icons">person_add</i>
                     </div>
@@ -47,7 +47,7 @@
                             <h4>Trained</h4>
                             <span class="material-icons error">face</span> indicates that 0 faces are ready to be sent for training.<br>
                             <span class="material-icons" style="{{ face_css("50%", colour_1, colour_2) }}">face</span> indicates that there are {% raw int(min_training_images / 2) %} out of the {{ min_training_images }} faces needed for the initial training.<br>
-                            <span class="material-icons" style="color: {{ colour_2 }}">face</span> indicates that enough faces are pending training.<br>
+                            <span class="material-icons" style="color: {{ colour_2 }}">face</span> indicates that faces are pending training.<br>
                             <span class="material-icons flashme">face</span> indicates that the members faces are being trained.<br>
                             <span class="material-icons success">face</span> indicates that more than {{ min_training_images }} faces have been trained and the user is now able to be recognised.<br>
                         </div>

@@ -1,8 +1,10 @@
 {% set running = False %}
-{% if not camera_running %}
-<strong>Camera turned off!</strong> Turn on in <a href="/settings">settings</a>!
+{% if not camera_on %}
+    <strong>Camera turned off!</strong> Turn on in <a href="/settings">settings</a>!
 {% elif not live_stream %}
     <strong>Live Stream turned off!</strong> Turn on in <a href="/settings">settings</a>!
+{% elif not camera_is_running %}
+    <strong class="error">There is no camera on this machine</strong>
 {% else %}
     {% set running = True %}
     <div align="center">

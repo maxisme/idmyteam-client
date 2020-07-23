@@ -150,7 +150,9 @@ def to_GB(val):
 def get_cpu_temp():
     # write cpu temperature
     cmd = os.popen("/opt/vc/bin/vcgencmd measure_temp").read()
-    return re.search(r"\d+\.\d+", cmd).group(0)  # extract only the number from cmd
+    if cmd:
+        return re.search(r"\d+\.\d+", cmd).group(0)  # extract only the number from cmd
+    return 0
 
 
 class Image:

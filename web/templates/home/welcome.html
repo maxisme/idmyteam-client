@@ -39,8 +39,10 @@
                         Turned off in <a href="/settings">settings</a>.
                     {% elif camera["Silent Mode"]["val"] == 1 %}
                         Just showing live stream and not recognising. Silent Mode turned on in <a href="/settings">settings</a>.
-                    {% else %}
+                    {% elif camera_is_running %}
                         <span class="material-icons success">check</span>
+                    {% else %}
+                        <b class="error">Not running... </b>
                     {% end %}
                 </div>
             </div>

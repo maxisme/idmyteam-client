@@ -2,6 +2,7 @@
 import os, sys
 import functions
 from pathlib import Path
+import threading
 
 ROOT = str(Path(os.path.realpath(__file__)).parent.parent) + "/"
 
@@ -45,8 +46,8 @@ STATS_INFO = {
 ###########
 # camera.py
 ###########
-CAMERA_THREAD = None
-RESTART_CAMERA = False
+CAMERA_THREAD: threading.Thread = None
+RESTART_CAMERA: bool = False
 CAMERA_RESTART_SETTINGS = [
     "Resolution",
     "Flip Vertically",
