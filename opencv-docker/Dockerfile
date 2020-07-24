@@ -1,6 +1,6 @@
-FROM python:3.8
+FROM python:3.8-slim
 
-RUN apt-get -q update && apt-get -y upgrade && apt-get install -y wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
+RUN apt-get -q update && apt-get -y upgrade && apt-get install -y wget unzip cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
 
 # install opencv
 RUN mkdir -p /tmp/opencv
