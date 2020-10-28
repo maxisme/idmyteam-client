@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% load my_tags %}
 {% load define_action %}
+{% load tags %}
 {% block content %}
     <form method="post" action="/settings">
         <ul class="collapsible content" data-collapsible="expandable">
@@ -35,102 +35,103 @@
                 <div class="collapsible-body">
                     {% for setting_type in settings %}
                         {% if setting_type != 'Global' %}
-                            {% define group as settings|dict_key:setting_type %}
-                            <ul class="collapsible" data-collapsible="expandable">
-                                <li id="{{ setting_type }}">
-                                    <div class="collapsible-header">
-                                        <i class="material-icons">{{ group|dict_key:'icon' }}</i> {{ setting_type }}
-                                    </div>
-                                    <div class="collapsible-body">
-                                        {% for setting in group %}
-                                            {% define s as group|dict_key:setting %}
-                                            {% if setting != 'info' and 'info' in s %}
-
-                                                {% define name as setting_type|to_form_name:setting %}
-                                                {% define info as s|dict_key:'info' %}
-                                                {% define type as s|dict_key:'type' %}
-                                                {% define val as s|dict_key:'val' %}
-                                                {% define options as s|dict_key:'options' %}
-                                                {% define disabled as False %}
-                                                {% if 'disabled' in s and s|dict_key:'disabled' %}
-                                                    {% define disabled as True %}
-                                                {% endif %}
-
-                                                <div class="row valign-wrapper">
-                                                    <div class="col s12 m6 l8">
-                                                        <!-- info -->
-                                                        <h5 id='{{ setting }}'>{{ setting }}</h5>
-                                                        {{ info|safe }}
-                                                    </div>
-                                                    <div align="center" class="in valign valign-wrapper col s12 m6 l4">
-                                                        <!-- HANDLE ALL THE DIFFERENT FORM INPUTS -->
-                                                        {% if type == 'switch' %}
-                                                            <span class="switch">
-                                                            <label>
-                                                                <input type="checkbox"
-                                                                       name="{{ name }}"
-                                                                       {% if val %}checked{% endif %}
-                                                                       {% if disabled %}disabled{% endif %}>
-                                                                <span class="lever"></span>
-                                                                <input type='hidden' value='0' name="{{ name }}">
-                                                            </label>
-                                                        </span>
-
-                                                        {% elif type == 'select' %}
-                                                            <select name="{{ name }}"
-                                                                    {% if disabled %}disabled{% endif %}>
-                                                                {% for option in options %}
-                                                                    <option
-                                                                            {% if option == val %}selected{% endif %}
-                                                                            value="{{ option }}">
-                                                                        {{ option }}
-                                                                    </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                            <select name="{{ name }}"
-                                                                    {% if disabled %}disabled{% endif %}>
-                                                                {{ options|safe }}
-                                                            </select>
-
-                                                        {% elif type == 'range' %}
-                                                            <div class="range-field">
-                                                                <input type="range"
-                                                                       name="{{ name }}"
-                                                                       value="{{ val }}"
-                                                                       min="{{ s|dict_key:'min' }}"
-                                                                       max="{{ s|dict_key:'max' }}"
-                                                                       {% if 'step' in s %}step="{{ s|dict_key:'step' }}"{% endif %}
-                                                                       {% if disabled %}disabled{% endif %}>
-                                                            </div>
-
-                                                        {% elif type == 'text' %}
-                                                            {% if 'icon' in s %}
-                                                                <label style="padding-right: 10px"
-                                                                       class="valign material-icons">{{ s|dict_key:'icon' }}</label>
+                            {% with group=settings|dict_key:setting_type %}
+                                <ul class="collapsible" data-collapsible="expandable">
+                                    <li id="{{ setting_type }}">
+                                        <div class="collapsible-header">
+                                            <i class="material-icons">{{ group|dict_key:'icon' }}</i> {{ setting_type }}
+                                        </div>
+                                        <div class="collapsible-body">
+                                            {% for setting in group %}
+                                                {% with s=group|dict_key:setting %}
+                                                    {% if setting != 'info' and 'info' in s %}
+                                                        {% with name=setting_type|to_form_name:setting info=s|dict_key:'info' type=s|dict_key:'type' val=s|dict_key:'val' %}
+                                                            {% define disabled as False %}
+                                                            {% if 'disabled' in s and s|dict_key:'disabled' %}
+                                                                {% define disabled as True %}
                                                             {% endif %}
-                                                            <input style="margin: 0;"
-                                                                   type="text"
-                                                                   name="{{ name }}"
-                                                                   value="{{ val }}"
-                                                                   {% if disabled %}disabled{% endif %}>
 
-                                                        {% elif type == 'time' %}
-                                                            <label style="padding-right: 10px" class="material-icons">timer</label>
-                                                            <input style="margin: 0;"
-                                                                   type="text"
-                                                                   name="{{ name }}"
-                                                                   class="timepicker"
-                                                                   value="{{ val }}"
-                                                                   {% if disabled %}disabled{% endif %}>
+                                                            <div class="row valign-wrapper">
+                                                                <div class="col s12 m6 l8">
+                                                                    <!-- info -->
+                                                                    <h5 id='{{ setting }}'>{{ setting }}</h5>
+                                                                    {{ info|safe }}
+                                                                </div>
+                                                                <div align="center"
+                                                                     class="in valign valign-wrapper col s12 m6 l4">
+                                                                    <!-- HANDLE ALL THE DIFFERENT FORM INPUTS -->
+                                                                    {% if type == 'switch' %}
+                                                                        <span class="switch">
+                                                                        <label>
+                                                                            <input type="checkbox"
+                                                                                   name="{{ name }}"
+                                                                                   {% if val %}checked{% endif %}
+                                                                                   {% if disabled %}disabled{% endif %}>
+                                                                            <span class="lever"></span>
+                                                                            <input type='hidden' value='0'
+                                                                                   name="{{ name }}">
+                                                                        </label>
+                                                                    </span>
 
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                </li>
-                            </ul>
+                                                                    {% elif type == 'select' %}
+                                                                        <select name="{{ name }}"
+                                                                                {% if disabled %}disabled{% endif %}>
+                                                                            {% for option in options %}
+                                                                                <option
+                                                                                        {% if option == val %}selected{% endif %}
+                                                                                        value="{{ option }}">
+                                                                                    {{ option }}
+                                                                                </option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <select name="{{ name }}"
+                                                                                {% if disabled %}disabled{% endif %}>
+                                                                            {{ options|safe }}
+                                                                        </select>
+
+                                                                    {% elif type == 'range' %}
+                                                                        <div class="range-field">
+                                                                            <input type="range"
+                                                                                   name="{{ name }}"
+                                                                                   value="{{ val }}"
+                                                                                   min="{{ s|dict_key:'min' }}"
+                                                                                   max="{{ s|dict_key:'max' }}"
+                                                                                   {% if 'step' in s %}step="{{ s|dict_key:'step' }}"{% endif %}
+                                                                                   {% if disabled %}disabled{% endif %}>
+                                                                        </div>
+
+                                                                    {% elif type == 'text' %}
+                                                                        {% if 'icon' in s %}
+                                                                            <label style="padding-right: 10px"
+                                                                                   class="valign material-icons">{{ s|dict_key:'icon' }}</label>
+                                                                        {% endif %}
+                                                                        <input style="margin: 0;"
+                                                                               type="text"
+                                                                               name="{{ name }}"
+                                                                               value="{{ val }}"
+                                                                               {% if disabled %}disabled{% endif %}>
+
+                                                                    {% elif type == 'time' %}
+                                                                        <label style="padding-right: 10px"
+                                                                               class="material-icons">timer</label>
+                                                                        <input style="margin: 0;"
+                                                                               type="text"
+                                                                               name="{{ name }}"
+                                                                               class="timepicker"
+                                                                               value="{{ val }}"
+                                                                               {% if disabled %}disabled{% endif %}>
+
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        {% endwith %}
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </div>
+                                    </li>
+                                </ul>
+                            {% endwith %}
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -146,9 +147,7 @@
         // https://stackoverflow.com/a/3177838/2768038
         function timeSince(date) {
             var seconds = Math.floor((new Date() - date) / 1000);
-
             var interval = Math.floor(seconds / 31536000);
-
             if (interval > 1) {
                 return interval + " years";
             }
