@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     <p class="info">
@@ -24,12 +25,12 @@
             </div>
         </p>
     </form>
-{% end %}
+{% endblock %}
 
 {% block scripts %}
-    <script src="{{ static_url('js/libraries/codemirror.js') }}"></script>
-    <script src="{{ static_url('js/libraries/codemirror-shell.js') }}"></script>
-{% end %}
+    <script src="{% static 'js' %}"></script>
+    <script src="{% static 'js/libraries/codemirror-shell.js' %}"></script>
+{% endblock %}
 
 {% block js %}
     <script>
@@ -48,4 +49,4 @@
             });
         });
     </script>
-{% end %}
+{% endblock %}
