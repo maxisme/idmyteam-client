@@ -1,13 +1,14 @@
 import os
+
 print(os.environ)
 
-import time
 
 import pytest
 from PIL import Image
 from settings import functions, config
 
 ROOT_DIR = config.ROOT
+
 
 @pytest.mark.incremental
 class TestYAML(object):

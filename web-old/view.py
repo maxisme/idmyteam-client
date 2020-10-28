@@ -45,7 +45,9 @@ class BaseHandler(tornado.web.RequestHandler):
             "authed": self.authed,
             "socket_status": config.SOCKET_STATUS,
             "socket_connected": config.SOCKET_STATUS == config.SOCKET_CONNECTED,
-            "silent_mode": bool(int(config.settings_yaml["Camera"]["Silent Mode"]["val"]))
+            "silent_mode": bool(
+                int(config.settings_yaml["Camera"]["Silent Mode"]["val"])
+            ),
         }
 
         # remove flash messages
@@ -158,11 +160,9 @@ class ClassifyHandler(BaseHandler):
         self.tmpl["page_size"] = page_size = config.NUM_UNCLASSIFIED_PER_PAGE
 
         conn = self.db_connect()
-        images = ClassifyImagesHandler.get_images(
-            conn, self.get_face_cookies(), True
-        )
+        images = ClassifyImagesHandler.get_images(conn, self.get_face_cookies(), True)
 
-        images = images[page_size * (page - 1):page_size * page]
+        images = images[page_size * (page - 1) : page_size * page]
 
         self.tmpl["images"] = images
 
@@ -172,7 +172,7 @@ class ClassifyHandler(BaseHandler):
 
     @permission("medium")
     def post(self):
-        if 'paths' in self.request.arguments:
+        if "paths" in self.request.arguments:
             img_paths = self.request.arguments["paths"]
             names = self.request.arguments["names"]
 
@@ -195,7 +195,8 @@ class ClassifyHandler(BaseHandler):
                     # move image to classification directory
                     file_name = os.path.basename(img_path)
                     os.rename(
-                        img_path, config.CLASSIFIED_PATH + str(member_id) + "/" + file_name
+                        img_path,
+                        config.CLASSIFIED_PATH + str(member_id) + "/" + file_name,
                     )
                     classify_cnt += 1
             self.flash_success("Success! Classified {} images.".format(classify_cnt))
@@ -296,7 +297,9 @@ class MemberHandler(BaseHandler):
             borderWidth: 1,
             borderColor: '#333',
             fill: false
-        }}""".format(",".join(str(s) for s in recognitions))
+        }}""".format(
+            ",".join(str(s) for s in recognitions)
+        )
 
         threshold = config.settings_yaml["Recognition"]["Id Threshold"]["val"]
         if float(threshold) > 0.5:
@@ -306,10 +309,16 @@ class MemberHandler(BaseHandler):
                 borderWidth: 1,
                 borderColor: '#bc2122',
                 fill: true
-            }}""".format(",".join(threshold for _ in range(len(recognitions))))
+            }}""".format(
+                ",".join(threshold for _ in range(len(recognitions)))
+            )
 
         self.tmpl["chartjs"] = self.display_chart(
-            "scores", self.tmpl["num_recognitions"], set, "Recognition Scores", point_radius=2
+            "scores",
+            self.tmpl["num_recognitions"],
+            set,
+            "Recognition Scores",
+            point_radius=2,
         )
 
         self.render("member.html", **self.tmpl)
@@ -410,7 +419,7 @@ class MemberTrainHandler(BaseHandler):
             img_path = img_path.decode()
             logging.info(img_path)
             if img_path not in face_coordinates and not functions.Image.Comment.read(
-                    img_path
+                img_path
             ):
                 self.tmpl["error_message"] = "Not added coordinates for every image"
                 return self._screen(conn, member_id)
@@ -455,14 +464,16 @@ class MemberTrainHandler(BaseHandler):
         )
         self.tmpl["min_training_images"] = config.MIN_TRAINING_IMAGES_PER_MEMBER
 
-        self.tmpl["camera_running"] = bool(int(config.settings_yaml["Camera"]["Run"]["val"]))
+        self.tmpl["camera_running"] = bool(
+            int(config.settings_yaml["Camera"]["Run"]["val"])
+        )
         self.tmpl["mask"] = bool(int(config.settings_yaml["Camera"]["Mask"]["val"]))
         self.tmpl["live_stream"] = bool(
             int(config.settings_yaml["Camera"]["Live Stream"]["val"])
         )
-        self.tmpl["recurring_time"] = config.settings_yaml["Training"]["Recurring Time"][
-            "val"
-        ]
+        self.tmpl["recurring_time"] = config.settings_yaml["Training"][
+            "Recurring Time"
+        ]["val"]
         self.render("train.html", **self.tmpl)
 
 
@@ -496,7 +507,9 @@ class LiveStreamHandler(BaseHandler):
     @permission("low")
     def get(self):
         self.tmpl["title"] = "Stream"
-        self.tmpl["camera_running"] = bool(int(config.settings_yaml["Camera"]["Run"]["val"]))
+        self.tmpl["camera_running"] = bool(
+            int(config.settings_yaml["Camera"]["Run"]["val"])
+        )
         self.tmpl["live_stream"] = bool(
             int(config.settings_yaml["Camera"]["Live Stream"]["val"])
         )
@@ -522,7 +535,7 @@ class StreamCaptureDeleteHandler(BaseHandler):
     def post(self, member_id):
         img_path = self.get_argument("image_path")
         if functions.path_in_dir(
-                img_path, config.TMP_CLASSIFIED_PATH
+            img_path, config.TMP_CLASSIFIED_PATH
         ) or functions.path_in_dir(img_path, config.CLASSIFIED_PATH):
             # valid img file path to delete
             try:
@@ -587,17 +600,19 @@ class SettingsHandler(BaseHandler):
         total_storage = functions.to_GB(st.f_bsize * st.f_blocks)
         storage_left = functions.to_GB(st.f_bavail * st.f_frsize)
         config.stats[config.STAT_STORAGE] = (
-                str(storage_left) + "/" + str(total_storage) + " GB"
+            str(storage_left) + "/" + str(total_storage) + " GB"
         )
 
         # number of classified
         config.stats[config.STAT_NUM_CLASSIFIED] = functions.num_files_in_dir(
-            config.ROOT + config.settings_yaml["File Location"]["Classified Images"]["val"]
+            config.ROOT
+            + config.settings_yaml["File Location"]["Classified Images"]["val"]
         )
 
         # number of unclassified
         config.stats[config.STAT_NUM_UNCLASSIFIED] = functions.num_files_in_dir(
-            config.ROOT + config.settings_yaml["File Location"]["Unclassified Images"]["val"]
+            config.ROOT
+            + config.settings_yaml["File Location"]["Unclassified Images"]["val"]
         )
 
         config.stats[config.STAT_CPU_TEMP] = functions.get_cpu_temp()
@@ -635,10 +650,10 @@ class LogsHandler(BaseHandler):
         self.tmpl["page"] = int(page)
         self.tmpl["page_size"] = config.NUM_LOGS_PER_PAGE
         self.tmpl["logs"] = (
-                functions.Logs.get_logs(
-                    conn, self.tmpl["page"], self.tmpl["page_size"], level
-                )
-                or {}
+            functions.Logs.get_logs(
+                conn, self.tmpl["page"], self.tmpl["page_size"], level
+            )
+            or {}
         )
         self.tmpl["logging_levels"] = logging._levelToName
         self.tmpl["current_level"] = int(level)

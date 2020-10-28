@@ -22,9 +22,7 @@ class SocketClient(object):
         config.SOCKET_STATUS = config.SOCKET_CLOSED
         try:
             self.ws = yield websocket_connect(
-                url=self.url,
-                on_message_callback=self.on_message,
-                ping_interval=30
+                url=self.url, on_message_callback=self.on_message, ping_interval=30
             )
         except Exception as e:
             if not self.is_reconnect:
@@ -46,9 +44,7 @@ class SocketClient(object):
             try:
                 message = json.loads(str(msg))
             except:
-                logging.warning(
-                    'Received invalid message from server "%s"', msg
-                )
+                logging.warning('Received invalid message from server "%s"', msg)
                 self.close()
                 return
 
@@ -107,10 +103,7 @@ class SocketClient(object):
                     move_img_path = None
                     if name == "INVALID":
                         if TRAINING_MODE:
-                            move_img_path = (
-                                config.UNCLASSIFIED_PATH
-                                + file_name
-                            )
+                            move_img_path = config.UNCLASSIFIED_PATH + file_name
 
                         logging.info("No face was detected in image upload")
                         # TODO need to decide what to do with an invalid image
@@ -124,15 +117,15 @@ class SocketClient(object):
                         t = time.time()
 
                         # time since file was created
-                        recognition_speed = str(
-                            t - os.path.getmtime(image_path)
-                        )
+                        recognition_speed = str(t - os.path.getmtime(image_path))
 
                         if name:
                             if functions.Member.allowed_recognition(
-                                    conn, member_id, RE_RECOGNITION_RATE
+                                conn, member_id, RE_RECOGNITION_RATE
                             ):
-                                execution_start = time.time() # speed of recognition script
+                                execution_start = (
+                                    time.time()
+                                )  # speed of recognition script
 
                                 functions.Shell.run_recognition_script(
                                     name, recognition_score, SCRIPT_PATH
@@ -151,29 +144,27 @@ class SocketClient(object):
                                     recognition_score,
                                     recognition_speed,
                                 )
-                                config.stats[config.STAT_RECOGNITION_SPEED] = recognition_speed
+                                config.stats[
+                                    config.STAT_RECOGNITION_SPEED
+                                ] = recognition_speed
 
                                 if TRAINING_MODE:
                                     # move all classified images to classified page
                                     move_img_path = (
-                                            config.UNCLASSIFIED_PATH
-                                            + str(member_id)
-                                            + "_"
-                                            + file_name
+                                        config.UNCLASSIFIED_PATH
+                                        + str(member_id)
+                                        + "_"
+                                        + file_name
                                     )
 
                             elif member_id == functions.Member.UNKNOWN_ID:
                                 logging.info("Unknown individual")
-                                move_img_path = (
-                                        config.UNCLASSIFIED_PATH + file_name
-                                )
+                                move_img_path = config.UNCLASSIFIED_PATH + file_name
 
                     if move_img_path:
                         if coords:
                             # write coords of face into image file
-                            functions.Image.Comment.write(
-                                image_path, coords
-                            )
+                            functions.Image.Comment.write(image_path, coords)
 
                         # move uploaded image for manual classification
                         os.rename(image_path, move_img_path)
@@ -191,12 +182,8 @@ class SocketClient(object):
                     member_id = int(member[0])
                     num_trained = int(member[1])
 
-                    functions.Member.Activity.trained(
-                        conn, member_id, num_trained
-                    )
-                    functions.Member.toggle_training(
-                        conn, member_id, is_training=False
-                    )
+                    functions.Member.Activity.trained(conn, member_id, num_trained)
+                    functions.Member.toggle_training(conn, member_id, is_training=False)
 
             elif message["type"] == "delete_trained_image":
                 file = config.CLASSIFIED_PATH + message["img_path"]

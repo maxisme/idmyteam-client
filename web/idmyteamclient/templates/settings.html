@@ -4,6 +4,7 @@
 {% block content %}
     <form method="post" action="/settings">
         <ul class="collapsible content" data-collapsible="expandable">
+            <!-- Stats -->
             <li id="Stats">
                 <div class="collapsible-header">
                     <i class="material-icons">show_chart</i> Statistics
@@ -28,6 +29,7 @@
                 </div>
             </li>
 
+            <!-- Settings -->
             <li id="Settings">
                 <div class="collapsible-header">
                     <i class="material-icons">tune</i> Settings
@@ -62,16 +64,16 @@
                                                                     <!-- HANDLE ALL THE DIFFERENT FORM INPUTS -->
                                                                     {% if type == 'switch' %}
                                                                         <span class="switch">
-                                                                        <label>
-                                                                            <input type="checkbox"
-                                                                                   name="{{ name }}"
-                                                                                   {% if val %}checked{% endif %}
-                                                                                   {% if disabled %}disabled{% endif %}>
-                                                                            <span class="lever"></span>
-                                                                            <input type='hidden' value='0'
-                                                                                   name="{{ name }}">
-                                                                        </label>
-                                                                    </span>
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                               name="{{ name }}"
+                                                                               {% if val %}checked{% endif %}
+                                                                               {% if disabled %}disabled{% endif %}>
+                                                                        <span class="lever"></span>
+                                                                        <input type='hidden' value='0'
+                                                                               name="{{ name }}">
+                                                                    </label>
+                                                                </span>
 
                                                                     {% elif type == 'select' %}
                                                                         <select name="{{ name }}"

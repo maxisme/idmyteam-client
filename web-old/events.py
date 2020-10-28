@@ -62,7 +62,7 @@ class ClassifyHandler(view.BaseHandler):
             if functions.path_in_dir(
                 img_path, config.UNCLASSIFIED_PATH
             ) and os.path.isfile(img_path):
-                os.remove(img_path) 
+                os.remove(img_path)
 
 
 class ClassifyDeleteHandler(view.BaseHandler):
@@ -103,7 +103,9 @@ class RetractHandler(view.BaseHandler):
             functions.incorrect_classification(
                 conn=self.application.db.connect(),
                 ws=config.ws,
-                capture_time=int(config.settings_yaml["Retract Recognition"]["Time"]["val"]),
+                capture_time=int(
+                    config.settings_yaml["Retract Recognition"]["Time"]["val"]
+                ),
                 tmp_dir=config.TMP_DETECTED_DIR,
                 unclassified_dir=config.UNCLASSIFIED_PATH,
             )

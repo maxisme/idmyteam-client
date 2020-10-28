@@ -19,7 +19,9 @@ def run():
             conn = functions.DB.conn(
                 config.DB["username"], config.DB["password"], config.DB["db"]
             )
-            capture_time = int(config.settings_yaml["Retract Recognition"]["Time"]["val"])
+            capture_time = int(
+                config.settings_yaml["Retract Recognition"]["Time"]["val"]
+            )
             functions.incorrect_classification(
                 conn=conn,
                 ws=config.ws,

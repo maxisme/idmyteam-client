@@ -1,6 +1,5 @@
 import os
 import logging
-import time
 
 from tornado.ioloop import IOLoop, PeriodicCallback
 import tornado.wsgi
@@ -72,6 +71,7 @@ def periodic_checks():
         logging.critical("Problem with camera please start with web server")
         IOLoop.instance().stop()
         main()
+
 
 def main():
     server = tornado.httpserver.HTTPServer(app)

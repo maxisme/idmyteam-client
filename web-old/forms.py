@@ -1,4 +1,4 @@
-from wtforms import Form, PasswordField, StringField, validators, FileField, SelectField
+from wtforms import Form, PasswordField, SelectField, StringField, validators
 
 from settings import config
 

@@ -80,7 +80,7 @@ class DB:
         sql = open(file, "r").read()
         try:
             x.execute(sql)
-        except Exception as e:
+        except Exception:
             print(sql)
         finally:
             x.close()
@@ -317,7 +317,7 @@ class Member:
         try:
             x.execute("SELECT * FROM Members WHERE id = %s", (id,))
             return x.fetchall()[0]
-        except Exception as e:
+        except Exception:
             return None
 
     @classmethod
@@ -420,7 +420,7 @@ class Member:
                 (member_id,),
             )
             return x.fetchall()[0][0]
-        except Exception as e:
+        except Exception:
             return 0
 
     @classmethod

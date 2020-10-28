@@ -132,17 +132,28 @@ def run():
             UPLOAD_CROP = bool(
                 int(config.settings_yaml["Recognition"]["Upload Cropped"]["val"])
             )
-            IS_SECURE = bool(config.settings_yaml["Recognition"]["Secure Upload"]["val"])
+            IS_SECURE = bool(
+                config.settings_yaml["Recognition"]["Secure Upload"]["val"]
+            )
             MOVEMENT_THRESH = float(
                 config.settings_yaml["Recognition"]["Movement Percentage"]["val"]
             )
-            STORE_FEATURES = bool(config.settings_yaml["Training"]["Store Features"]["val"])
+            STORE_FEATURES = bool(
+                config.settings_yaml["Training"]["Store Features"]["val"]
+            )
 
             img = frame.array
             has_uploaded = False
             if not ONLY_IMAGE and config.SOCKET_STATUS == config.SOCKET_CONNECTED:
                 t = time.time()
-                x, y, w, h, mask, diff = functions.Image.BackgroundExtractor.get_movement(
+                (
+                    x,
+                    y,
+                    w,
+                    h,
+                    mask,
+                    diff,
+                ) = functions.Image.BackgroundExtractor.get_movement(
                     img,
                     bg_model,
                     MOVEMENT_THRESH,
@@ -196,7 +207,7 @@ def run():
 
                     # log how much movement and status
                     img_text = "...."
-                    img_text = img_text[:(i % 4)]
+                    img_text = img_text[: (i % 4)]
                     if x:
                         if has_uploaded:
                             img_text = "Uploading Image"
@@ -209,7 +220,9 @@ def run():
 
                 if has_uploaded:
                     now = datetime.datetime.now()
-                    time_str = str(now.hour)+":"+str(now.minute)+":"+str(now.second)
+                    time_str = (
+                        str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
+                    )
                     if time_str not in config.CAPTURE_LOG:
                         config.CAPTURE_LOG[time_str] = 1
                     else:
