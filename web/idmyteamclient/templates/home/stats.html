@@ -1,0 +1,66 @@
+{% extends '../helpers/base.html' %}
+{% block content %}
+    <table class="responsive-table centered">
+        <thead>
+            <tr>
+                <th><span style="font-size: 2em" class="material-icons tooltipped" data-position="top" data-tooltip="Live Stream">photo_camera</span></th>
+                <th><span style="font-size: 2em" class="material-icons tooltipped" data-position="top" data-tooltip="idmy.team Connection">settings_ethernet</span></th>
+                <th><span style="font-size: 2em" class="material-icons tooltipped" data-position="top" data-tooltip="Recognitions are running">face</span></th>
+                <th><span style="font-size: 2em" class="material-icons tooltipped" data-position="top" data-tooltip="Average time it takes from the snap of the camera to the returned recognition.">av_timer</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    {% if camera_running %}
+                        Running
+                    {% else %}
+                        <a class='error' href='/settings'>Off</a>
+                    {% end %}
+                </td>
+                <td>
+                    {% if socket_status == "Connected" %}
+                        Connected!
+                    {% else %}
+                        <span class='error'>
+                            {% if socket_status == "No Team Model" %}
+                                No Recognition Model. You must train at least two <a href='members'>members</a> for the system to start recognising!
+                            {% else %}
+                                Unable to connect to the <a href='mailto:help@idmy.team'>idmy.team</a> server - see <a href='logs'>Logs</a>!
+                            {% end %}
+                        </span>
+                    {% end %}
+                </td>
+                <td>
+                    {% if config['Camera']['Silent Mode']['val'] %}
+                        <a class='error' href='/settings'>Silent mode is on</a><br>Turn off for recognitions.
+                    {% elif recognising %}
+                        Recognising
+                    {% else %}
+                        <span class='error'>Not recognising!</span>
+                    {% end %}
+                </td>
+                <td>
+                    {% if avg_speed %}
+                        {{ avg_speed }}
+                    {% else %}
+                        No recognitions yet!
+                    {% end %}
+
+{#                        <?php#}
+{#                        // average recognition speed#}
+{#                        $query = mysqli_query($con, "SELECT AVG(speed) AS avg_speed#}
+{#        FROM Activity;");#}
+{#                        $a_speed = round(mysqli_fetch_array($query)['avg_speed'], 3);#}
+{#                        if ($a_speed > 0) {#}
+{#                            echo $a_speed;#}
+{#                        }else{#}
+{#                            echo "No recognitions yet!";#}
+{#                        }#}
+{#                        ?>#}
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% end %}

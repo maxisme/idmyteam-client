@@ -1,0 +1,108 @@
+{% set face_coords_js = "" %}
+{% set img_id = '0' %}
+{% set num_classified = 0 %}
+
+{% for img_path in images %}
+    {% set img = images[img_path] %}
+    {% set img_id = str(int(img_id) + 1) %}
+    {% if images[img_path]['coordinates'] and images[img_path]['coordinates'] != '{}' and images[img_path]['coordinates'] != 'null' %}
+        {% set face_coords_js = face_coords_js + "$('#portrait-"+img_id+"').selectAreas('add', toActualArea($('#portrait-"+img_id+"'), JSON.parse('"+images[img_path]['coordinates']+"'), true));\n$('#portrait-"+img_id+"').closest('span').attr('has_coords', '1');\n\n" %}
+    {% end %}
+
+    <span image-path="{{ img_path }}" align="left" style="padding-bottom: 20px" class="col ima {{ col_classes }}">
+        <div class="icon material-icons delete">remove_circle_outline</div>
+
+        {% if img['type'] == 'classified' %}
+            <!-- show icon showing that the image has already been classified-->
+            {% if not classifying %}<div class="icon material-icons face">face</div>{% end %}
+            {% set num_classified = num_classified + 1 %}
+        {% end %}
+
+        {% if classifying %}
+            <!-- Show selection icon so that you can classify the name of multiple image at once-->
+            <div class="icon circle material-icons">panorama_fish_eye</div>
+        {% end %}
+
+        <img style="height: 500px; width: 100%" id="portrait-{{ img_id }}" class="portrait" src='{{ img['img'] }}'>
+
+        {% if classifying %}
+            <input name="names"
+                   class="autocomplete{% if images[img_path]['member_name'] %} valid{% end %}"
+                {% if images[img_path]['member_name'] %}
+                   value="{{ images[img_path]['member_name'] }}"
+                {% end %}
+                   placeholder="Member Name..."
+                   type="search">
+        {% end %}
+    </span>
+    <input type="hidden" name="paths" value="{{ img_path }}">
+{% end %}
+
+<!-- JAVASCRIPT -->
+<script src="{{ static_url('js/libraries/jquery.selectareas.min.js') }}"></script>
+<script>
+    /* set areas after page load */
+    $(document).ready(function() {
+        window.setting_init_areas = true;
+        {% raw face_coords_js %}
+        window.setting_init_areas = false;
+    });
+
+    /* image dimensions by js library are relative to the screen size rather than the actual image size
+    * This function converts them*/
+    function toActualArea(el, area, inverse=false){
+        var arr = new Object();
+        if(!area) return arr; // return empty object for empty area
+
+        var nw = el[0].naturalWidth / el.width();
+        var nh = el[0].naturalHeight / el.height();
+        if(inverse){
+            nw = el.width() / el[0].naturalWidth;
+            nh = el.height() / el[0].naturalHeight;
+        }
+
+        arr.x = area.x * nw;
+        arr.y = area.y * nh;
+        arr.width = area.width * nw;
+        arr.height = area.height * nh;
+
+        if(area.method) arr.method = area.method;
+        return arr;
+    }
+
+    // HANDLE SELECTION
+    $(".portrait").selectAreas({
+        minSize: [10, 10],
+        maxAreas: 1,
+        onChanged: function (e, id, areas) {
+            var p_span = $(this).closest(".ima");
+            var a = toActualArea($(this), areas[0]);
+
+            var outline = $(this).parent().find('.select-areas-outline');
+            if(!window.setting_init_areas){ // don't upload during initial set of areas on images
+                outline.css("border", "1px #bc2122 solid"); // during Ajax Upload
+
+                // store changed coord in $_session for use in to-train.php
+                $.post("/classify/set-face-coordinates", {
+                    img_path: p_span.attr("image-path"),
+                    coords: JSON.stringify(a)
+                }).done(function () {
+                    // mark image as having coords for submit button
+                    if (areas.length >= 1) {
+                        outline.css("border", "4px #bc2122 solid"); // red border
+                        p_span.attr("has_coords", "1");
+                    } else {
+                        p_span.attr("has_coords", "0");
+                    }
+
+                    // SEND ALERT TO CLASSIFY FUNCTION TO VERIFY INPUT IS STILL VALID
+                    {% if classifying %}
+                        window.inputValidation(p_span.find("input"));
+                    {% end %}
+                });
+            }else if(a.method == "model"){
+                outline.css("border", "4px #2BA9B1 solid"); // blue border
+            }
+        }
+    });
+</script>

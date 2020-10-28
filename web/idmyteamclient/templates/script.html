@@ -1,0 +1,51 @@
+{% extends 'helpers/base.html' %}
+
+{% block content %}
+    <p class="info">
+        Custom <a href="http://www.tldp.org/LDP/Bash-Beginners-Guide/html/" target="_blank">bash</a> script to be executed on member recognition.
+        <hr>
+    </p>
+
+    <p>
+        <b>$1</b> - Holds the name of the recognised person. Returns <i>Unknown</i> if detected a person but unable to recognise them.
+        <br>
+        <b>$2</b> - Holds a value between 0 and 1 representing the confidence of the member.
+        <br>
+    </p>
+
+    <form method="post" action="/script">
+        <textarea id="bash-script" name="bash-script">{{ file_content }}</textarea>
+        Last Execution Speed (seconds): {{ script_speed }}
+        <p>
+            <div class="center-align">
+                <button class="btn-floating btn-large disabled" type="submit">
+                    <i class="material-icons">code</i>
+                </button>
+            </div>
+        </p>
+    </form>
+{% end %}
+
+{% block scripts %}
+    <script src="{{ static_url('js/libraries/codemirror.js') }}"></script>
+    <script src="{{ static_url('js/libraries/codemirror-shell.js') }}"></script>
+{% end %}
+
+{% block js %}
+    <script>
+        $(document).ready(function(){
+            var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("bash-script"),{
+                lineNumbers: true,
+                indentUnit: 4
+            });
+            myCodeMirror.on("keydown", function() {
+                console.log("change");
+                $("button").removeClass("disabled");
+                $("button").addClass("pulse");
+                setTimeout(function() {
+                    $("button").removeClass("pulse");
+                }, 1000);
+            });
+        });
+    </script>
+{% end %}

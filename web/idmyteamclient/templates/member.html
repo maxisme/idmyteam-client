@@ -1,0 +1,27 @@
+{% extends 'helpers/base.html' %}
+
+{% block content %}
+    <p>
+        <span class="material-icons">loop</span> Trained with <b>{{ num_trained }}</b> different portraits!
+    </p>
+    <p>
+        <span class="material-icons">face</span> Recognised <b>{{ num_recognitions }}</b> times!
+    </p>
+    <p>
+        {% if num_recognitions > 0 %}
+            <canvas id="scores" width="400" height="125"></canvas>
+        {% else %}
+            No recognitions of {{  member['name'] }}.
+        {% end %}
+    </p>
+{% end %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ static_url('js/libraries/Chart.min.js') }}"></script>
+{% end %}
+
+{% block js %}
+    {% if num_recognitions > 0 %}
+        {% raw chartjs %}
+    {% end %}
+{% end %}

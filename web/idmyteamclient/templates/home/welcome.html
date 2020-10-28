@@ -1,0 +1,55 @@
+{% extends '../helpers/base.html' %}
+{% block content %}
+    <div id="welcome" align="center">
+        <h1>
+            ID My Team
+        </h1>
+        <p>Welcome to the web panel...</p>
+    </div>
+
+    <div class="row">
+        <div class="col m6 s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        <span class="material-icons">settings_ethernet</span> Socket
+                    </span>
+                    {% if not socket_connected %}
+                        <b class="error">
+                            {% if socket_status == 2 %}
+                                No trained <a href="/members">members</a>...
+                            {% else %}
+                                Not connected...
+                            {% end %}
+                        </b>
+                    {% else %}
+                        <span class="material-icons success">check</span>
+                    {% end %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col m6 s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        <span class="material-icons">camera_alt</span> Camera
+                    </span>
+                    {% if camera["Run"]["val"] == 0 %}
+                        Turned off in <a href="/settings">settings</a>.
+                    {% elif camera["Silent Mode"]["val"] == 1 %}
+                        Just showing live stream and not recognising. Silent Mode turned on in <a href="/settings">settings</a>.
+                    {% else %}
+                        <span class="material-icons success">check</span>
+                    {% end %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+			fadeInOut($("#login"));
+        });
+    </script>
+{% end %}

@@ -1,0 +1,107 @@
+{% extends 'helpers/base.html' %}
+
+{% block content %}
+    <h5>How to train</h5>
+    <ol>
+        <li class="info">
+            Take as many photos of <strong>{{ team_member['name'] }}</strong> as possible. The more images, the better the system will perform (you are required to take at least {{ min_training_images }} images).
+        </li>
+        <li class="info">
+            After taking the photos <strong>select the facial areas</strong>.
+        </li>
+        <li class="info">
+            Submit.
+        </li>
+    </ol>
+
+    {% if team_member['num_trained'] >= min_training_images %}
+        <p class="info">
+            Due to the member already being trained. On submitting the images they will be moved to <strong>{{ team_member['name'] }}</strong> training folder for training at {{ recurring_time }} hours.
+        </p>
+    {% else %}
+        <p class="info">
+            As {{ team_member['name'] }} has not been trained. On submitting the images they will be immediately uploaded for training.
+        </p>
+    {% end %}
+    <hr>
+
+    {% if mask or not silent_mode %}
+        {% if mask %}
+            <p class="error">You need to have <strong>Mask</strong> turned <b>off</b> in <a target="_blank" href="/settings">Settings> camera</a> to train members.</p>
+        {% end %}
+        {% if not silent_mode %}
+            <p class="error">You need to have <strong>Silent Mode</strong> turned <b>on</b> in <a target="_blank" href="/settings">Settings > Camera</a> to train members.</p>
+        {% end %}
+    {% else %}
+        {% include 'includers/live-stream.html' %}
+
+
+        <form action="/member/{{ team_member['id'] }}/train" class="train-form" method="post">
+            {% if running %}
+                <div align="center"><div id="capture-btn" class="btn-floating btn-large"><i class="material-icons">photo_camera</i></div></div>
+            {% end %}
+
+            {% set num_images = len(images) %}
+
+            {{ num_images }} / {{ min_training_images }} images to be sent for training.
+            <div class="progress">
+                <div class="determinate" style="width: {% raw float(num_images) / float(min_training_images) * 100 %}%"></div>
+            </div>
+
+            <h4 id="images">Training Images of {{ team_member['name'] }}</h4>
+            <p class="valign-wrapper">
+                <span class="material-icons">face</span> the image has been classified as {{ member['name'] }} and is pending training.
+            </p>
+
+            <div class="row">
+                {% set col_classes = "s12 l6" %}
+                {% set classifying = False %}
+                {% include 'includers/classified-images.html' %}
+            </div>
+
+            <div align="center">
+                <button type="submit" id="train" class="btn-floating btn-large {% if (num_images - num_classified) < min_training_images %}disabled{% end %}">
+                    <i class="material-icons">people_outline</i>
+                </button>
+            </div>
+        </form>
+    {% end %}
+{% end %}
+
+{% block scripts %}
+    <script src="{{ static_url('js/libraries/jquery.redirect.js') }}"></script>
+{% end %}
+
+{% block js %}
+    <script>
+        $(document).ready(function(){
+            $("#capture-btn").click(function(){
+                $(this).addClass('disabled');
+                $(this).val("more_horiz");
+                $.redirect("capture");
+            });
+
+            $("#train").click(function(){
+                if(!allImagesHaveAreas()){
+                    alert("Not all images have detection coordinates set.");
+                    return false;
+                }
+            });
+
+            $(".delete").click(function(){
+                var path = $(this).parent().attr("image-path");
+                $.redirect("capture/delete", {image_path: path});
+            });
+
+            /* used along with a submit button to make sure all images have manually assigned areas */
+            function allImagesHaveAreas() {
+                var has_areas = true;
+                $(".ima").each(function () {
+                    var has_coords = $(this).attr("has_coords");
+                    if(!has_coords || has_coords != 1) has_areas = false;
+                });
+                return has_areas;
+            }
+        });
+    </script>
+{% end %}

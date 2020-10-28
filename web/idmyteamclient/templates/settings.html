@@ -1,0 +1,205 @@
+{% extends 'helpers/base.html' %}
+
+{% block content %}
+   <form method="post" action="/settings">
+        <ul class="collapsible content" data-collapsible="expandable">
+            <li id="Stats">
+                <div class="collapsible-header">
+                    <i class="material-icons">show_chart</i> Statistics
+                </div>
+                <div class="collapsible-body">
+                    <div id="time_since"></div>
+                    {% if stats %}
+                        {% for stat in stats %}
+                            <div class="row valign-wrapper">
+                                <div class="col valign s12 m6 l8">
+                                    <h5>{{ stat }}</h5>
+                                    {{ stats_info[stat] }}
+                                </div>
+                                <div align="center" class="col s12 m6 l4">
+
+                                    <h5>{{ stats[stat] }}</h5>
+                                </div>
+                            </div>
+                        {% end %}
+                    {% else %}
+                        Acquiring stats... Please come back later.
+                    {% end %}
+                </div>
+            </li>
+
+            <li id="Settings">
+                <div class="collapsible-header">
+                    <i class="material-icons">tune</i> Settings
+                </div>
+                <div class="collapsible-body">
+                {% for setting_type in settings %}
+                    {% if setting_type == 'Global' %} {% continue %} {% end %}
+                    {% set group = settings[setting_type] %}
+                    <ul class="collapsible" data-collapsible="expandable">
+                        <li id="{{ setting_type }}">
+                            <div class="collapsible-header">
+                                <i class="material-icons">{{ group['icon'] }}</i> {{ setting_type }}
+                            </div>
+                            <div class="collapsible-body">
+                                {% for setting in group %}
+                                    {% if setting == 'info' or 'info' not in group[setting] %}
+                                        {% continue %}
+                                    {% end %}
+
+                                    {% set name = (setting_type+"_"+setting).replace(" ", "-").lower() %}
+                                    {% set info = group[setting]['info'] %}
+                                    {% set type = group[setting]['type'] %}
+                                    {% set val = group[setting]['val'] %}
+
+                                    {% set disabled = False %}
+                                    {% if 'disabled' in group[setting] and group[setting]['disabled'] %}
+                                        {% set disabled = True %}
+                                    {% end %}
+                                    <div class="row valign-wrapper">
+                                        <div class="col s12 m6 l8">
+                                            <!-- info -->
+                                            <h5 id='{{ setting }}'>{{ setting }}</h5>
+                                            {% raw info %}
+                                        </div>
+                                        <div align="center" class="in valign valign-wrapper col s12 m6 l4">
+                                            <!-- HANDLE ALL THE DIFFERENT FORM INPUTS -->
+                                            {% if type == 'switch' %}
+                                                <span class="switch">
+                                                    <label>
+                                                        <input type="checkbox" name="{{ name }}" {% if val%}checked{% end %} {% if disabled %}disabled{% end %}>
+                                                        <span class="lever"></span>
+                                                        <input type='hidden' value='0' name="{{ name }}">
+                                                    </label>
+                                                </span>
+
+                                            {% elif type == 'select' %}
+                                                <select name="{{ name }}" {% if disabled %}disabled{% end %}>
+                                                    {% for option in group[setting]['options'] %}
+                                                        <option {% if option == val %}selected{% end %}
+                                                                value="{{ option }}">
+                                                            {{ option }}
+                                                        </option>
+                                                    {% end %}
+                                                </select>
+{#                                                <select name="{{ name }}" {% if disabled %}disabled{% end %}>#}
+                                                    {# using replace to select the set value #}
+{#                                                    {% raw group[setting]['options'].replace('value="'+str(val)+'"','value="'+str(val)+'" selected') %}#}
+{#                                                </select>#}
+
+                                            {% elif type == 'range' %}
+                                                <div class="range-field"><input type="range" name="{{ name }}" value="{{ val }}" min="{{ group[setting]['min'] }}" max="{{ group[setting]['max'] }}" {% if 'step' in group[setting] %}step="{{ group[setting]['step'] }}"{% end %} {% if disabled %}disabled{% end %}></div>
+
+                                            {% elif type == 'text' %}
+                                                {% if 'icon' in group[setting] %}
+                                                    <label style="padding-right: 10px" class="valign material-icons">{{ group[setting]['icon'] }}</label>
+                                                {% end %}
+                                                <input style="margin: 0;" type="text" name="{{ name }}" value="{{ val }}" {% if disabled %}disabled{% end %}>
+
+                                            {% elif type == 'time' %}
+                                                <label style="padding-right: 10px" class="material-icons">timer</label>
+                                                <input style="margin: 0;" type="text" name="{{ name }}" class="timepicker" value="{{ val }}" {% if disabled %}disabled{% end %}>
+                                            {% end %}
+                                        </div>
+                                    </div>
+                                {% end %}
+                            </div>
+                        </li>
+                    </ul>
+                {% end %}
+                </div>
+            </li>
+        </ul>
+        <button id="sub" type="submit" class="btn-floating btn-large disabled"><i class="material-icons">done</i></button>
+    </form>
+{% end %}
+
+{% block js %}
+    <script>
+        // https://stackoverflow.com/a/3177838/2768038
+        function timeSince(date) {
+            var seconds = Math.floor((new Date() - date) / 1000);
+
+            var interval = Math.floor(seconds / 31536000);
+
+            if (interval> 1) {
+                return interval + " years";
+            }
+            interval = Math.floor(seconds / 2592000);
+            if (interval> 1) {
+                return interval + " months";
+            }
+            interval = Math.floor(seconds / 86400);
+            if (interval> 1) {
+                return interval + " days";
+            }
+            interval = Math.floor(seconds / 3600);
+            if (interval> 1) {
+                return interval + " hours";
+            }
+            interval = Math.floor(seconds / 60);
+            if (interval> 1) {
+                return interval + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
+
+        var should_prevent = false;
+        function onChange(){
+            should_prevent = true;
+            $("#sub").removeClass("disabled");
+            $("#sub").addClass("pulse");
+            setTimeout(function() {
+                $("#sub").removeClass("pulse");
+            }, 1000);
+        }
+
+        $(document).ready(function () {
+            // initiate open settings sections
+            if (sessionStorage.getItem("closes")) {
+                var arr = JSON.parse(sessionStorage.getItem("closes"));
+                for (var key in arr) {
+                    if (arr[key] === 1) {
+                        $("#" + key).find(".collapsible-header").first().addClass("active");
+                    }
+                }
+            }
+
+            function collapse(id, open){
+                var closes = JSON.parse(sessionStorage.getItem("closes"));
+                if (!closes){
+                    closes = {};
+                }
+                closes[id] = open;
+                sessionStorage.setItem("closes", JSON.stringify(closes));
+            }
+
+            $('.collapsible').collapsible({
+                onOpen: function(el){
+                    collapse($(el).attr("id"), 1);
+                },
+                onClose: function(el){
+                    collapse($(el).attr("id"), 0);
+                }
+            });
+
+
+            $('.timepicker').pickatime({
+                fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+                twelvehour: false, // Use AM/PM or 24-hour format
+                donetext: 'OK', // text for done-button
+                cleartext: 'Clear', // text for clear-button
+                canceltext: 'Cancel', // Text for cancel-button
+                autoclose: true, // automatic close timepicker
+                ampmclickable: true, // make AM PM clickable
+                afterDone: function () {
+                    onChange();
+                }
+            });
+
+            $("form").on('change keyup', function() {
+                onChange();
+            });
+        });
+    </script>
+{% end %}

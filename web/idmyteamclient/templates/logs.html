@@ -1,0 +1,71 @@
+{% extends 'helpers/base.html' %}
+{% block content %}
+    <div align="center"><strong class="error">"With great power comes great responsibility!"</strong></div>
+    <div align="center">Please do not use these logs to keep 'tabs' these are purely for debugging the system. Be reminded that we have the right to terminate the account on behalf of employees.</div>
+    <br>
+    <div align="center">
+        <p>
+        {% for l in logging_levels %}
+            <input class="with-gap levels" level="{{ l }}" name="level_group" type="radio" id="level{{ l }}" {% if l == current_level %}checked{% end %} />
+            <label for="level{{ l }}">{{ logging_levels[l] }}</label>
+        {% end %}
+        </p>
+    </div>
+    {% if logs %}
+        <table class="responsive-table">
+            <thead>
+            <tr>
+                <th>Message</th>
+                <th>Time</th>
+                <th>Level</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td class="log-error-{{ log['level'] }}">
+                            {{ log['message'] }}
+                        </td>
+                        <td>
+                            {% raw log['time'].strftime("%c") %}
+                        </td>
+                        <td>
+                            {{ logging_levels[log['level']] }}
+                        </td>
+                    </tr>
+                {% end %}
+            </tbody>
+        </table>
+
+       <br>
+        <div class="nav-btns" align="center">
+            {% if page - 1 > 0 %}
+                <a class="btn-large" href='/logs/{{ page - 1 }}'> < </a>
+            {% end %}
+
+            {% if len(logs) == page_size %}
+                <a class="btn-large" href='/logs/{{ page + 1 }}'> > </a>
+            {% end %}
+        </div>
+
+        {% if authed('high') %}<a href="/logs/delete" class="delete material-icons">delete</a>{% end %}
+    {% end %}
+{% end %}
+
+{% block js %}
+    <script>
+        $(document).ready(function(){
+            {% if authed('high') %}
+                $(".delete").click(function() {
+                    if (!confirm("Are you sure you want to permanently delete all logs?")) {
+                        return false;
+                    }
+                });
+            {% end %}
+            $("input[type=radio][name='level_group']").change(function() {
+                window.location.href = '/logs/1/'+$(this).attr('level')
+            })
+        });
+    </script>
+{% end %}

@@ -1,0 +1,181 @@
+{% extends 'helpers/base.html' %}
+{% block content %}
+    <p class="info">
+        Manually classify images that the system was not able to.
+        <hr>
+        <ul>
+            <li>
+                Remove all images that do not show a face or do not show a member of your team.
+            </li>
+            <li>
+                Enter the name of the <a href="/members">member</a> below the image and, if not already select the area of the face.
+            </li>
+        </ul>
+        <div align="center">
+            <a class="modal-trigger question material-icons" style="font-size: 2em;" href="#infotrain">help_outline</a>
+        </div>
+    </p>
+
+    <!-- Modal Train Structure -->
+    <div id="infotrain" class="modal">
+        <div class="modal-content">
+            <h4>Tips</h4>
+            You can use the cmd (⌘) key and click between the <span class="material-icons">panorama_fish_eye</span> icons at the top left corner of the images to select <strong>individually</strong>.<br><br>
+            You can use the shift (⇧) key and click between the <span class="material-icons">panorama_fish_eye</span> icons at the top left corner of the images to select <strong>images between</strong>.
+            <hr>
+            A blue border <div class="box" style="border-color: #2BA9B1">&nbsp;</div> indicates the face has been selected by the ID My Team server.<br>
+            A red border <div class="box" style="border-color: #bc2122">&nbsp;</div> indicates the face has been selected manually by a member of your team.
+        </div>
+    </div>
+
+    <form method="POST" action="/classify" enctype="application/x-www-form-urlencoded">
+        <div id="classifiers" class="row">
+            {% set col_classes = "s12 m6 l4" %}
+            {% set classifying = True %}
+            {% include 'includers/classified-images.html' %}
+        </div>
+
+        <!-- classify button -->
+        <button id="sub" type="submit" class="btn-floating btn-large {% if not classifying %}disabled{% end %}"><i class="material-icons">done</i></button>
+    </form>
+
+
+
+    <div class="nav-btns" align="center">
+        {% if page - 1 > 0 %}
+            <a class="btn-large" href='/classify/{{ page - 1 }}'> < </a>
+        {% end %}
+
+        {% if len(images) == page_size %}
+            <a class="btn-large" href='/classify/{{ page + 1 }}'> > </a>
+        {% end %}
+    </div>
+{% end %}
+
+{% block scripts %}
+    <script src="{{ static_url('js/libraries/multiselector.js') }}"></script>
+    <script src="{{ static_url('js/libraries/jquery.redirect.js') }}"></script>
+{% end %}
+
+{% block js %}
+<script>
+    /* get name data */
+    var names = {
+        {% for m in members %}
+            '{{ m['name'] }}': null,
+        {% end %}
+    };
+
+    $(document).ready(function () {
+        $(document).mousedown(function (e) {
+            if (!$(e.target).parents("#classifiers").length && !$(e.target).is("span")) {
+                selector.multiSelector('deselect');
+            }
+        });
+
+        var selector = $("#classifiers");
+        selector.multiSelector({
+            selector: '.col',
+            onSelectionStart: function (list, parent, e) {
+                return !$(e).find(".autocomplete").is(":focus");
+            }
+        });
+
+        $("input").bind('keyup change', function () {
+            if ($(this).parent().hasClass('ms-selected')) { // check if this input is selected
+                // update all the selected values
+                var val = $(this).val();
+                $(".ms-selected").each(function () {
+                    var input = $(this).find("input");
+                    input.val(val);
+                    window.inputValidation(input);
+                });
+            } else {
+                window.inputValidation($(this)); // single input edit
+            }
+        });
+
+        $('input.autocomplete').autocomplete({
+            data: names,
+            limit: 5, /* show max 5 names */
+            minLength: 0
+        });
+
+        window.inputValidation = function (input) {
+            // check if the value of input is in the names list
+            var match = false;
+            var v = input.val();
+            for (var name in names) {
+                if (name === v) {
+                    match = true;
+                    break;
+                }
+            }
+
+            // set underline colour of input
+            input.removeClass("valid").removeClass("invalid");
+            if (v !== "") {
+                if (match && input.closest("span").attr("has_coords") == "1") {
+                    input.addClass("valid");
+                } else {
+                    input.addClass("invalid");
+                }
+            }
+
+            var class_btn = $("#sub");
+            class_btn.addClass("disabled");
+            if ($(".valid").length > 0 && $(".invalid").length === 0) class_btn.removeClass("disabled");
+        };
+
+        /* DELETE image */
+        $(".delete").click(function () {
+            var to_delete_images = [];
+            var to_delete_spans = [];
+            /* add the one clicked */
+            to_delete_images.push($(this).closest("span").attr("image-path"));
+            to_delete_spans.push($(this).closest("span"));
+
+            if ($(this).parent().hasClass('ms-selected')) {
+                /* add all the selected items as well */
+                $(".ms-selected").each(function () {
+                    to_delete_images.push($(this).closest("span").attr("image-path"));
+                    to_delete_spans.push($(this).closest("span"));
+                });
+            }
+
+            to_delete_images = $.unique(to_delete_images); /* make sure all the ids are unique */
+            if (confirm('Are you sure you want to remove ' + to_delete_images.length + ' invalid images?')) {
+                $.ajax({
+                    url: "/classify/delete",
+                    type: "POST",
+                    data: {
+                        image_paths: to_delete_images
+                    },
+                    success: function(){
+                        // remove the images
+                        for(var i in to_delete_spans){
+                            var span = to_delete_spans[i];
+                            $(span).remove();
+                        }
+                    },
+                    error: function(e){
+                        console.error(e);
+                        alert('Error deleting image');
+                    }
+                });
+            }
+        });
+
+        {#$("#sub").click(function () {#}
+        {#    var classify_array = {};#}
+        {#    $(".valid").each(function () {#}
+        {#        classify_array[$(this).closest("span").attr("image-path")] = $(this).val();#}
+        {#    });#}
+        {##}
+        {#    if (confirm('Are you sure you want to classify?')) {#}
+        {#        $.redirect("classify", {classify_array: JSON.stringify(classify_array)});#}
+        {#    }#}
+        {# });#}
+    });
+</script>
+{% end %}
