@@ -61,16 +61,16 @@ class SocketClient(object):
             # settings
             SCRIPT_PATH = (
                 config.ROOT
-                + config.settings["File Location"]["Bash Script"]["val"]
+                + config.settings_yaml["File Location"]["Bash Script"]["val"]
             )
             ID_THRESHOLD = float(
-                config.settings["Recognition"]["Id Threshold"]["val"]
+                config.settings_yaml["Recognition"]["Id Threshold"]["val"]
             )
             RE_RECOGNITION_RATE = int(
-                config.settings["Recognition"]["Re Recognition"]["val"]
+                config.settings_yaml["Recognition"]["Re Recognition"]["val"]
             )
             TRAINING_MODE = bool(
-                int(config.settings["Recognition"]["Training Mode"]["val"])
+                int(config.settings_yaml["Recognition"]["Training Mode"]["val"])
             )
 
             conn = db.pool.raw_connection()

@@ -1,4 +1,4 @@
-{% extends '../helpers/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
     <div id="welcome" align="center">
         <h1>
@@ -16,15 +16,15 @@
                     </span>
                     {% if not socket_connected %}
                         <b class="error">
-                            {% if socket_status == 2 %}
-                                No trained <a href="/members">members</a>...
-                            {% else %}
-                                Not connected...
-                            {% end %}
+{#                            {% if socket_status == 2 %}#}
+{#                                No trained <a href="/members">members</a>...#}
+{#                            {% else %}#}
+{#                                Not connected...#}
+{#                            {% end %}#}
                         </b>
                     {% else %}
                         <span class="material-icons success">check</span>
-                    {% end %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -35,13 +35,13 @@
                     <span class="card-title">
                         <span class="material-icons">camera_alt</span> Camera
                     </span>
-                    {% if camera["Run"]["val"] == 0 %}
-                        Turned off in <a href="/settings">settings</a>.
-                    {% elif camera["Silent Mode"]["val"] == 1 %}
-                        Just showing live stream and not recognising. Silent Mode turned on in <a href="/settings">settings</a>.
-                    {% else %}
-                        <span class="material-icons success">check</span>
-                    {% end %}
+{#                    {% if camera["Run"]["val"] == 0 %}#}
+{#                        Turned off in <a href="/settings">settings</a>.#}
+{#                    {% elif camera["Silent Mode"]["val"] == 1 %}#}
+{#                        Just showing live stream and not recognising. Silent Mode turned on in <a href="/settings">settings</a>.#}
+{#                    {% else %}#}
+{#                        <span class="material-icons success">check</span>#}
+{#                    {% end %}#}
                 </div>
             </div>
         </div>
@@ -52,4 +52,4 @@
 			fadeInOut($("#login"));
         });
     </script>
-{% end %}
+{% endblock %}

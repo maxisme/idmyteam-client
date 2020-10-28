@@ -2,20 +2,29 @@
 
 
 [Server Code](https://github.com/maxisme/idmyteam-server)
+
+
+# Local environment
+
+## `pre-commit`
 ```
-$ git config core.hooksPath .githooks/
-$ chmod +x .githooks/*
+$ pip install pre-commit
+$ pre-commit install
 ```
 
+to test:
 ```
-nano /etc/dphys-swapfile
-```
-set:
-```
-CONF_SWAPSIZE=2048
+$ pre-commit run --all-files
 ```
 
-then:
+## create venv
 ```
-dphys-swapfile setup
+python3 -m venv .venv
 ```
+
+
+___
+
+#### requirements.txt
+```
+pipdeptree | grep -P '^\w+' > web/requirements.txt

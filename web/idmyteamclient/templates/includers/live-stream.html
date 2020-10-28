@@ -1,14 +1,15 @@
-{% set running = False %}
+{% load define_action %}
+{% define running as False %}
 {% if not camera_running %}
-<strong>Camera turned off!</strong> Turn on in <a href="/settings">settings</a>!
+    <strong>Camera turned off!</strong> Turn on in <a href="/settings">settings</a>!
 {% elif not live_stream %}
     <strong>Live Stream turned off!</strong> Turn on in <a href="/settings">settings</a>!
 {% else %}
-    {% set running = True %}
+    {% define running as True %}
     <div align="center">
         <canvas id="livestream" width="700px" height="500px"></canvas>
     </div>
-{% end %}
+{% endif %}
 
 {% if running %}
     <script>
@@ -36,4 +37,4 @@
             timedRefresh();
         });
     </script>
-{% end %}
+{% endif %}

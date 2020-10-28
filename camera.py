@@ -35,11 +35,11 @@ except:
 
 class Camera(object):
     def __init__(self):
-        VFLIP = bool(int(config.settings["Camera"]["Flip Vertically"]["val"]))
-        SHUTTER = int(config.settings["Camera"]["Framerate"]["val"])
-        FRAMERATE = int(config.settings["Camera"]["Shutter Speed"]["val"])
+        VFLIP = bool(int(config.settings_yaml["Camera"]["Flip Vertically"]["val"]))
+        SHUTTER = int(config.settings_yaml["Camera"]["Framerate"]["val"])
+        FRAMERATE = int(config.settings_yaml["Camera"]["Shutter Speed"]["val"])
         RES = tuple(
-            map(int, config.settings["Camera"]["Resolution"]["val"].split(" x "))
+            map(int, config.settings_yaml["Camera"]["Resolution"]["val"].split(" x "))
         )
 
         self.camera = pc.PiCamera()
@@ -104,7 +104,7 @@ def run():
 
     # background extractor
     bg_model = functions.Image.BackgroundExtractor.model(
-        int(config.settings["Camera"]["Mask Threshold"]["val"])
+        int(config.settings_yaml["Camera"]["Mask Threshold"]["val"])
     )
 
     # init camera
@@ -124,19 +124,19 @@ def run():
             raw.truncate(0)
             return run()
 
-        if bool(int(config.settings["Camera"]["Run"]["val"])):
-            SHOW_LIVE = bool(int(config.settings["Camera"]["Live Stream"]["val"]))
-            ONLY_IMAGE = bool(int(config.settings["Camera"]["Silent Mode"]["val"]))
-            SHOW_MASK = bool(int(config.settings["Camera"]["Mask"]["val"]))
-            MASK_THRESH = int(config.settings["Camera"]["Mask Threshold"]["val"])
+        if bool(int(config.settings_yaml["Camera"]["Run"]["val"])):
+            SHOW_LIVE = bool(int(config.settings_yaml["Camera"]["Live Stream"]["val"]))
+            ONLY_IMAGE = bool(int(config.settings_yaml["Camera"]["Silent Mode"]["val"]))
+            SHOW_MASK = bool(int(config.settings_yaml["Camera"]["Mask"]["val"]))
+            MASK_THRESH = int(config.settings_yaml["Camera"]["Mask Threshold"]["val"])
             UPLOAD_CROP = bool(
-                int(config.settings["Recognition"]["Upload Cropped"]["val"])
+                int(config.settings_yaml["Recognition"]["Upload Cropped"]["val"])
             )
-            IS_SECURE = bool(config.settings["Recognition"]["Secure Upload"]["val"])
+            IS_SECURE = bool(config.settings_yaml["Recognition"]["Secure Upload"]["val"])
             MOVEMENT_THRESH = float(
-                config.settings["Recognition"]["Movement Percentage"]["val"]
+                config.settings_yaml["Recognition"]["Movement Percentage"]["val"]
             )
-            STORE_FEATURES = bool(config.settings["Training"]["Store Features"]["val"])
+            STORE_FEATURES = bool(config.settings_yaml["Training"]["Store Features"]["val"])
 
             img = frame.array
             has_uploaded = False
@@ -220,7 +220,7 @@ def run():
                     target=functions.Image.delete_expired,
                     args=(
                         config.TMP_DETECTED_DIR,
-                        int(config.settings["Retract Recognition"]["Time"]["val"]),
+                        int(config.settings_yaml["Retract Recognition"]["Time"]["val"]),
                     ),
                 ).start()
 

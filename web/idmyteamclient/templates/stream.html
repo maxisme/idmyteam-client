@@ -1,11 +1,11 @@
-{% extends 'helpers/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
     <p class="info">
         Live stream of the camera.
     </p>
     <hr>
     {% include 'includers/live-stream.html' %}
-    {% for time in capture_log %}
-        <p>{{ time }} - {{ capture_log[time] }}</p>
-    {% end %}
-{% end %}
+{#    {% for time in capture_log %}#}
+{#        <p>{{ time }} - {{ capture_log[time] }}</p>#}
+{#    {% end %}#}
+{% endblock %}
