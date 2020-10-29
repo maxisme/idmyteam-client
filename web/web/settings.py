@@ -22,7 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "idmyteam",
-    "idmyteamclient.apps.IdmyteamclientConfig"
+    "idmyteamclient.apps.IdmyteamclientConfig",
 ]
 
 MIDDLEWARE = [

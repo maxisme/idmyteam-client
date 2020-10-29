@@ -17,7 +17,7 @@ def to_form_name(type, setting):
 def face_css(percentage):
     COLOUR_1 = "#bc2122"
     COLOUR_2 = "#db8d2e"
-    
+
     return f"""
     background: -moz-linear-gradient(bottom, {COLOUR_2} 0%, {COLOUR_2} {percentage}, {COLOUR_1} {percentage}, {COLOUR_1} 100%);
     background: -webkit-linear-gradient(bottom, {COLOUR_2} 0%, {COLOUR_2} {percentage}, {COLOUR_1} {percentage}, {COLOUR_1} 100%);

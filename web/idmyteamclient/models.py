@@ -1,18 +1,19 @@
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import UserManager, AbstractUser
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
 class Member(AbstractUser):
     class Permission(models.IntegerChoices):
-        PHANTOM = 0, _('Phantom Member')
-        CLASSIFY = 1, _('Classify Member')
-        MEDIUM = 2, _('Medium Member')
-        HIGH = 3, _('High Member')
+        PHANTOM = 0, _("Phantom Member")
+        CLASSIFY = 1, _("Classify Member")
+        MEDIUM = 2, _("Medium Member")
+        HIGH = 3, _("High Member")
 
     is_training = models.BooleanField(default=False)
-    permission = models.PositiveSmallIntegerField(choices=Permission.choices, null=False)
+    permission = models.PositiveSmallIntegerField(
+        choices=Permission.choices, null=False
+    )
 
 
 class Event(models.Model):

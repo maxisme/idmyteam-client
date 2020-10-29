@@ -74,6 +74,7 @@ def member_handler(request):
         },
     )
 
+
 def members_handler(request):
     return render(
         request,
