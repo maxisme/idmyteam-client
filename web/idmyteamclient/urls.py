@@ -20,8 +20,9 @@ from idmyteamclient import auth
 urlpatterns = [
     path("", views.welcome_handler, name="welcome"),
     path("stream", auth.stream_handler, name="stream"),
-    path("members", views.welcome_handler, name="members"),
-    path("script", views.welcome_handler, name="script"),
+    path("member", auth.member_handler, name="member"),
+    path("members", auth.members_handler, name="members"),
+    path("script", auth.script_handler, name="script"),
     path("classify", views.welcome_handler, name="classify"),
     path("settings", auth.settings_handler, name="settings"),
     path("logs", views.welcome_handler, name="logs"),

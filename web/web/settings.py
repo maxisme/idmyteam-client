@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "idmyteam",
+    "idmyteamclient.apps.IdmyteamclientConfig"
 ]
 
 MIDDLEWARE = [
@@ -34,14 +35,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+AUTH_USER_MODEL = "idmyteamclient.Member"
+
 ROOT_URLCONF = "web.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            os.path.join(BASE_DIR, "idmyteamclient/templates"),
-        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -50,9 +50,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {
-                "tags": "idmyteamclient.templatetags.tags",
-            },
         },
     },
 ]
@@ -112,6 +109,8 @@ STATIC_URL = "/static/"
 SETTINGS_FILE = os.environ.get("SETTINGS_FILE", os.path.join(BASE_DIR, "settings.yaml"))
 
 settings_yaml = functions.YAML.read(SETTINGS_FILE)
+
+SCRIPT_PATH = os.path.join(BASE_DIR, "recognition.sh")
 
 #########
 # stats #
