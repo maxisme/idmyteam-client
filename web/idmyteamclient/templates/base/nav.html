@@ -1,11 +1,14 @@
-{% if not member %}
+{% load tags %}
+{% if user.is_authenticated %}
     <li><a href='{% url 'stream' %}' class='button'>Stream</a></li>
     <li><a href='{% url 'members' %}' class='button'>Members</a></li>
     <li><a href='{% url 'script' %}' class='button'>Script</a></li>
     <li><a href='{% url 'classify' %}' class='button'>Classify</a></li>
-    <li><a href='{% url 'settings' %}' class='button'>Settings</a></li>
-    <li><a href='{% url 'logs' %}' class='button'>Logs</a></li>
+    {% if user|permitted:"high" %}
+        <li><a href='{% url 'settings' %}' class='button'>Settings</a></li>
+        <li><a href='{% url 'logs' %}' class='button'>Logs</a></li>
+    {% endif %}
     <li><a href='{% url 'logout' %}' class='button'>Log Out</a></li>
 {% else %}
-    <li><a id='login' href='{% url 'log in' %}' class='button'>Log In</a></li>
+    <li><a id='login' href='{% url 'login' %}' class='button'>Log In</a></li>
 {% endif %}

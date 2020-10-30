@@ -1,27 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     <p>
-        <span class="material-icons">loop</span> Trained with <b>{{ num_trained }}</b> different portraits!
+        <span class="material-icons">loop</span> Trained with <b>{{ member.num_trained }}</b> different portraits!
     </p>
     <p>
-        <span class="material-icons">face</span> Recognised <b>{{ num_recognitions }}</b> times!
+        <span class="material-icons">face</span> Recognised <b>{{ member.num_recognitions }}</b> times!
     </p>
     <p>
-        {% if num_recognitions > 0 %}
+        {% if member.num_recognitions > 0 %}
             <canvas id="scores" width="400" height="125"></canvas>
         {% else %}
-            No recognitions of {{  member['name'] }}.
-        {% end %}
+            No recognitions of {{ member }}.
+        {% endif %}
     </p>
-{% end %}
+{% endblock %}
 
 {% block scripts %}
-    <script type="text/javascript" src="{{ static_url('js/libraries/Chart.min.js') }}"></script>
-{% end %}
+    <script type="text/javascript" src="{% static 'js/libraries/Chart.min.js' %} "></script>
+{% endblock %}
 
 {% block js %}
-    {% if num_recognitions > 0 %}
-        {% raw chartjs %}
-    {% end %}
-{% end %}
+    {% if member.num_recognitions > 0 %}
+        {{ chartjs|safe }}
+    {% endif %}
+{% endblock %}

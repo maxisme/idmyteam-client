@@ -2,18 +2,41 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+PERMISSION_NAMES = {
+    "phantom": 0,
+    "classify": 1,
+    "medium": 2,
+    "high": 3,
+}
+
 
 class Member(AbstractUser):
     class Permission(models.IntegerChoices):
-        PHANTOM = 0, _("Phantom Member")
-        CLASSIFY = 1, _("Classify Member")
-        MEDIUM = 2, _("Medium Member")
-        HIGH = 3, _("High Member")
+        PHANTOM = PERMISSION_NAMES["phantom"], _("Phantom Member")
+        CLASSIFY = PERMISSION_NAMES["classify"], _("Classify Member")
+        MEDIUM = PERMISSION_NAMES["medium"], _("Medium Member")
+        HIGH = PERMISSION_NAMES["high"], _("High Member")
 
     is_training = models.BooleanField(default=False)
     permission = models.PositiveSmallIntegerField(
         choices=Permission.choices, null=False
     )
+
+    def permitted(self, perm):
+        if isinstance(perm, str):
+            if perm not in PERMISSION_NAMES:
+                raise Exception(f"Invalid permission name '{perm}'")
+            perm = PERMISSION_NAMES[perm]
+
+        return self.permission >= perm
+
+    @property
+    def num_trained(self):
+        return len(Event.objects.filter(team_id=self.id, type=Event.Type.TRAINED))
+
+    @property
+    def num_recognitions(self):
+        return len(Event.objects.filter(team_id=self.id, type=Event.Type.RECOGNISED))
 
 
 class Event(models.Model):

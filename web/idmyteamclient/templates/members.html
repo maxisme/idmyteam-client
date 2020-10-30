@@ -1,148 +1,148 @@
 {% extends 'base.html' %}
+{% load tags %}
 {% block content %}
-    {{ perms }}
-{#    <p class="info">#}
-{#        {% if socket_status == 2 %}#}
-{#            <div align="center" class='error'>#}
-{#                <span class="material-icons error">warning</span><br>For the system to start recognising, you must add and train at least 2 members!#}
-{#            </div><br>#}
-{#        {% else %}#}
-{#            The members of your team.#}
-{#        {% endif %}#}
-{#        <hr>#}
-{#    </p>#}
-{##}
-{#    {% if authed('medium') %}#}
-{#        <div align="center">#}
-{#            <p>#}
-{#                <a style="border-bottom: none;" href="member/add">#}
-{#                    <div class="btn-floating btn-large">#}
-{#                        <i class="large material-icons">person_add</i>#}
-{#                    </div>#}
-{#                </a>#}
-{#                {% if authed('high') %}#}
-{#                    <a style="border-bottom: none;" {% if train_allowed %}href="/members/train"{% endif %}>#}
-{#                        <div class="btn-floating btn-large {% if not train_allowed %}disabled{% endif %}">#}
-{#                            <i class="large material-icons">people_outline</i>#}
-{#                        </div>#}
-{#                    </a>#}
-{#                {% endif %}#}
-{#            </p>#}
-{#        </div>#}
-{#    {% end %}#}
-{##}
-{#    <table id="members">#}
-{#        <thead>#}
-{#            <tr>#}
-{#                <th>Name</th>#}
-{#                {% if authed('medium') %}#}
-{#                    <th>#}
-{#                        Train <a class="modal-trigger question material-icons" href="#modaltrain">help_outline</a>#}
-{#                    </th>#}
-{#                    <!-- Modal Train Structure -->#}
-{#                    <div id="modaltrain" class="modal">#}
-{##}
-{#                        <div class="modal-content">#}
-{#                            <h4>Trained</h4>#}
-{#                            <span class="material-icons error">face</span> indicates that 0 faces are ready to be sent for training.<br>#}
-{#                            <span class="material-icons" style="{{ face_css("50%", colour_1, colour_2) }}">face</span> indicates that there are {% raw int(min_training_images / 2) %} out of the {{ min_training_images }} faces needed for the initial training.<br>#}
-{#                            <span class="material-icons" style="color: {{ colour_2 }}">face</span> indicates that enough faces are pending training.<br>#}
-{#                            <span class="material-icons flashme">face</span> indicates that the members faces are being trained.<br>#}
-{#                            <span class="material-icons success">face</span> indicates that more than {{ min_training_images }} faces have been trained and the user is now able to be recognised.<br>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <th>#}
-{#                        Stats#}
-{#                    </th>#}
-{#                {% end %}#}
-{##}
-{#                {% if authed('high') %}#}
-{#                    <th>Permissions <a class="question modal-trigger material-icons" href="#modalperm">help_outline</a></th>#}
-{##}
-{#                    <!-- MODAL FOR PERMISSIONS SAME AS member/add.php-->#}
-{#                    <div id="modalperm" class="modal">#}
-{#                        <div class="modal-content">#}
-{#                            <h4>Web Panel Permissions</h4>#}
-{#                            <p>#}
-{#                                Choose the permissions for this user.#}
-{#                            </p>#}
-{#                            {% for permission in permissions %}#}
-{#                                <p>#}
-{#                                    <strong>{{ permission.title() }}</strong><br>{{ permissions[permission]['description'] }}#}
-{#                                </p>#}
-{#                            {% end %}#}
-{#                        </div>#}
-{#                    </div>#}
-{##}
-{#                    <th>Change Password</th>#}
-{#                    <th>Delete <a class=" modal-trigger question material-icons" href="#modaldelete">help_outline</a></th>#}
-{#                    <!-- Modal Delete Structure -->#}
-{#                    <div id="modaldelete" class="modal">#}
-{#                        <div class="modal-content">#}
-{#                            <h4>Delete</h4>#}
-{#                            <p>Deleting a member is <strong>irreversible</strong>. All the users data will be purged and the user will no longer be recognised.</p>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% end %}#}
-{#            </tr>#}
-{#        </thead>#}
-{#        <tbody>#}
-{#            {% for team_member in members %}#}
-{#                <tr data-member-id="{{ team_member['id'] }}">#}
-{#                    <td>#}
-{#                        <strong><span class="name">{{ team_member['name'] }}</span></strong>#}
-{#                    </td>#}
-{#                    {% if authed('medium') %}#}
-{#                        {% if team_member['training'] == 1 %}#}
-{#                            <td><div class="icon material-icons flashme">face</div></td>#}
-{#                        {% elif team_member['num_trained'] >= min_training_images %}#}
-{#                            <td><a href="/member/{{ team_member['id'] }}/train" class="icon material-icons success">face</a></td>#}
-{#                        {% else %}#}
-{#                            {% set perc = str((team_member['num_to_train'] / min_training_images) * 100) + '%' %}#}
-{#                            <td><a href="/member/{{ team_member['id'] }}/train" class="train icon material-icons" style="{{ face_css(perc, colour_1, colour_2) }}">face</a></td>#}
-{#                        {% end %}#}
-{#                        <td><a href="/member/{{ team_member['id'] }}" class="stats icon material-icons">timeline</a></td>#}
-{#                    {% end %}#}
-{##}
-{#                    {% if authed('high') %}#}
-{#                        <td>#}
-{#                            <select>#}
-{#                                {% for permission in permissions %}#}
-{#                                    {% set level = permissions[permission]['level'] %}#}
-{#                                    {% if str(level) == team_member['perm'] %}#}
-{#                                        <option value='{{ level }}' selected>{{ permission.title() }}</option>#}
-{#                                    {% else %}#}
-{#                                        <option value='{{ level }}'>{{ permission.title() }}</option>#}
-{#                                    {% end %}#}
-{#                                {% end %}#}
-{#                            </select>#}
-{#                        </td>#}
-{#                        <td><a class="new-pass icon material-icons" href="/member/{{ team_member['id'] }}/password">vpn_key</a></td>#}
-{#                        <td><a class="delete icon material-icons" href="/member/{{ team_member['id'] }}/delete">delete</a></td>#}
-{#                    {% endif %}#}
-{#                </tr>#}
-{#            {% endfor %}#}
-{#        </tbody>#}
-{#    </table>#}
+    <p class="info">
+        {% if socket_status == 2 %}
+            <div align="center" class='error'>
+                <span class="material-icons error">warning</span><br>For the system to start recognising, you must add
+                and train at least 2 members!
+            </div><br>
+        {% else %}
+            The members of your team.
+        {% endif %}
+    <hr>
+    </p>
+
+    {% if user|permitted:"medium" %}
+        <div align="center">
+            <p>
+                <a style="border-bottom: none;" href="{% url "add-member" %}">
+                    <div class="btn-floating btn-large">
+                        <i class="large material-icons">person_add</i>
+                    </div>
+                </a>
+                {% if user|permitted:"high" %}
+                    <a style="border-bottom: none;" {% if train_allowed %}href="/members/train"{% endif %}>
+                        <div class="btn-floating btn-large {% if not train_allowed %}disabled{% endif %}">
+                            <i class="large material-icons">people_outline</i>
+                        </div>
+                    </a>
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+
+    <table id="members">
+        <thead>
+        <tr>
+            <th>Name</th>
+            {% if user|permitted:"medium" %}
+                <th>
+                    Train <a class="modal-trigger question material-icons" href="#modaltrain">help_outline</a>
+                </th>
+                <!-- Modal Train Structure -->
+                <div id="modaltrain" class="modal">
+
+                    <div class="modal-content">
+                        <h4>Trained</h4>
+                        <span class="material-icons error">face</span> indicates that 0 faces are ready to be sent for
+                        training.<br>
+                        <span class="material-icons" style="{{ "50%"|face_css }}">face</span> indicates that there are only half of the {{ min_training_images }} faces needed for the initial training.<br>
+                        <span class="material-icons" style="color: {{ colour_2 }}">face</span> indicates that enough
+                        faces are pending training.<br>
+                        <span class="material-icons flashme">face</span> indicates that the members faces are being
+                        trained.<br>
+                        <span class="material-icons success">face</span> indicates that more
+                        than {{ min_training_images }} faces have been trained and the user is now able to be
+                        recognised.<br>
+                    </div>
+                </div>
+                <th>
+                    Stats
+                </th>
+            {% endif %}
+
+            {% if user|permitted:"high" %}
+                <th>Permissions <a class="question modal-trigger material-icons" href="#modalperm">help_outline</a></th>
+
+                <!-- MODAL FOR PERMISSIONS SAME AS member/add.php-->
+                <div id="modalperm" class="modal">
+                    <div class="modal-content">
+                        <h4>Web Panel Permissions</h4>
+                        <p>
+                            Choose the permissions for this user.
+                        </p>
+                        {#                            {% for permission in permissions %}#}
+                        {#                                <p>#}
+                        {#                                    <strong>{{ permission.title() }}</strong><br>{{ permissions[permission]['description'] }}#}
+                        {#                                </p>#}
+                        {#                            {% endfor %}#}
+                    </div>
+                </div>
+
+                <th>Change Password</th>
+                <th>Delete <a class=" modal-trigger question material-icons" href="#modaldelete">help_outline</a></th>
+                <!-- Modal Delete Structure -->
+                <div id="modaldelete" class="modal">
+                    <div class="modal-content">
+                        <h4>Delete</h4>
+                        <p>Deleting a member is <strong>irreversible</strong>. All the users data will be purged and the
+                            user will no longer be recognised.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for member in members %}
+            <tr data-member-id="{{ member.id }}">
+                <td>
+                    <strong><span class="name">{{ member.username }}</span></strong>
+                </td>
+                {% if user|permitted:"medium" %}
+                    {% if member.is_training == 1 %}
+                        <td>
+                            <div class="icon material-icons flashme">face</div>
+                        </td>
+                    {% elif member.num_trained >= min_training_images %}
+                        <td><a href="{% url "train" member.id %}" class="icon material-icons success">face</a></td>
+                    {% else %}
+                        <td><a href="{% url "train" member.id %}" class="train icon material-icons" style="{{ member|face_css }}">face</a></td>
+                    {% endif %}
+                    <td><a href="{% url "member" member.id %}" class="stats icon material-icons">timeline</a></td>
+                {% endif %}
+
+                {% if user|permitted:"high" %}
+                    <td>
+                        {{ member_form.permission|set_initial_form_field:member.permission }}
+                    </td>
+                    <td><a class="new-pass icon material-icons" href="{% url "password" member.id %}">vpn_key</a></td>
+                    <td><a class="delete-member icon material-icons" data-member-id="{{ member.id }}" href="#">delete</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p>&nbsp;</p>
 {% endblock %}
 
 {% block js %}
-{#    <script>#}
-{#        $(document).ready(function(){#}
-{#            {% if authed('high') %}#}
-{#                $(".delete").click(function(e) {#}
-{#                    if(!confirm("Are you sure you want to permanently delete this member?")){#}
-{#                        return false; // prevent redirect#}
-{#                    }#}
-{#                });#}
-{##}
-{#                $('select').on('change', function() {#}
-{#                    var member_id = $(this).parents("tr").attr("data-member-id");#}
-{#                    $.post("member/"+member_id+"/permission", { perm: this.value}).fail(function(){#}
-{#                        alert("Problem setting users permission");#}
-{#                    });#}
-{#                });#}
-{#            {% end %}#}
-{#        });#}
-{#    </script>#}
+    <script>
+        {% if user|permitted:'high' %}
+            $(document).ready(function () {
+                $(".delete").click(function (e) {
+                    if (!confirm("Are you sure you want to permanently delete this member?")) {
+                        return false; // prevent redirect
+                    }
+                });
+
+                $('select').on('change', function () {
+                    var member_id = $(this).parents("tr").attr("data-member-id");
+                    $.post("member/" + member_id + "/permission", {perm: this.value}).fail(function () {
+                        alert("Problem setting users permission");
+                    });
+                });
+            });
+        {% endif %}
+    </script>
 {% endblock %}

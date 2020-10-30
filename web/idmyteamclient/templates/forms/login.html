@@ -1,0 +1,8 @@
+{% extends 'form.html' %}
+{% load materializecss %}
+{% block form %}
+    <div class="row">
+        {{ form.username|materializecss:'s12 m6' }}
+        {{ form.password|materializecss:'s12 m6' }}
+    </div>
+{% endblock %}
