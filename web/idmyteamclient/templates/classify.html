@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
     <p class="info">
         Manually classify images that the system was not able to.
@@ -30,40 +31,44 @@
 
     <form method="POST" action="/classify" enctype="application/x-www-form-urlencoded">
         <div id="classifiers" class="row">
-            {% set col_classes = "s12 m6 l4" %}
-            {% set classifying = True %}
-            {% include 'includers/classified-images.html' %}
+            {% with class_cols="s12 m6 l4" classifying=True %}
+                {% include 'includers/classified-images.html' %}
+            {% endwith %}
         </div>
 
         <!-- classify button -->
-        <button id="sub" type="submit" class="btn-floating btn-large {% if not classifying %}disabled{% end %}"><i class="material-icons">done</i></button>
+        <button id="sub"
+                type="submit"
+                class="btn-floating btn-large">
+            <i class="material-icons">done</i>
+        </button>
     </form>
 
 
 
-    <div class="nav-btns" align="center">
-        {% if page - 1 > 0 %}
-            <a class="btn-large" href='/classify/{{ page - 1 }}'> < </a>
-        {% end %}
-
-        {% if len(images) == page_size %}
-            <a class="btn-large" href='/classify/{{ page + 1 }}'> > </a>
-        {% end %}
-    </div>
-{% end %}
+{#    <div class="nav-btns" align="center">#}
+{#        {% if page - 1 > 0 %}#}
+{#            <a class="btn-large" href='/classify/{{ page - 1 }}'> < </a>#}
+{#        {% endif %}#}
+{##}
+{#        {% if len(images) == page_size %}#}
+{#            <a class="btn-large" href='/classify/{{ page + 1 }}'> > </a>#}
+{#        {% end %}#}
+{#    </div>#}
+{% endblock %}
 
 {% block scripts %}
-    <script src="{{ static_url('js/libraries/multiselector.js') }}"></script>
-    <script src="{{ static_url('js/libraries/jquery.redirect.js') }}"></script>
-{% end %}
+    <script src="{% static 'js/libraries/multiselector.js' %}"></script>
+    <script src="{% static 'js/libraries/jquery.redirect.js' %}"></script>
+{% endblock %}
 
 {% block js %}
 <script>
     /* get name data */
-    var names = {
-        {% for m in members %}
-            '{{ m['name'] }}': null,
-        {% end %}
+    var member_names = {
+        {% for member in members %}
+            '{{ member.name }}': null,
+        {% endfor %}
     };
 
     $(document).ready(function () {
@@ -96,7 +101,7 @@
         });
 
         $('input.autocomplete').autocomplete({
-            data: names,
+            data: member_names,
             limit: 5, /* show max 5 names */
             minLength: 0
         });
@@ -105,7 +110,7 @@
             // check if the value of input is in the names list
             var match = false;
             var v = input.val();
-            for (var name in names) {
+            for (var name in member_names) {
                 if (name === v) {
                     match = true;
                     break;
@@ -178,4 +183,4 @@
         {# });#}
     });
 </script>
-{% end %}
+{% endblock %}

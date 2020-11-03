@@ -45,9 +45,7 @@ class BaseHandler(tornado.web.RequestHandler):
             "authed": self.authed,
             "socket_status": config.SOCKET_STATUS,
             "socket_connected": config.SOCKET_STATUS == config.SOCKET_CONNECTED,
-            "silent_mode": bool(
-                int(config.settings_yaml["Camera"]["Silent Mode"]["val"])
-            ),
+            "silent_mode": bool(int(config.yaml["Camera"]["Silent Mode"]["val"])),
         }
 
         # remove flash messages
@@ -138,18 +136,6 @@ class BaseHandler(tornado.web.RequestHandler):
             self.conn.close()
         except AttributeError:
             pass
-
-
-class Error404(BaseHandler):
-    def get(self):
-        self.write("404")
-
-
-class WelcomeHandler(BaseHandler):
-    def get(self):
-        self.tmpl["title"] = ""
-        self.tmpl["camera"] = config.settings_yaml["Camera"]
-        self.render("home/welcome.html", **self.tmpl)
 
 
 class ClassifyHandler(BaseHandler):
@@ -301,7 +287,7 @@ class MemberHandler(BaseHandler):
             ",".join(str(s) for s in recognitions)
         )
 
-        threshold = config.settings_yaml["Recognition"]["Id Threshold"]["val"]
+        threshold = config.yaml["Recognition"]["Id Threshold"]["val"]
         if float(threshold) > 0.5:
             set += """, {{
                 label: 'Recognition Threshold',
@@ -464,16 +450,12 @@ class MemberTrainHandler(BaseHandler):
         )
         self.tmpl["min_training_images"] = config.MIN_TRAINING_IMAGES_PER_MEMBER
 
-        self.tmpl["camera_running"] = bool(
-            int(config.settings_yaml["Camera"]["Run"]["val"])
-        )
-        self.tmpl["mask"] = bool(int(config.settings_yaml["Camera"]["Mask"]["val"]))
+        self.tmpl["camera_running"] = bool(int(config.yaml["Camera"]["Run"]["val"]))
+        self.tmpl["mask"] = bool(int(config.yaml["Camera"]["Mask"]["val"]))
         self.tmpl["live_stream"] = bool(
-            int(config.settings_yaml["Camera"]["Live Stream"]["val"])
+            int(config.yaml["Camera"]["Live Stream"]["val"])
         )
-        self.tmpl["recurring_time"] = config.settings_yaml["Training"][
-            "Recurring Time"
-        ]["val"]
+        self.tmpl["recurring_time"] = config.yaml["Training"]["Recurring Time"]["val"]
         self.render("train.html", **self.tmpl)
 
 
@@ -507,14 +489,12 @@ class LiveStreamHandler(BaseHandler):
     @permission("low")
     def get(self):
         self.tmpl["title"] = "Stream"
-        self.tmpl["camera_running"] = bool(
-            int(config.settings_yaml["Camera"]["Run"]["val"])
-        )
+        self.tmpl["camera_running"] = bool(int(config.yaml["Camera"]["Run"]["val"]))
         self.tmpl["live_stream"] = bool(
-            int(config.settings_yaml["Camera"]["Live Stream"]["val"])
+            int(config.yaml["Camera"]["Live Stream"]["val"])
         )
         self.tmpl["capture_log"] = config.CAPTURE_LOG
-        self.render("stream.html", **self.tmpl)
+        self.render("camera.html", **self.tmpl)
 
 
 class StreamCaptureHandler(BaseHandler):
@@ -553,7 +533,7 @@ class SettingsHandler(BaseHandler):
     @permission("high")
     def get(self):
         self.tmpl["title"] = "Settings"
-        self.tmpl["settings"] = config.settings_yaml
+        self.tmpl["settings"] = config.yaml
         self._get_stats()
         self.tmpl["stats"] = config.stats
         self.tmpl["stats_info"] = config.STATS_INFO
@@ -576,15 +556,15 @@ class SettingsHandler(BaseHandler):
             except:
                 pass
 
-            if config.settings_yaml[type][setting]["val"] != val:
+            if config.yaml[type][setting]["val"] != val:
                 # value changed
-                config.settings_yaml[type][setting]["val"] = val
+                config.yaml[type][setting]["val"] = val
                 if setting in config.CAMERA_RESTART_SETTINGS:
                     restart_camera = True
 
         if restart_camera:
             config.RESTART_CAMERA = True
-        functions.YAML.write(config.SETTINGS_FILE, config.settings_yaml)
+        functions.YAML.write(config.SETTINGS_FILE, config.yaml)
         self.redirect("/settings")
 
     def _get_args(self):
@@ -605,14 +585,12 @@ class SettingsHandler(BaseHandler):
 
         # number of classified
         config.stats[config.STAT_NUM_CLASSIFIED] = functions.num_files_in_dir(
-            config.ROOT
-            + config.settings_yaml["File Location"]["Classified Images"]["val"]
+            config.ROOT + config.yaml["File Location"]["Classified Images"]["val"]
         )
 
         # number of unclassified
         config.stats[config.STAT_NUM_UNCLASSIFIED] = functions.num_files_in_dir(
-            config.ROOT
-            + config.settings_yaml["File Location"]["Unclassified Images"]["val"]
+            config.ROOT + config.yaml["File Location"]["Unclassified Images"]["val"]
         )
 
         config.stats[config.STAT_CPU_TEMP] = functions.get_cpu_temp()

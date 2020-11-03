@@ -4,16 +4,18 @@ from django.utils.translation import gettext_lazy as _
 
 PERMISSION_NAMES = {
     "phantom": 0,
-    "classify": 1,
+    "low": 1,
     "medium": 2,
     "high": 3,
 }
 
 
 class Member(AbstractUser):
+    UNKNOWN_NAME = "UNKNOWN"
+
     class Permission(models.IntegerChoices):
         PHANTOM = PERMISSION_NAMES["phantom"], _("Phantom Member")
-        CLASSIFY = PERMISSION_NAMES["classify"], _("Classify Member")
+        LOW = PERMISSION_NAMES["low"], _("Low Member")
         MEDIUM = PERMISSION_NAMES["medium"], _("Medium Member")
         HIGH = PERMISSION_NAMES["high"], _("High Member")
 
@@ -22,7 +24,7 @@ class Member(AbstractUser):
         choices=Permission.choices, null=False
     )
 
-    def permitted(self, perm):
+    def permitted(self, perm) -> bool:
         if isinstance(perm, str):
             if perm not in PERMISSION_NAMES:
                 raise Exception(f"Invalid permission name '{perm}'")
@@ -54,7 +56,7 @@ class Event(models.Model):
 
 PERMISSION_DESCRIPTIONS = {
     Member.Permission.PHANTOM: "No access to web panel. - Only used for recognitions.",
-    Member.Permission.CLASSIFY: "Allowed to classify and view team members.",
-    Member.Permission.MEDIUM: "Allowed to add new members, delete member classification, view the live stream and customise the script.",
-    Member.Permission.HIGH: "Allowed to choose member permissions, delete team members, view the logs and customise the settings.",
+    Member.Permission.LOW: "Allowed to classify and view team members.",
+    Member.Permission.MEDIUM: "Allowed to add new members, delete member classification and customise the script.",
+    Member.Permission.HIGH: "Allowed to choose member permissions, delete team members, view the live stream camera, view the logs and customise the settings.",
 }

@@ -106,17 +106,25 @@ STATIC_URL = "/static/"
 # id my team client specific settings
 #########################################
 
+WS_URL = os.environ.get("WS_URL", "ws://127.0.0.1:8000/ws")
+WS_THREAD = None
+
 SETTINGS_FILE = os.environ.get("SETTINGS_FILE", os.path.join(BASE_DIR, "settings.yaml"))
 
-settings_yaml = functions.YAML.read(SETTINGS_FILE)
+yaml = functions.YAML(SETTINGS_FILE)
 
 SCRIPT_PATH = os.path.join(BASE_DIR, "recognition.sh")
+
+# image directories
+UNCLASSIFIED_PATH = os.path.join(BASE_DIR, "images/unclassified/")
+CLASSIFIED_PATH = os.path.join(BASE_DIR, "images/classified/")
+TMP_CLASSIFIED_PATH = os.path.join(BASE_DIR, "images/tmp/")
 
 #########
 # stats #
 #########
 stats = {}
-LOG_STAT_EVERY = 60  # logs to `STATS_FILE` every x frames
+LOG_STAT_EVERY = 60
 STAT_FPS = "FPS"
 STAT_STORAGE = "Storage"
 STAT_NUM_CLASSIFIED = "Number Of Classified Images"
@@ -150,12 +158,12 @@ CAMERA_RESTART_SETTINGS = [
     "Framerate",
     "Shutter Speed",
 ]
-IMG_TYPE = settings_yaml["Global"]["Image File Type"]
 UPLOAD_RETRY_LIMIT = 10
 CAPTURE_LIMIT = 10
 CAPTURE_LOG = {}
 MAJOR_BG_CHANGE_THRESH = 50
 BG_IMG_REDUCTION = 0.5
+IMG_TYPE = ".jpg"
 
 ########
 # web
@@ -165,7 +173,7 @@ NUM_UNCLASSIFIED_PER_PAGE = 30
 
 SOCKET_CLOSED = 0
 SOCKET_CONNECTED = 1
-SOCKET_NOT_TRAINED = 2
+SOCKET_NO_MODEL = 2
 SOCKET_STATUS = SOCKET_CLOSED
 
 MIN_TRAINING_IMAGES_PER_MEMBER = 10  # TODO get from server

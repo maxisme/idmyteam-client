@@ -1,11 +1,15 @@
+from typing import Dict
+
 from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse
 from idmyteam.helpers import render, SUCCESS_COOKIE_KEY, redirect
 
 from idmyteamclient import forms
+from idmyteamclient.decorators import permitted
 from idmyteamclient.forms import NewMemberForm
-from idmyteamclient.helpers import update_global_stats
+from idmyteamclient.helpers import update_global_stats, Image
 from idmyteamclient.models import Member
+from idmyteamclient.structs import ClassifiedImage
 from web import settings
 
 
@@ -18,7 +22,7 @@ def login_handler(request):
                 username=form.cleaned_data["username"],
                 password=form.cleaned_data["password"],
             )
-            if member and member.permitted(Member.Permission.CLASSIFY):
+            if member and member.permitted(Member.Permission.LOW):
                 login(request, member)
                 return redirect("/")
     else:
@@ -32,21 +36,57 @@ def logout_handler(request):
     return redirect("/")
 
 
+@permitted(Member.Permission.MEDIUM)
 def stream_handler(request):
+    settings.WS_URL = "hi"
     return render(
         request,
-        "stream.html",
+        "camera.html",
         {
-            "title": "Stream",
-            "camera_running": bool(int(settings.settings_yaml["Camera"]["Run"]["val"])),
-            "live_stream_on": bool(
-                int(settings.settings_yaml["Camera"]["Live Stream"]["val"])
-            ),
+            "title": "Camera",
+            "camera_running": bool(int(settings.yaml["Camera"]["Run"]["val"])),
+            "live_stream_on": bool(int(settings.yaml["Camera"]["Live Stream"]["val"])),
             "capture_log": settings.CAPTURE_LOG,
         },
     )
 
 
+@permitted(Member.Permission.LOW)
+def classify_handler(request, page=1, page_size=30):
+    images = Image.get_stored_images(
+        request.COOKIES.get("face_coordinates"), page, page_size, classifying=True
+    )
+    return render(
+        request,
+        "classify.html",
+        {
+            "title": "Classify Members",
+            "page": page,
+            "page_size": page_size,
+            "members": Member.objects.all(),
+            "image_bbox_js": _fetch_image_bbox_js(images),
+            "images": images,
+        },
+    )
+
+
+def _fetch_image_bbox_js(images: Dict[str, ClassifiedImage]):
+    """
+    returns the javascript code of the bbox for the classified images
+    :return:
+    """
+    js = ""
+    for img_path, image in images:
+        if image.coordinates:
+            # language=JavaScript
+            js += f"""
+            $('#portrait-{image.id}').selectAreas('add', toActualArea($('#portrait-{image.id}'), JSON.parse('{image.coordinates}'), true));
+            $('#portrait-{image.id}').closest('span').attr('has_coords', '1');
+            """
+    return js
+
+
+@permitted(Member.Permission.HIGH)
 def settings_handler(request):
     update_global_stats()
 
@@ -55,13 +95,14 @@ def settings_handler(request):
         "settings.html",
         {
             "title": "Settings",
-            "settings": settings.settings_yaml,
+            "settings": settings.yaml,
             "stats": settings.stats,
             "stats_info": settings.STATS_INFO,
         },
     )
 
 
+@permitted(Member.Permission.HIGH)
 def script_handler(request):
     return render(
         request,
@@ -74,6 +115,8 @@ def script_handler(request):
     )
 
 
+@permitted(Member.Permission.HIGH, ["DELETE"])
+@permitted(Member.Permission.MEDIUM, ["GET"])
 def member_handler(request, member_id: int):
     if request.method == "GET":
         member = Member.objects.get(id=member_id)
@@ -94,6 +137,30 @@ def member_handler(request, member_id: int):
         Member.objects.delete(id=member_id)
 
 
+@permitted(Member.Permission.HIGH)
+def change_member_password(request, member_id):
+    member = Member.objects.get(id=member_id)
+    if request.method == "POST":
+        form = forms.ChangePasswordForm(request.POST)
+        if form.is_valid():
+            member.set_password(form.cleaned_data.get("password"))
+            member.save()
+
+            return redirect(
+                reverse("members"),
+                cookies={SUCCESS_COOKIE_KEY: f"You have changed {member}s password!"},
+            )
+    else:
+        form = forms.ChangePasswordForm()
+
+    return render(
+        request,
+        "forms/change-password.html",
+        {"title": f"Change {member}'s password", "form": form},
+    )
+
+
+@permitted(Member.Permission.MEDIUM)
 def add_member_handler(request):
     if request.method == "POST":
         form = forms.NewMemberForm(request.POST)
@@ -121,6 +188,7 @@ def add_member_handler(request):
     )
 
 
+@permitted(Member.Permission.LOW)
 def members_handler(request):
     return render(
         request,

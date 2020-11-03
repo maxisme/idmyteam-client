@@ -56,17 +56,14 @@ class SocketClient(object):
 
             # settings
             SCRIPT_PATH = (
-                config.ROOT
-                + config.settings_yaml["File Location"]["Bash Script"]["val"]
+                config.ROOT + config.yaml["File Location"]["Bash Script"]["val"]
             )
-            ID_THRESHOLD = float(
-                config.settings_yaml["Recognition"]["Id Threshold"]["val"]
-            )
+            ID_THRESHOLD = float(config.yaml["Recognition"]["Id Threshold"]["val"])
             RE_RECOGNITION_RATE = int(
-                config.settings_yaml["Recognition"]["Re Recognition"]["val"]
+                config.yaml["Recognition"]["Re Recognition"]["val"]
             )
             TRAINING_MODE = bool(
-                int(config.settings_yaml["Recognition"]["Training Mode"]["val"])
+                int(config.yaml["Recognition"]["Training Mode"]["val"])
             )
 
             conn = db.pool.raw_connection()
@@ -80,7 +77,7 @@ class SocketClient(object):
                 functions.Member.Activity.purge(
                     conn
                 )  # kill any team activity as there shouldn't be any, anyway.
-                config.SOCKET_STATUS = config.SOCKET_NOT_TRAINED
+                config.SOCKET_STATUS = config.SOCKET_NO_MODEL
 
             elif message["type"] == "invalid_credentials":
                 logging.error("Invalid Id My Team Credentials!")
@@ -171,7 +168,7 @@ class SocketClient(object):
 
             elif message["type"] == "trained":
                 # when a team gets their first model restart the camera and socket
-                if config.SOCKET_STATUS == config.SOCKET_NOT_TRAINED:
+                if config.SOCKET_STATUS == config.SOCKET_NO_MODEL:
                     # tell camera thread to restart
                     config.RESTART_CAMERA = True
 

@@ -12,7 +12,7 @@ $ pip install pre-commit
 $ pre-commit install
 ```
 
-to test:
+run manually:
 ```
 $ pre-commit run --all-files
 ```
@@ -30,7 +30,7 @@ $ python3 manage.py migrate
 $ python3 manage.py loaddata test-user.json
 $ python3 manage.py runserver
 ```
-You can then login with the credentials `testuser`:`testuser`
+You can then login with the credentials `testuser`:`cXJRwjtUiDqAnNxA9Qkb`
 
 
 ___

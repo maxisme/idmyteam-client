@@ -1,13 +1,13 @@
 import datetime
 
-from log import LogDBHandler
+from idmyteamclient.helpers import random_file_name, Image
+from web import settings
 
 try:
     import picamera as pc
     from picamera.array import PiRGBArray
 except ModuleNotFoundError:
-    # keep a pytest working
-    pass
+    pass  # for tests
 
 import logging
 import multiprocessing
@@ -17,70 +17,54 @@ import cv2
 import requests
 import time
 
-from settings import functions, config
-
-# set logger
-try:
-    logging.basicConfig(level="INFO")
-    handler = LogDBHandler(
-        functions.DB.conn(config.DB["username"], config.DB["password"], config.DB["db"])
-    )
-    logging.getLogger("").addHandler(handler)
-    logging.getLogger("").setLevel("INFO")
-    logging.getLogger("tornado.access").disabled = True
-except:
-    # exception for testing
-    pass
-
 
 class Camera(object):
     def __init__(self):
-        VFLIP = bool(int(config.settings_yaml["Camera"]["Flip Vertically"]["val"]))
-        SHUTTER = int(config.settings_yaml["Camera"]["Framerate"]["val"])
-        FRAMERATE = int(config.settings_yaml["Camera"]["Shutter Speed"]["val"])
-        RES = tuple(
-            map(int, config.settings_yaml["Camera"]["Resolution"]["val"].split(" x "))
-        )
-
         self.camera = pc.PiCamera()
-        self.camera.resolution = RES
-        self.camera.vflip = VFLIP
-        if FRAMERATE:
-            self.camera.framerate = FRAMERATE
-        if SHUTTER:
-            self.camera.shutter_speed = SHUTTER
+        self.camera.resolution = tuple(
+            map(int, settings.yaml["Camera"]["Resolution"]["val"].split(" x "))
+        )
+        self.camera.vflip = bool(int(settings.yaml["Camera"]["Flip Vertically"]["val"]))
+
+        framerate = int(settings.yaml["Camera"]["Shutter Speed"]["val"])
+        if framerate:
+            self.camera.framerate = framerate
+        shutter = int(settings.yaml["Camera"]["Framerate"]["val"])
+        if shutter:
+            self.camera.shutter_speed = shutter
 
     def getRaw(self):
         return PiRGBArray(self.camera, size=self.camera.resolution)
 
 
-def classify(img, store_features, secure):
+async def classify(img, should_store_features: bool, is_secure: bool):
     """
     :param img: img to be uploaded to be recognised
-    :param store_features: whether to store the predicted images features for constant learning.
-    :param bool secure: whether to use http or https
+    :param bool should_store_features: whether to store the predicted images features for constant learning.
+    :param bool is_secure: whether to use http or https
     :return bool: whether image was uploaded successfully
     """
-
-    upload_path = functions.random_file_name(config.TMP_DETECTED_DIR, config.IMG_TYPE)
+    upload_path = random_file_name(settings.TMP_CLASSIFIED_PATH, settings.IMG_TYPE)
 
     # write image to file for future handling
     cv2.imwrite(upload_path, img)
 
-    protocol = "https" if secure else "http"
-    r = requests.post(
-        protocol + "://idmy.team/upload",
-        files={"img_file": open(upload_path, "rb")},
-        data={
-            "username": config.username,
-            "credentials": config.credentials,
-            "store-features": store_features * 1,
-            "file-name": upload_path.replace(config.TMP_DETECTED_DIR, ""),
-        },
-    )
+    protocol = "https" if is_secure else "http"
+    with open(upload_path, "rb") as file:
+        r = requests.post(
+            protocol + "://idmy.team/upload",
+            files={"file": file},
+            data={
+                "username": settings.yaml["Credentials"]["Id My Team Username"]["val"],
+                "credentials": settings.yaml["Credentials"]["Id My Team Credentials"][
+                    "val"
+                ],
+                "store-features": should_store_features * 1,
+                "file-name": upload_path.replace(settings.TMP_CLASSIFIED_PATH, ""),
+            },
+        )
 
     if r.status_code != 200:
-        # upload is likely being rate limited
         logging.error(r.reason)
         return False
     return True
@@ -89,22 +73,11 @@ def classify(img, store_features, secure):
 process_pool = Pool()
 
 
-def run():
-    # check if connected to socket
-    if config.SOCKET_STATUS != config.SOCKET_CONNECTED:
-        if config.SOCKET_STATUS == config.SOCKET_NOT_TRAINED:
-            logging.error(
-                "You must train a minimum of two members before starting the recognition system."
-            )
-        else:
-            logging.critical("Not connected to the ID My Team Socket!")
-
-    # initialise timing logs
-    bg_t, write_t = False, False
+async def run():
 
     # background extractor
-    bg_model = functions.Image.BackgroundExtractor.model(
-        int(config.settings_yaml["Camera"]["Mask Threshold"]["val"])
+    bg_model = Image.BackgroundExtractor.model(
+        int(settings.yaml.get("Camera", "Mask Threshold"))
     )
 
     # init camera
@@ -117,30 +90,24 @@ def run():
     upload_cnt = 0
     fps_start_time = time.time()
     for frame in cam.camera.capture_continuous(raw, format="bgr", use_video_port=True):
-        if config.RESTART_CAMERA:
+        if settings.RESTART_CAMERA:
             logging.info("Restarting camera...")
             cam.camera.close()
             config.RESTART_CAMERA = False
             raw.truncate(0)
             return run()
 
-        if bool(int(config.settings_yaml["Camera"]["Run"]["val"])):
-            SHOW_LIVE = bool(int(config.settings_yaml["Camera"]["Live Stream"]["val"]))
-            ONLY_IMAGE = bool(int(config.settings_yaml["Camera"]["Silent Mode"]["val"]))
-            SHOW_MASK = bool(int(config.settings_yaml["Camera"]["Mask"]["val"]))
-            MASK_THRESH = int(config.settings_yaml["Camera"]["Mask Threshold"]["val"])
-            UPLOAD_CROP = bool(
-                int(config.settings_yaml["Recognition"]["Upload Cropped"]["val"])
-            )
-            IS_SECURE = bool(
-                config.settings_yaml["Recognition"]["Secure Upload"]["val"]
-            )
+        if bool(int(config.yaml["Camera"]["Run"]["val"])):
+            SHOW_LIVE = bool(int(config.yaml["Camera"]["Live Stream"]["val"]))
+            ONLY_IMAGE = bool(int(config.yaml["Camera"]["Silent Mode"]["val"]))
+            SHOW_MASK = bool(int(config.yaml["Camera"]["Mask"]["val"]))
+            MASK_THRESH = int(config.yaml["Camera"]["Mask Threshold"]["val"])
+            UPLOAD_CROP = bool(int(config.yaml["Recognition"]["Upload Cropped"]["val"]))
+            IS_SECURE = bool(config.yaml["Recognition"]["Secure Upload"]["val"])
             MOVEMENT_THRESH = float(
-                config.settings_yaml["Recognition"]["Movement Percentage"]["val"]
+                config.yaml["Recognition"]["Movement Percentage"]["val"]
             )
-            STORE_FEATURES = bool(
-                config.settings_yaml["Training"]["Store Features"]["val"]
-            )
+            STORE_FEATURES = bool(config.yaml["Training"]["Store Features"]["val"])
 
             img = frame.array
             has_uploaded = False
@@ -233,7 +200,7 @@ def run():
                     target=functions.Image.delete_expired,
                     args=(
                         config.TMP_DETECTED_DIR,
-                        int(config.settings_yaml["Retract Recognition"]["Time"]["val"]),
+                        int(config.yaml["Retract Recognition"]["Time"]["val"]),
                     ),
                 ).start()
 

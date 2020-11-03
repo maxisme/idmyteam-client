@@ -98,14 +98,12 @@ class RetractHandler(view.BaseHandler):
     def get(self):
         if (
             self.get_argument("key")
-            == config.settings_yaml["Retract Recognition"]["Time"]["val"]
+            == config.yaml["Retract Recognition"]["Time"]["val"]
         ):
             functions.incorrect_classification(
                 conn=self.application.db.connect(),
                 ws=config.ws,
-                capture_time=int(
-                    config.settings_yaml["Retract Recognition"]["Time"]["val"]
-                ),
+                capture_time=int(config.yaml["Retract Recognition"]["Time"]["val"]),
                 tmp_dir=config.TMP_DETECTED_DIR,
                 unclassified_dir=config.UNCLASSIFIED_PATH,
             )

@@ -14,13 +14,13 @@
                     <span class="card-title">
                         <span class="material-icons">settings_ethernet</span> Socket
                     </span>
-                    {% if not socket_connected %}
+                    {% if socket_status != 1 %}
                         <b class="error">
-{#                            {% if socket_status == 2 %}#}
-{#                                No trained <a href="/members">members</a>...#}
-{#                            {% else %}#}
-{#                                Not connected...#}
-{#                            {% end %}#}
+                            {% if socket_status == 2 %}
+                                No trained <a href="/members">members</a>...
+                            {% else %}
+                                Not connected...
+                            {% endif %}
                         </b>
                     {% else %}
                         <span class="material-icons success">check</span>

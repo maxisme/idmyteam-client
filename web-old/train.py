@@ -28,7 +28,7 @@ def allowed():
             # If first time training team there must be at least MIN_TRAINING_IMAGES_PER_MEMBER
             valid_members[key] = members[key]
 
-    if config.SOCKET_STATUS == config.SOCKET_NOT_TRAINED:
+    if config.SOCKET_STATUS == config.SOCKET_NO_MODEL:
         # for the initial training there must be more than the min_training_images classified
         # for a minimum of two members
         if len(valid_members) < 2:

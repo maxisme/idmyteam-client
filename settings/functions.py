@@ -1,5 +1,4 @@
 # common functions used in multiple scripts
-import base64
 import datetime
 import json
 import logging
@@ -7,10 +6,8 @@ import shlex
 import shutil
 import socket
 import tempfile
-from random import randint
 from shutil import copyfile
 
-import numpy as np
 import re
 import oyaml
 import os
@@ -18,9 +15,7 @@ import zmq
 from subprocess import Popen, PIPE
 import MySQLdb
 import tornado.escape
-import cv2
 import bcrypt
-from PIL import Image as PILImage
 
 
 class YAML:
@@ -133,16 +128,6 @@ def unescape(str):
     return {}
 
 
-def random_file_name(dir, type):
-    while True:
-        ran_file = (
-            dir + str(randint(1, 9999999999999999999999999999999999999999999)) + type
-        )
-        if not os.path.isfile(ran_file):
-            break
-    return ran_file
-
-
 def to_GB(val):
     return round(float(float(float(val / 1024) / 1024) / 1024), 2)
 
@@ -151,136 +136,6 @@ def get_cpu_temp():
     # write cpu temperature
     cmd = os.popen("/opt/vc/bin/vcgencmd measure_temp").read()
     return re.search(r"\d+\.\d+", cmd).group(0)  # extract only the number from cmd
-
-
-class Image:
-    @classmethod
-    def write_stream(cls, img, tmp, live):
-        """
-        Write img that can be read safely
-        :param img: image data to be written
-        :param tmp: temporary file to be written
-        :param live: output file that is being read
-        :return:
-        """
-        cv2.imwrite(tmp, img)  # ~0.038 seconds - even after overclocking SD
-        os.rename(tmp, live)  # does not impact write speed
-
-    @classmethod
-    def write_text(cls, img, text):
-        cv2.putText(img, text, (0, 30), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (255, 255, 255))
-
-    class Comment:
-        @classmethod
-        def write(cls, img_path, comment):
-            cmd = "convert '{img_path}' -set comment '{comment}' '{img_path}'".format(
-                img_path=img_path, comment=comment
-            )
-            out, _, _ = Shell.run_process(cmd)
-            return out
-
-        @classmethod
-        def read(cls, img_path):
-            try:
-                return PILImage.open(img_path).app["COM"]
-            except Exception as e:
-                logging.error(f"Problem fetching comment from image: {e}")
-                return None
-
-    class BackgroundExtractor:
-        INITIAL_RESIZE = 1.0
-
-        @classmethod
-        def get_movement(
-            cls, img, fgbg, diff_threshold, img_w, img_h, resize_prop=INITIAL_RESIZE
-        ):
-            """
-            get border contour around movement area from an image
-            :param array img:
-            :param class fgbg: foreground background image model
-            :param float diff_threshold: amount of movement for the model to pay attention to
-            :param int img_w: img width
-            :param int img_h: img height
-            :param float resize_prop: proportion to resize image to
-            :return x, y, w, h contour of movement (max area to fit mask) and the mask
-            """
-
-            x, y, w, h = 0, 0, 0, 0
-
-            num_img_pixels = float(img_w * img_h) * resize_prop
-
-            if resize_prop != cls.INITIAL_RESIZE:
-                img = cv2.resize(
-                    img, (int(img_w * resize_prop), int(img_h * resize_prop))
-                )
-
-            mask = ret_mask = fgbg.apply(
-                img, 0
-            )  # apply background extractor model without training
-
-            if resize_prop != cls.INITIAL_RESIZE:
-                ret_mask = cv2.resize(mask, (img_w, img_h))  # mask to return
-
-            # check the amount of change in the image
-            num_changed_pixels = float(np.count_nonzero(mask))
-            image_diff = (
-                100 - ((num_img_pixels - num_changed_pixels) / num_img_pixels) * 100
-            )
-
-            if image_diff > float(diff_threshold):
-                # Acquire contours from the background extractor
-                # https://docs.opencv.org/4.0.0/d4/d73/tutorial_py_contours_begin.html
-                # https://docs.opencv.org/4.0.0/d9/d8b/tutorial_py_contours_hierarchy.html
-                cnts, _ = cv2.findContours(
-                    mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-                )
-
-                # get the single largest contour rectangle
-                largest_contour = 0
-                for c in cnts:
-                    ca = cv2.contourArea(c)
-                    if ca > largest_contour:
-                        largest_contour = ca
-                        (x, y, w, h) = cv2.boundingRect(c)
-
-                if largest_contour:
-                    x = int(x / resize_prop)
-                    y = int(y / resize_prop)
-                    w = int(w / resize_prop)
-                    h = int(h / resize_prop)
-            else:
-                # train model from smaller background changes
-                fgbg.apply(img, -1)
-
-            return x, y, w, h, ret_mask, float(image_diff)
-
-        @classmethod
-        def model(cls, mask_thresh):
-            return cv2.createBackgroundSubtractorMOG2(
-                history=1000, varThreshold=mask_thresh, detectShadows=False
-            )
-            # return cv2.bgsegm.createBackgroundSubtractorCNT(useHistory=False)
-
-    @classmethod
-    def delete_expired(cls, dir, capture_time):
-        for f in os.listdir(dir):
-            file = os.path.join(dir, f)
-            if os.path.isfile(file):
-                try:
-                    end_time = datetime.datetime.fromtimestamp(
-                        os.stat(file).st_mtime
-                    ) + datetime.timedelta(0, capture_time)
-                    if end_time < datetime.datetime.now():
-                        os.unlink(file)  # delete file
-                except:
-                    if file:
-                        os.unlink(file)  # delete file
-
-    @classmethod
-    def base_64_src(cls, file_path):
-        with open(file_path, "rb") as image_file:
-            b64 = base64.b64encode(image_file.read())
-        return "data:image/jpeg; base64," + b64.decode("utf-8")
 
 
 class Member:

@@ -19,14 +19,17 @@ from idmyteamclient import auth
 
 urlpatterns = [
     path("", views.welcome_handler, name="welcome"),
-    path("stream", auth.stream_handler, name="stream"),
+    path("camera", auth.stream_handler, name="camera"),
     path("add-member", auth.add_member_handler, name="add-member"),
     path("member/<int:member_id>", auth.member_handler, name="member"),
     path("member/<int:member_id>/train", auth.member_handler, name="train"),
-    path("member/<int:member_id>/password", auth.member_handler, name="password"),
+    path(
+        "member/<int:member_id>/password", auth.change_member_password, name="password"
+    ),
     path("members", auth.members_handler, name="members"),
     path("script", auth.script_handler, name="script"),
-    path("classify", views.welcome_handler, name="classify"),
+    path("classify", auth.classify_handler, name="classify"),
+    path("classify/<int:page>", auth.classify_handler, name="classify"),
     path("settings", auth.settings_handler, name="settings"),
     path("logs", views.welcome_handler, name="logs"),
     path("logout", auth.logout_handler, name="logout"),

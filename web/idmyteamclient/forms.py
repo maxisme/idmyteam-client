@@ -19,3 +19,23 @@ class LoginForm(forms.Form):
     class Meta:
         model = Member
         fields = ["username", "password"]
+
+
+class ChangePasswordForm(forms.Form):
+    password = forms.CharField(
+        min_length=8, widget=forms.PasswordInput(), required=True, label="Password"
+    )
+    confirm = forms.CharField(
+        min_length=8,
+        widget=forms.PasswordInput(),
+        required=True,
+        label="Confirm Password",
+    )
+
+    def clean(self):
+        cleaned_data = super(ChangePasswordForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm = cleaned_data.get("confirm")
+
+        if password != confirm:
+            raise forms.ValidationError("Passwords do not match!")
