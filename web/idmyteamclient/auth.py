@@ -88,18 +88,21 @@ def _fetch_image_bbox_js(images: Dict[str, ClassifiedImage]):
 
 @permitted(Member.Permission.HIGH)
 def settings_handler(request):
-    update_global_stats()
+    if request.method == "POST":
+        pass
+    else:
+        update_global_stats()
 
-    return render(
-        request,
-        "settings.html",
-        {
-            "title": "Settings",
-            "settings": settings.yaml,
-            "stats": settings.stats,
-            "stats_info": settings.STATS_INFO,
-        },
-    )
+        return render(
+            request,
+            "settings.html",
+            {
+                "title": "Settings",
+                "settings": settings.yaml,
+                "stats": settings.stats,
+                "stats_info": settings.STATS_INFO,
+            },
+        )
 
 
 @permitted(Member.Permission.HIGH)

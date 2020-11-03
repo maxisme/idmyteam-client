@@ -123,5 +123,5 @@ def _handle_classification(classification: ClassificationWSStruct):
             # write coords of face into image file as comment
             Image.Comment.write(image_path, json.dumps(classification.coordinates))
 
-        # move uploaded image for manual classification
+        # move image for manual classification
         os.rename(image_path, move_img_path)

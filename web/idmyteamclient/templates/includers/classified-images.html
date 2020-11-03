@@ -3,7 +3,7 @@
 
 {% for img_path in images %}
     {% with img=images|dict_key:img_path %}
-        <span image-path="{{ img_path }}" align="left" style="padding-bottom: 20px" class="col ima {{ col_classes }}">
+        <span image-path="{{ img_path }}" align="left" class="col ima {{ col_classes }}">
             <div class="icon material-icons delete">remove_circle_outline</div>
 
             {% if img.type == 'classified' %}
