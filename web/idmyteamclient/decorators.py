@@ -17,7 +17,7 @@ def permitted(perm: Member.Permission, request_method=None):
                 member: Member = request.user
                 if member.permitted(perm):
                     return func(request, *args, **kwargs)
-            except AttributeError:
+            except AttributeError as _:  # _ for breakpoint
                 pass
             return redirect(reverse("login"))
 

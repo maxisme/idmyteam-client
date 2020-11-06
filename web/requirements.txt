@@ -5,3 +5,4 @@ Pillow==8.0.1
 websocket-client==0.57.0
 opencv-python==4.4.0.44
 requests==2.24.0
+shellcheck-py==0.7.1.1

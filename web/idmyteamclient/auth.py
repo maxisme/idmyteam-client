@@ -4,12 +4,14 @@ from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse
 from idmyteam.helpers import render, SUCCESS_COOKIE_KEY, redirect
 
+from functions import Shell
 from idmyteamclient import forms
 from idmyteamclient.decorators import permitted
 from idmyteamclient.forms import NewMemberForm
 from idmyteamclient.helpers import update_global_stats, Image
 from idmyteamclient.models import Member
 from idmyteamclient.structs import ClassifiedImage
+from idmyteamclient.templatetags.tags import to_form_name
 from web import settings
 
 
@@ -89,7 +91,41 @@ def _fetch_image_bbox_js(images: Dict[str, ClassifiedImage]):
 @permitted(Member.Permission.HIGH)
 def settings_handler(request):
     if request.method == "POST":
-        pass
+        should_restart_camera = False
+        all_settings = settings.yaml.get_all()
+        for group in all_settings:
+            for setting in all_settings[group]:
+                form_name = to_form_name(group, setting)
+                if form_name in request.POST or _setting_is_switch(
+                    all_settings, group, setting
+                ):
+                    if (
+                        _setting_is_switch(all_settings, group, setting)
+                        and form_name not in request.POST
+                    ):
+                        # switch results are not passed in the post request so need to catch that they are missing
+                        # and set to 0
+                        val = 0
+                    else:
+                        val = request.POST[form_name]
+
+                    # convert val to int if possible
+                    try:
+                        val = int(val)
+                    except ValueError:
+                        pass
+
+                    # check value has changed
+                    if settings.yaml.get(group, setting) != val:
+                        settings.yaml.set(group, setting, val)
+                        if setting in settings.CAMERA_RESTART_SETTINGS:
+                            should_restart_camera = True
+
+        if should_restart_camera:
+            settings.RESTART_CAMERA = True
+
+        settings.yaml.save()
+        return redirect(reverse("settings"))
     else:
         update_global_stats()
 
@@ -98,28 +134,50 @@ def settings_handler(request):
             "settings.html",
             {
                 "title": "Settings",
-                "settings": settings.yaml,
+                "settings": settings.yaml.get_all(),
                 "stats": settings.stats,
                 "stats_info": settings.STATS_INFO,
             },
         )
 
 
-@permitted(Member.Permission.HIGH)
+def _setting_is_switch(settings, group, setting) -> bool:
+    return (
+        "type" in settings[group][setting]
+        and settings[group][setting]["type"] == "switch"
+    )
+
+
+@permitted(Member.Permission.HIGH, "POST")
+@permitted(Member.Permission.MEDIUM)
 def script_handler(request):
+    error_message, success_message = "", ""
+    if request.method == "POST":
+        bash_script_content = request.POST["bash-script"]
+        error_message = Shell.validate(bash_script_content, settings.SCRIPT_PATH)
+        if error_message:
+            error_message = f"<pre>{error_message.decode()}</pre>"
+        else:
+            success_message = "Updated script!"
+        file_content = bash_script_content
+    else:
+        file_content = open(settings.SCRIPT_PATH, "r").read()
+
     return render(
         request,
         "script.html",
         {
             "title": "Script",
             "script_speed": 0.002,  # TODO get actual speed
-            "file_content": open(settings.SCRIPT_PATH, "r").read(),
+            "file_content": file_content,
+            "error_message": error_message,
+            "success_message": success_message,
         },
     )
 
 
-@permitted(Member.Permission.HIGH, ["DELETE"])
-@permitted(Member.Permission.MEDIUM, ["GET"])
+@permitted(Member.Permission.HIGH, "DELETE")
+@permitted(Member.Permission.MEDIUM, "GET")
 def member_handler(request, member_id: int):
     if request.method == "GET":
         member = Member.objects.get(id=member_id)

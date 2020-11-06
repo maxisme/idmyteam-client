@@ -29,7 +29,7 @@ def update_global_stats():
     settings.stats[settings.STAT_NUM_CLASSIFIED] = num_files_in_dir(
         os.path.join(
             settings.BASE_DIR,
-            settings.yaml["File Location"]["Classified Images"]["val"],
+            settings.yaml.get("File Location", "Classified Images"),
         )
     )
 
@@ -37,7 +37,7 @@ def update_global_stats():
     settings.stats[settings.STAT_NUM_UNCLASSIFIED] = num_files_in_dir(
         os.path.join(
             settings.BASE_DIR,
-            settings.yaml["File Location"]["Unclassified Images"]["val"],
+            settings.yaml.get("File Location", "Unclassified Images"),
         )
     )
 

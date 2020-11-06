@@ -16,8 +16,8 @@ def dict_key(d: dict, k):
 
 
 @register.filter()
-def to_form_name(type, setting):
-    return (type + "_" + setting).replace(" ", "-").lower()
+def to_form_name(group, setting):
+    return (group + "_" + setting).replace(" ", "-").lower()
 
 
 @register.filter()

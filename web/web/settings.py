@@ -151,7 +151,7 @@ STATS_INFO = {
 # camera.py
 ###########
 CAMERA_THREAD = None
-RESTART_CAMERA = False
+RESTART_CAMERA = None
 CAMERA_RESTART_SETTINGS = [
     "Resolution",
     "Flip Vertically",

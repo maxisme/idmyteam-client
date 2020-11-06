@@ -37,32 +37,43 @@ class YAML:
             return oyaml.dump(config, outfile, default_flow_style=False)
 
     def save(self) -> bool:
+        """
+        save _config to file self._path
+        :return:
+        """
         with self._lock:
             return self.write(self._path, self._config)
 
-    def get(self, group: str, key: str):
+    def get(self, group: str, setting: str):
         with self._lock:
-            return self._config[group][key]["val"]
+            return self._config[group][setting]["val"]
+
+    def set(self, group: str, setting: str, val):
+        with self._lock:
+            self._config[group][setting]["val"] = val
+
+    def get_all(self):
+        return self._config
 
 
 class Shell:
     @classmethod
-    def run_recognition_script(cls, member_name, score, script_path):
+    def run_recognition_script(cls, member_name: str, score: float, script_path: str):
         # run script with arguments
         Popen([script_path, member_name, str(score)])
 
     @classmethod
-    def validate(cls, shell_str, out_file):
+    def validate(cls, shell_str: str, out_file: str):
         str = shell_str.replace("\r", "")
-        tmp_name = cls._write_str_to_tmp_file(str)
+        tmp_file_path = cls._write_str_to_tmp_file(str)
 
-        cmd = "shellcheck '{}'".format(tmp_name)
+        cmd = f"shellcheck '{tmp_file_path}'"
 
         out, exitcode, _ = cls.run_process(cmd)
         if exitcode == 0:
             # success so copy validated file
-            copyfile(tmp_name, out_file)
-        os.remove(tmp_name)
+            copyfile(tmp_file_path, out_file)
+        os.remove(tmp_file_path)
         return out
 
     @classmethod

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$("#sub").css("right", $(window).width() / 2 - $("#sub").width() / 2);
+	$("#floating-submit-btn").css("right", $(window).width() / 2 - $("#sub").width() / 2);
 
     /* for nav bar */
 	$(".button-collapse").sideNav();
@@ -39,6 +39,5 @@ $(document).ready(function(){
         el.animate({opacity:'0.2'}, 1000);
         el.animate({opacity:'1'}, 1000, fadeInOut);
     }
-
     fadeInOut();
 });

@@ -2,8 +2,10 @@
 {% load define_action %}
 {% load tags %}
 {% block content %}
-    <form method="post" action="/settings">
-        <ul class="collapsible content" data-collapsible="expandable">
+    <form method="post" action="{% url "settings" %}">
+        {% csrf_token %}
+
+        <ul class="collapsible" data-collapsible="expandable">
             <!-- Stats -->
             <li id="Stats">
                 <div class="collapsible-header">
@@ -60,36 +62,33 @@
                                                                     {{ info|safe }}
                                                                 </div>
                                                                 <div align="center"
-                                                                     class="in valign valign-wrapper col s12 m6 l4">
-                                                                    <!-- HANDLE ALL THE DIFFERENT FORM INPUTS -->
+                                                                     class="in input-field valign valign-wrapper col s12 m6 l4">
                                                                     {% if type == 'switch' %}
                                                                         <span class="switch">
-                                                                    <label>
-                                                                        <input type="checkbox"
-                                                                               name="{{ name }}"
-                                                                               {% if val %}checked{% endif %}
-                                                                               {% if disabled %}disabled{% endif %}>
-                                                                        <span class="lever"></span>
-                                                                        <input type='hidden' value='0'
-                                                                               name="{{ name }}">
-                                                                    </label>
-                                                                </span>
+                                                                            <label>
+                                                                                <input type="checkbox"
+                                                                                       name="{{ name }}"
+                                                                                       {% if val %}checked{% endif %}
+                                                                                       {% if disabled %}disabled{% endif %}>
+                                                                                <span class="lever"></span>
+{#                                                                                <input type='hidden' value='0'#}
+{#                                                                                       name="{{ name }}">#}
+                                                                            </label>
+                                                                        </span>
 
                                                                     {% elif type == 'select' %}
-                                                                        <select name="{{ name }}"
+                                                                        {% with options=s|dict_key:'options' %}
+                                                                            <select name="{{ name }}"
                                                                                 {% if disabled %}disabled{% endif %}>
-                                                                            {% for option in options %}
-                                                                                <option
+                                                                                {% for option in options %}
+                                                                                    <option
                                                                                         {% if option == val %}selected{% endif %}
                                                                                         value="{{ option }}">
-                                                                                    {{ option }}
-                                                                                </option>
-                                                                            {% endfor %}
-                                                                        </select>
-                                                                        <select name="{{ name }}"
-                                                                                {% if disabled %}disabled{% endif %}>
-                                                                            {{ options|safe }}
-                                                                        </select>
+                                                                                        {{ option }}
+                                                                                    </option>
+                                                                                {% endfor %}
+                                                                            </select>
+                                                                        {% endwith %}
 
                                                                     {% elif type == 'range' %}
                                                                         <div class="range-field">
@@ -139,7 +138,7 @@
                 </div>
             </li>
         </ul>
-        <button id="sub" type="submit" class="btn-floating btn-large disabled"><i class="material-icons">done</i>
+        <button id="floating-submit-btn" type="submit" class="btn-floating btn-large disabled"><i class="material-icons">done</i>
         </button>
     </form>
 {% endblock %}
@@ -176,10 +175,10 @@
 
         function onChange() {
             should_prevent = true;
-            $("#sub").removeClass("disabled");
-            $("#sub").addClass("pulse");
+            $("#floating-submit-btn").removeClass("disabled");
+            $("#floating-submit-btn").addClass("pulse");
             setTimeout(function () {
-                $("#sub").removeClass("pulse");
+                $("#floating-submit-btn").removeClass("pulse");
             }, 1000);
         }
 
